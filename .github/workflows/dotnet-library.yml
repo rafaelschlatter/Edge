@@ -6,6 +6,7 @@ env:
   NUGET_OUTPUT: Artifacts/NuGet
   COVERAGE_FOLDER: Coverage
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
   push:
