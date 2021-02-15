@@ -3,4 +3,4 @@
 **/.vs
 **/TestResults
 *.nupkg
-**/packages/*
+**/Packages/*
