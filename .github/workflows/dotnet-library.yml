@@ -1,0 +1,34 @@
+name: .NET Library CI/CD
+
+env:
+  PRERELEASE_BRANCHES: experimental,alpha,beta,rc # Comma separated list of prerelease branch names. 'alpha,rc, ...'
+  CASCADES: "" # Comma separated list of cascading repos. 'dolittle/DotNet.SDK,...'
+  NUGET_OUTPUT: Artifacts/NuGet
+  COVERAGE_FOLDER: Coverage
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    types: [closed]
+
+jobs:
+  ci:
+    name: CI/CD
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "5.0"
+      - name: Build
+        run: dotnet build --configuration Release
+      - name: Test and report coverage
+        run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/ /p:MergeWith=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage.json /p:CoverletOutputFormat=\"opencover,json\" -m:1
+      - name: Upload coverage to CodeCov
+        run: bash <(curl -s https://codecov.io/bash) -f "$FILE_PATH"
+        env:
+          FILE_PATH: ${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage.opencover.xml
