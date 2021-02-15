@@ -5,6 +5,7 @@ env:
   CASCADES: "" # Comma separated list of cascading repos. 'dolittle/DotNet.SDK,...'
   NUGET_OUTPUT: Artifacts/NuGet
   COVERAGE_FOLDER: Coverage
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 on:
   push:
@@ -32,3 +33,9 @@ jobs:
         run: bash <(curl -s https://codecov.io/bash) -f "$FILE_PATH"
         env:
           FILE_PATH: ${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage.opencover.xml
+      - name: SonarScanner for .NET Core with pull request decoration support
+        uses: highbyte/sonarscan-dotnet@1.0.2
+        with:
+          sonarProjectKey: RaaLabs_Edge
+          sonarProjectName:  Edge
+          sonarOrganization: raalabs
