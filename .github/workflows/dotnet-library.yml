@@ -29,7 +29,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release
       - name: Test and report coverage
-        run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/ /p:MergeWith=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage/ /p:CoverletOutputFormat=opencover --collect "Code coverage""
+        run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/ /p:MergeWith=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage/ /p:CoverletOutputFormat=opencover"
       - name: SonarScanner for .NET Core with pull request decoration support
         uses: highbyte/sonarscan-dotnet@2.0
         with:
