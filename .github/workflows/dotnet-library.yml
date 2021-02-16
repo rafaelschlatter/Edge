@@ -37,5 +37,5 @@ jobs:
           sonarProjectName:  Edge
           sonarOrganization: raalabs
           dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-          sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/*.trx"
+          sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 
