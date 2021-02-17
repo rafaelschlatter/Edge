@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <SpecFlowObsoleteCodeBehindFiles Remove="Features\Configuration.feature.cs" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\ApplicationBuilder - Copy.feature.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,17 +35,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Edge.Modules.Configuration\Edge.Modules.Configuration.csproj" />
+    <ProjectReference Include="..\Edge\Edge.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Features\Configuration.feature.cs">
-      <DependentUpon>Configuration.feature</DependentUpon>
+    <Compile Update="Features\AsyncTasks.feature.cs">
+      <DependentUpon>AsyncTasks.feature</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <SpecFlowFeatureFiles Update="Features\Configuration.feature">
+    <SpecFlowFeatureFiles Update="Features\AsyncTasks.feature">
       <Visible>$(UsingMicrosoftNETSdk)</Visible>
       <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
     </SpecFlowFeatureFiles>

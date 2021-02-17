@@ -10,7 +10,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub
     {
         private readonly ILogger _logger;
 
-        private Dictionary<string, MessageHandler> _messageHandlers;
+        private readonly Dictionary<string, MessageHandler> _messageHandlers;
         public List<string> MessagesSent { get; }
 
         public NullIotModuleClient(ILogger logger)
