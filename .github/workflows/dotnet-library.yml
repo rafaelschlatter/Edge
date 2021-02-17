@@ -1,0 +1,41 @@
+name: .NET Library CI/CD
+
+env:
+  PRERELEASE_BRANCHES: experimental,alpha,beta,rc # Comma separated list of prerelease branch names. 'alpha,rc, ...'
+  CASCADES: "" # Comma separated list of cascading repos. 'dolittle/DotNet.SDK,...'
+  NUGET_OUTPUT: Artifacts/NuGet
+  COVERAGE_FOLDER: Coverage
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    types: [closed]
+
+jobs:
+  ci:
+    name: CI/CD
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "5.0"
+      - name: Build
+        run: dotnet build --configuration Release
+      - name: Test and report coverage
+        run: dotnet test --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/ /p:MergeWith=${{ github.workspace }}/${{ env.COVERAGE_FOLDER }}/coverage/ /p:CoverletOutputFormat=opencover
+      - name: SonarScanner for .NET Core with pull request decoration support
+        uses: highbyte/sonarscan-dotnet@2.0
+        with:
+          sonarProjectKey: RaaLabs_Edge
+          sonarProjectName:  Edge
+          sonarOrganization: raalabs
+          dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+
