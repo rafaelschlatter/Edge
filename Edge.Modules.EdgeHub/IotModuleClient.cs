@@ -17,6 +17,10 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             ModuleClient.CreateFromEnvironmentAsync(TransportType.Mqtt)
                 .ContinueWith(_ => _client = _.Result)
                 .Wait();
+
+            _logger.Information("Open IoT Edge ModuleClient and wait");
+            _client.OpenAsync().Wait();
+            _logger.Information("Client is ready");
         }
 
         public Task SendEventAsync(string outputName, Message message)
