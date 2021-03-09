@@ -22,19 +22,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Drivers\" />
     <Folder Include="Hooks\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Edge.Modules.EdgeHub\Edge.Modules.EdgeHub.csproj" />
     <ProjectReference Include="..\Edge.Modules.EventHandling\Edge.Modules.EventHandling.csproj" />
-    <ProjectReference Include="..\Edge.Modules.Logging\Edge.Modules.Logging.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Features\EdgeHub.feature.cs">
       <DependentUpon>EdgeHub.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Steps\EdgeHubSteps.cs">
+      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 

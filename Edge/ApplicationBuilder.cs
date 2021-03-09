@@ -2,6 +2,7 @@
 using Autofac;
 using System.Collections.Generic;
 using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace RaaLabs.Edge
 {
@@ -46,6 +47,12 @@ namespace RaaLabs.Edge
             return this;
         }
 
+        public ApplicationBuilder WithManualRegistration(Action<ContainerBuilder> registration)
+        {
+            registration(_builder);
+            return this;
+        }
+
         public Application Build()
         {
             IContainer container = _builder.Build();
@@ -55,7 +62,7 @@ namespace RaaLabs.Edge
         private Serilog.Core.Logger CreateLogger()
         {
             var log = new LoggerConfiguration()
-                .WriteTo.Console()
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
 
             return log;

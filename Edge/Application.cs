@@ -9,20 +9,20 @@ namespace RaaLabs.Edge
 {
     public class Application
     {
-        private readonly IContainer _container;
+        public IContainer Container { get; }
         private readonly List<Type> _handlers;
         private readonly List<Type> _tasks;
 
         public Application(IContainer container, List<Type> handlers, List<Type> tasks)
         {
-            _container = container;
+            Container = container;
             _handlers = handlers;
             _tasks = tasks;
         }
 
         public async Task Run()
         {
-            using var scope = _container.BeginLifetimeScope();
+            using var scope = Container.BeginLifetimeScope();
             var logger = scope.Resolve<Serilog.ILogger>();
 
             logger.Information("Starting up handlers...");

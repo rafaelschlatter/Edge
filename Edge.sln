@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.EdgeHub", "Edg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.Configuration", "Edge.Modules.Configuration\Edge.Modules.Configuration.csproj", "{ED1C06BA-AE47-4062-88BA-55136E8D8908}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.Logging", "Edge.Modules.Logging\Edge.Modules.Logging.csproj", "{9AC792B6-4F01-4F88-B4DE-7AB4794D7D3C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.EventHandling.Specs", "Edge.Modules.EventHandling.Specs\Edge.Modules.EventHandling.Specs.csproj", "{9BC3BBAD-BDA0-4EE6-9A8A-F20D98D14955}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.EdgeHub.Specs", "Edge.Modules.EdgeHub.Specs\Edge.Modules.EdgeHub.Specs.csproj", "{4CFEC0FA-9993-4266-90DE-BFECCAB563B1}"
@@ -43,10 +41,6 @@ Global
 		{ED1C06BA-AE47-4062-88BA-55136E8D8908}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED1C06BA-AE47-4062-88BA-55136E8D8908}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED1C06BA-AE47-4062-88BA-55136E8D8908}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9AC792B6-4F01-4F88-B4DE-7AB4794D7D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9AC792B6-4F01-4F88-B4DE-7AB4794D7D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9AC792B6-4F01-4F88-B4DE-7AB4794D7D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9AC792B6-4F01-4F88-B4DE-7AB4794D7D3C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9BC3BBAD-BDA0-4EE6-9A8A-F20D98D14955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9BC3BBAD-BDA0-4EE6-9A8A-F20D98D14955}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BC3BBAD-BDA0-4EE6-9A8A-F20D98D14955}.Release|Any CPU.ActiveCfg = Release|Any CPU

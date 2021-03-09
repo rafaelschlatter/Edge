@@ -25,7 +25,11 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             var payload = Encoding.UTF8.GetString(message.GetBytes());
             _logger.Information("Payload to send: {Payload}", payload);
 
-            MessagesSent.Add(payload);
+            // Set an upper limit to the number of messages to be stored
+            if (MessagesSent.Count < 1000)
+            {
+                MessagesSent.Add(payload);
+            }
 
             return Task.CompletedTask;
         }

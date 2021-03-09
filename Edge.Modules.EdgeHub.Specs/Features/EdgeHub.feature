@@ -1,44 +1,60 @@
 ﻿Feature: EdgeHub Functionality
 
 Scenario: Loading EdgeHub module into context
-	Given an Autofac context
-	Given module RaaLabs.Edge.Modules.EdgeHub.EdgeHub from RaaLabs.Edge.Modules.EdgeHub is registered
-
-	When Building application container
-	Then Starting lifetime scope should succeed
+	Given an application with the following registrations
+		| Kind    | Type                |
+		| Module  | EventHandling       |
+		| Module  | EdgeHub             |
+	
+	Then starting lifetime scope should succeed
 
 Scenario: Receiving an event from EdgeHub
-	Given an Autofac context
-	Given module RaaLabs.Edge.Modules.Logging.Logging from RaaLabs.Edge.Modules.Logging is registered
-	Given module RaaLabs.Edge.Modules.EventHandling.EventHandling from RaaLabs.Edge.Modules.EventHandling is registered
-	And module RaaLabs.Edge.Modules.EdgeHub.EdgeHub from RaaLabs.Edge.Modules.EdgeHub is registered
-	And IntegerInputHandler is registered
+	Given an application with the following registrations
+		| Kind    | Type						|
+		| Module  | EventHandling				|
+		| Module  | EdgeHub                     |
+		| Handler | IntegerInputHandler         |
+		| Handler | IntegerInputSquaringHandler |
+	
+	And a lifetime scope with the following instances
+		| Name                  | Type                        |
+		| inputHandler1         | IntegerInputHandler         |
+		| inputHandler2         | IntegerInputHandler         |
+		| inputSquaringHandler1 | IntegerInputSquaringHandler |
 
-	Given application container has been built
+	When EdgeHub input IntegerInput receives the following values
+		| Value |
+		| 1     |
+		| 3     |
+		| 6     |
 
-	Given an instance of IntegerInputHandler named inputHandler1
-	And   an instance of IntegerInputHandler named inputHandler2
-
-	When EdgeHub input IntegerInput receives 1
-	And  EdgeHub input IntegerInput receives 26
-
-	Then IntegerInputHandler inputHandler1 receives [1, 26]
-	And IntegerInputHandler inputHandler2 receives [1, 26]
+	Then handlers should receive the following values
+		| inputHandler1 | inputHandler2 | inputSquaringHandler1 |
+		| 1             | 1             | 1                     |
+		| 3             | 3             | 9                     |
+		| 6             | 6             | 36                    |
 
 Scenario: Sending an event to EdgeHub
-	Given an Autofac context
-	Given module RaaLabs.Edge.Modules.Logging.Logging from RaaLabs.Edge.Modules.Logging is registered
-	Given module RaaLabs.Edge.Modules.EventHandling.EventHandling from RaaLabs.Edge.Modules.EventHandling is registered
-	And module RaaLabs.Edge.Modules.EdgeHub.EdgeHub from RaaLabs.Edge.Modules.EdgeHub is registered
-	And IntegerOutputHandler is registered
+	Given an application with the following registrations
+		| Kind    | Type						|
+		| Module  | EventHandling				|
+		| Module  | EdgeHub                     |
+		| Handler | IntegerOutputHandler        |
+	
+	And a lifetime scope with the following instances
+		| Name                  | Type                  |
+		| outputHandler         | IntegerOutputHandler  |
 
-	Given application container has been built
+	When event producer outputHandler produces the following values
+		| Value |
+		| 1     |
+		| 4     |
+		| 23    |
+		| 15    |
 
-	Given an instance of IntegerOutputHandler named outputHandler
-
-	When IntegerOutputHandler outputHandler sends 32
-	And  IntegerOutputHandler outputHandler sends 37
-	And  IntegerOutputHandler outputHandler sends 14
-	And  IntegerOutputHandler outputHandler sends 123
-
-	Then EdgeHub output IntegerOutput sends [32, 37, 14, 123]
+	Then EdgeHub output IntegerOutput sends the following values
+		| Value |
+		| 1     |
+		| 4     |
+		| 23    |
+		| 15    |
