@@ -13,17 +13,23 @@ using System.Reflection;
 
 namespace RaaLabs.Edge.Modules.Configuration
 {
+    /// <summary>
+    /// An Autofac registration source for resolving all types implementing IConfiguration.
+    /// </summary>
     class ConfigurationRegistrationSource : IRegistrationSource
     {
         public bool IsAdapterForIndividualComponents => false;
 
         public IEnumerable<IComponentRegistration> RegistrationsFor(Service service, Func<Service, IEnumerable<ServiceRegistration>> registrationAccessor)
         {
+            // If service is not a TypedService, don't provide any registrations.
             var ts = service as TypedService;
             if (ts == null)
             {
                 return Enumerable.Empty<IComponentRegistration>();
             }
+
+            // If the concrete type requested is not assignable to an IConfiguration variable, don't provide any registrations.
             var serviceType = ts.ServiceType;
             if (!typeof(IConfiguration).IsAssignableFrom(serviceType))
             {
@@ -46,6 +52,13 @@ namespace RaaLabs.Edge.Modules.Configuration
             return new IComponentRegistration[] { registration };
         }
 
+        /// <summary>
+        /// Load a configuration file into a type instance implementing the IConfiguration interface.
+        /// Uses the Name(...) attribute of the type as a filename for the configuration file.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="fs"></param>
+        /// <returns></returns>
         private static IConfiguration LoadConfigurationObject(Type type, IFileSystem fs)
         {
             string filename = type.GetCustomAttribute<NameAttribute>().Name;

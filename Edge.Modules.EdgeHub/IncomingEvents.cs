@@ -13,8 +13,17 @@ using Serilog;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {
+    /// <summary>
+    /// Module for bridging EdgeHub input messages to Event Handling classes.
+    /// </summary>
     class IncomingEvents : Module
     {
+        /// <summary>
+        /// This function will detect event classes implementing IEdgeHubIncomingEvent when they are being activated, and will
+        /// set up the EdgeHub client to publish messages to these events.
+        /// </summary>
+        /// <param name="componentRegistry"></param>
+        /// <param name="registration"></param>
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration)
         {
             Type eventType;
@@ -33,6 +42,14 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             }
         }
 
+        /// <summary>
+        /// This function will set up EdgeHub to publish incoming events to the specified event type T.
+        /// 
+        /// IMPORTANT: This function appears to not be in use, but will be called at runtime using reflection.
+        /// 
+        /// </summary>
+        /// <typeparam name="T">The event handling class receiving the incoming input</typeparam>
+        /// <param name="context">The autofac scope for resolving dependencies</param>
         public static void SetupEdgeHubIncomingEvents<T>(ResolveRequestContext context)
             where T : IEvent
         {
@@ -48,6 +65,14 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             }, null);
         }
 
+        /// <summary>
+        /// Deserialize incoming EdgeHub message and publish the event to the application.
+        /// </summary>
+        /// <typeparam name="T">The event type to deserialize the incoming data to</typeparam>
+        /// <param name="eventHandler">The event handler for the given event type</param>
+        /// <param name="message">The incoming EdgeHub message</param>
+        /// <param name="logger">a logger</param>
+        /// <returns></returns>
         async static Task<MessageResponse> HandleSubscriber<T>(EventHandling.EventHandler<T> eventHandler, Message message, ILogger logger)
             where T : IEvent
         {
@@ -70,6 +95,13 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             }
         }
 
+        /// <summary>
+        /// Test whether the type being activated implements IEdgeHubIncomingEvent, and if it does, returns the concrete
+        /// type being activated.
+        /// </summary>
+        /// <param name="registration"></param>
+        /// <param name="eventType"></param>
+        /// <returns></returns>
         private static bool IsEventHandlerForEdgeHubIncomingEvent(IComponentRegistration registration, out Type eventType)
         {
             eventType = null;

@@ -38,6 +38,10 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
         [Given(@"a lifetime scope with the following instances")]
         public void GivenTheFollowingInstances(Table table)
         {
+            var mappings = table.Rows.Select(row => (Source: row["Source"], From: row["From"], To: row["To"]));
+
+            var sources = mappings.GroupBy(_ => _.Source);
+
             var scope = _appContext.StartScope();
             foreach (var row in table.Rows)
             {

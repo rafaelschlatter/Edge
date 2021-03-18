@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {
+    /// <summary>
+    /// A mocked IotModuleClient, used when there is no edgeHub running on the system. Will be used during testing.
+    /// </summary>
     public class NullIotModuleClient : IIotModuleClient
     {
         private readonly ILogger _logger;

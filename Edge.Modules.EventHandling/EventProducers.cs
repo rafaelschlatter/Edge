@@ -9,8 +9,17 @@ using System.Reflection;
 
 namespace RaaLabs.Edge.Modules.EventHandling
 {
+    /// <summary>
+    /// Plumbing module for connecting all event producers to the corresponding EventHandler.
+    /// </summary>
     class EventProducers : Autofac.Module
     {
+        /// <summary>
+        /// This function will detect classes implementing IProduceEvent when they are being activated, and will
+        /// set up publishing to all the specified event types that they produce.
+        /// </summary>
+        /// <param name="componentRegistry"></param>
+        /// <param name="registration"></param>
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration)
         {
             if (HasInterface<IProduceEvent>(registration))
@@ -26,6 +35,11 @@ namespace RaaLabs.Edge.Modules.EventHandling
             }
         }
 
+        /// <summary>
+        /// This function will set up all event publishing for a class instance upon activation.
+        /// 
+        /// </summary>
+        /// <param name="context">The autofac resolve context</param>
         private void SetupEventProductionForProducer(ResolveRequestContext context)
         {
             var producer = (IProduceEvent)context.Instance;
@@ -58,6 +72,15 @@ namespace RaaLabs.Edge.Modules.EventHandling
             }
         }
 
+        /// <summary>
+        /// Set up publishing to a given event type T for a producer.
+        /// 
+        /// IMPORTANT: This function appears to not be in use, but will be called at runtime using reflection.
+        /// </summary>
+        /// <typeparam name="T">The event type to publish to</typeparam>
+        /// <param name="context">The Autofac context</param>
+        /// <param name="emitter">The class which will emit the event</param>
+        /// <returns></returns>
         public static void SetupEventEmitter<T>(IComponentContext context, IProduceEvent producer, EventInfo emitter)
             where T : IEvent
         {

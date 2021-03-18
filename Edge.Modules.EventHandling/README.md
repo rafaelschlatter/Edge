@@ -71,3 +71,8 @@ class SomethingHappenedConsumer : IConsumeEvent<SomethingHappened>
     }
 }
 ```
+
+### Event Handler
+Every event type has an Event Handler registered in the Autofac context, which is used internally
+to handle the "plumbing" from an event is produced, until it is consumed. For normal use of the
+framework, the developer can ignore this concept.

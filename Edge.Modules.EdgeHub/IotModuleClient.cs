@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {
+    /// <summary>
+    /// An IotModuleClient with an actual underlying EdgeHub ModuleClient.
+    /// </summary>
     public class IotModuleClient : IIotModuleClient
     {
         private ModuleClient _client;

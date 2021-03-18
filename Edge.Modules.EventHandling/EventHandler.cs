@@ -3,6 +3,16 @@ using System.Collections.Generic;
 
 namespace RaaLabs.Edge.Modules.EventHandling
 {
+    /// <summary>
+    /// An event handler for the given event type T. This is responsible for the "plumbing" between event producers
+    /// and event consumers. It exposes a function "Produce(...)", which will be called by all event producers.
+    /// 
+    /// On a new incoming event, the EventHandler class will iterate through all the consumers for its event type T,
+    /// calling the "Handle(T @event)" function of all these classes.
+    /// 
+    /// For normal development, this class can be ignored by the developer.
+    /// </summary>
+    /// <typeparam name="T">the event type</typeparam>
     public class EventHandler<T> : IEventHandler
         where T: IEvent
     {
@@ -13,6 +23,12 @@ namespace RaaLabs.Edge.Modules.EventHandling
             _observers = new List<IConsumeEvent<T>>();
             _observerFunctions = new List<Action<T>>();
         }
+
+        /// <summary>
+        /// Called by the subsciber class to start subscribing to event
+        /// </summary>
+        /// <param name="observer"></param>
+        /// <returns></returns>
         public IDisposable Subscribe(IConsumeEvent<T> observer)
         {
             if (!_observers.Contains(observer))
@@ -23,6 +39,11 @@ namespace RaaLabs.Edge.Modules.EventHandling
             return new Unsubscriber<T>(_observers, observer);
         }
 
+        /// <summary>
+        /// Called by the subsciber function to start subscribing to event.
+        /// </summary>
+        /// <param name="observer"></param>
+        /// <returns></returns>
         public IDisposable Subscribe(Action<T> observerFunction)
         {
             if (!_observerFunctions.Contains(observerFunction))
@@ -33,6 +54,10 @@ namespace RaaLabs.Edge.Modules.EventHandling
             return new UnsubscriberFunction<T>(_observerFunctions, observerFunction);
         }
 
+        /// <summary>
+        /// Called by the event emitter to produce a new event.
+        /// </summary>
+        /// <param name="event"></param>
         public void Produce(T @event)
         {
             _observers.ForEach(_ => _.Handle(@event));
@@ -40,6 +65,10 @@ namespace RaaLabs.Edge.Modules.EventHandling
         }
     }
 
+    /// <summary>
+    /// Remove consumer class from list of subscribers when it is deleted
+    /// </summary>
+    /// <typeparam name="T">the event type</typeparam>
     public class Unsubscriber<T> : IDisposable
     {
         private List<IConsumeEvent<T>> _observers;
@@ -59,6 +88,10 @@ namespace RaaLabs.Edge.Modules.EventHandling
         }
     }
 
+    /// <summary>
+    /// Remove consumer function from list of subscribers when it is deleted
+    /// </summary>
+    /// <typeparam name="T">the event type</typeparam>
     public class UnsubscriberFunction<T> : IDisposable
     {
         private List<Action<T>> _observerFunctions;
