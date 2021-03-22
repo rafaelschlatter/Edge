@@ -14,13 +14,13 @@ namespace RaaLabs.Edge.Modules.EdgeHub
         private readonly ILogger _logger;
 
         private readonly Dictionary<string, MessageHandler> _messageHandlers;
-        public List<string> MessagesSent { get; }
+        public List<(string, string)> MessagesSent { get; }
 
         public NullIotModuleClient(ILogger logger)
         {
             _logger = logger;
             _messageHandlers = new Dictionary<string, MessageHandler>();
-            MessagesSent = new List<string>();
+            MessagesSent = new List<(string, string)>();
         }
 
         public Task SendEventAsync(string outputName, Message message)
@@ -31,7 +31,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             // Set an upper limit to the number of messages to be stored
             if (MessagesSent.Count < 1000)
             {
-                MessagesSent.Add(payload);
+                MessagesSent.Add((outputName, payload));
             }
 
             return Task.CompletedTask;
