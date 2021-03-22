@@ -72,7 +72,10 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
         public void ThenEdgeHubOutputSendsTheFollowingValues(string outputName, Table table)
         {
             NullIotModuleClient client = (NullIotModuleClient)_appContext.Scope.Resolve<IIotModuleClient>();
-            client.MessagesSent.Select(_ => JsonConvert.DeserializeObject<EdgeHubIntegerOutputEvent>(_).Value).Should().BeEquivalentTo(table.Rows.Select(_ => int.Parse(_["Value"])));
+            client.MessagesSent
+                .Where(message => message.Item1 == outputName)
+                .Select(message => message.Item2)
+                .Select(_ => JsonConvert.DeserializeObject<EdgeHubIntegerOutputEvent>(_).Value).Should().BeEquivalentTo(table.Rows.Select(_ => int.Parse(_["Value"])));
         }
     }
 }
