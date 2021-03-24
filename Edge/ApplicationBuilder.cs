@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Autofac.Features.ResolveAnything;
+using System.Reflection;
 
 namespace RaaLabs.Edge
 {
@@ -87,6 +88,21 @@ namespace RaaLabs.Edge
         public ApplicationBuilder WithManualRegistration(Action<ContainerBuilder> registration)
         {
             registration(_builder);
+            return this;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="I">the interface to search for implementations of</typeparam>
+        /// <returns></returns>
+        public ApplicationBuilder WithAllImplementationsOf<I>() where I: class {
+            var dataAccess = Assembly.GetExecutingAssembly();
+            _builder.RegisterAssemblyTypes(dataAccess)
+                .Where(type => type.IsAssignableTo<I>())
+                .AsSelf()
+                .As<I>();
+
             return this;
         }
 
