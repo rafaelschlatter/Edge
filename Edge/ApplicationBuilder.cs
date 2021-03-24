@@ -94,7 +94,7 @@ namespace RaaLabs.Edge
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="I"></typeparam>
+        /// <typeparam name="I">the interface to search for implementations of</typeparam>
         /// <returns></returns>
         public ApplicationBuilder WithAllImplementationsOf<I>() where I: class {
             var dataAccess = Assembly.GetExecutingAssembly();
