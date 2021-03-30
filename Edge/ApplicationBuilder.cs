@@ -94,10 +94,12 @@ namespace RaaLabs.Edge
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="I">the interface to search for implementations of</typeparam>
+        /// <typeparam name="I">the interface to search for implementations of. 
+        /// Note that the interaface and the implementation should exist within the same assembly. </typeparam>
         /// <returns></returns>
-        public ApplicationBuilder WithAllImplementationsOf<I>() where I: class {
-            var dataAccess = Assembly.GetExecutingAssembly();
+        public ApplicationBuilder WithAllImplementationsOf<I>() where I : class
+        {
+            var dataAccess = typeof(I).Assembly;
             _builder.RegisterAssemblyTypes(dataAccess)
                 .Where(type => type.IsAssignableTo<I>())
                 .AsSelf()
