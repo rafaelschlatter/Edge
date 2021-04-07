@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Devices.Client;
+using Microsoft.Azure.Devices.Client;
 using Serilog;
 using System.Text;
 using System.Threading.Tasks;

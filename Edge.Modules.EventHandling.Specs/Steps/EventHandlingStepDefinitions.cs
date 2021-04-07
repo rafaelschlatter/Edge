@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using TechTalk.SpecFlow;
 using RaaLabs.Edge.Modules.EventHandling;
 using System;

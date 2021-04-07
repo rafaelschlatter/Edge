@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {

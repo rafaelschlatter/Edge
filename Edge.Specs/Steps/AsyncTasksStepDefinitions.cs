@@ -1,4 +1,4 @@
-﻿using RaaLabs.Edge;
+using RaaLabs.Edge;
 using TechTalk.SpecFlow;
 using FluentAssertions;
 using System.Threading.Tasks;

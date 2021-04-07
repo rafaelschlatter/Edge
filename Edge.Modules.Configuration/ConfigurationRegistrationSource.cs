@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Delegate;
 using Autofac.Core.Lifetime;

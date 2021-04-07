@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.EventHandling

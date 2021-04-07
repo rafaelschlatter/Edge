@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using System.Collections.Generic;
 using Serilog;
@@ -62,7 +62,7 @@ namespace RaaLabs.Edge
         /// <returns></returns>
         public ApplicationBuilder WithType<T>()
         {
-            _builder.RegisterType<T>();
+            _builder.RegisterType<T>().AsImplementedInterfaces().AsSelf();
             return this;
         }
 

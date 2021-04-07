@@ -1,4 +1,4 @@
-﻿using Autofac.Core;
+using Autofac.Core;
 using RaaLabs.Edge.Modules.EdgeHub.Specs.Drivers;
 using System;
 using System.Collections.Generic;
