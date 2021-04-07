@@ -1,4 +1,4 @@
-﻿Feature: EventHandling
+Feature: EventHandling
 
 Scenario: Loading EventHandling module into context
 	Given an Autofac context

@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Autofac.Core;
 using Newtonsoft.Json;
 using RaaLabs.Edge.Modules.EdgeHub.Specs.Drivers;

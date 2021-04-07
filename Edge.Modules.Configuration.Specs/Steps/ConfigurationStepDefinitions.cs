@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using TechTalk.SpecFlow;
 using System;
 using System.IO.Abstractions;

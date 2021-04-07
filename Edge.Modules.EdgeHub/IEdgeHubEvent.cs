@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.EdgeHub

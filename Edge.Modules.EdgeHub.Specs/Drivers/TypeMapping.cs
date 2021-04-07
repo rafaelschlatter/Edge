@@ -1,4 +1,4 @@
-﻿using RaaLabs.Edge.Modules.EventHandling.Specs.Drivers;
+using RaaLabs.Edge.Modules.EventHandling.Specs.Drivers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

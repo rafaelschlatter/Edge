@@ -1,4 +1,4 @@
-﻿Feature: AsyncTasks
+Feature: AsyncTasks
 
 Scenario: Adding Async tasks to application
 	Given an ApplicationBuilder

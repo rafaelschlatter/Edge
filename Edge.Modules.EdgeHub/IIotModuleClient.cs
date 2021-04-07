@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Devices.Client;
+using Microsoft.Azure.Devices.Client;
 using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Modules.EdgeHub

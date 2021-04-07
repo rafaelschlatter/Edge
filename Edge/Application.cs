@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using System.Collections.Generic;
 using System.Linq;

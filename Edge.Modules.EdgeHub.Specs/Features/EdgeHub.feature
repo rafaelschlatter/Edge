@@ -1,4 +1,4 @@
-﻿Feature: EdgeHub Functionality
+Feature: EdgeHub Functionality
 
 Scenario: Loading EdgeHub module into context
 	Given an application with the following registrations

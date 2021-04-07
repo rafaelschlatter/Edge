@@ -1,4 +1,4 @@
-﻿Feature: ApplicationBuilder
+Feature: ApplicationBuilder
 
 Scenario: Building an Application from an ApplicationBuilder
 	Given an ApplicationBuilder

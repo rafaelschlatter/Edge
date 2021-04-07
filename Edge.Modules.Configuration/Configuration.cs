@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using System.IO.Abstractions;
 
 namespace RaaLabs.Edge.Modules.Configuration

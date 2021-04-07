@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using System.Collections.Generic;
 using Serilog;
@@ -62,7 +62,7 @@ namespace RaaLabs.Edge
         /// <returns></returns>
         public ApplicationBuilder WithType<T>()
         {
-            _builder.RegisterType<T>();
+            _builder.RegisterType<T>().AsImplementedInterfaces().AsSelf();
             return this;
         }
 
@@ -94,7 +94,7 @@ namespace RaaLabs.Edge
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="I">the interface to search for implementations of</typeparam>
+        /// <typeparam name="I">the interface to search for implementations of </typeparam>
         /// <returns></returns>
         public ApplicationBuilder WithAllImplementationsOf<I>() where I: class {
             var dataAccess = Assembly.GetExecutingAssembly();

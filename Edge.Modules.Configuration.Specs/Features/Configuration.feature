@@ -1,4 +1,4 @@
-﻿Feature: Configuration Functionality
+Feature: Configuration Functionality
 
 Scenario: Loading Configuration module into context
 	Given an ApplicationBuilder
