@@ -1,5 +1,5 @@
 
-VERSION=1.0.3 #$(git tag --sort=-version:refname | head -1)
+VERSION=1.0.4 #$(git tag --sort=-version:refname | head -1)
 PACKAGEDIR=$PWD/Packages
 dotnet build --configuration Release
 rm -rf $PACKAGEDIR
