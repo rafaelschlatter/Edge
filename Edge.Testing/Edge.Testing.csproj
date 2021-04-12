@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFramework>net5.0</TargetFramework>
+      <RootNamespace>RaaLabs.Edge.Testing</RootNamespace>
+      <AssemblyName>RaaLabs.Edge.Testing</AssemblyName>
+  </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Edge\Edge.csproj" />
+        <ProjectReference Include="..\Edge.Modules.EdgeHub\Edge.Modules.EdgeHub.csproj" />
+        <PackageReference Include="SpecFlow" Version="3.7.38" />
+        <PackageReference Include="SpecFlow.MsTest" Version="3.7.38" />
+    </ItemGroup>
+</Project>
