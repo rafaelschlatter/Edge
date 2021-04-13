@@ -134,6 +134,7 @@ namespace RaaLabs.Edge.Testing
             }
             var verifier = _container.Resolve<IProducedEventVerifier<T>>();
             var emittedEvents = _emittedEvents[typeof(T)].Select(_ => (T) _).ToList();
+            emittedEvents.Count.Should().Be(table.Rows.Count);
             foreach (var (@event, expected) in emittedEvents.Zip(table.Rows))
             {
                 verifier.VerifyFromTableRow(@event, expected);
