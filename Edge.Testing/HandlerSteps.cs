@@ -8,30 +8,39 @@ using TechTalk.SpecFlow;
 
 namespace RaaLabs.Edge.Testing
 {
+    /// <summary>
+    /// A class defining steps for testing a handler
+    /// </summary>
     [Binding]
     public sealed class HandlerSteps
     {
-        private IObjectContainer _container;
-        private TypeMapping _typeMapping;
+        private readonly IObjectContainer _container;
+        private readonly TypeMapping _typeMapping;
 
         private IConsumeEvent _handler;
         private Dictionary<Type, List<IEvent>> _emittedEvents;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="container"></param>
+        /// <param name="typeMapping"></param>
         public HandlerSteps(IObjectContainer container, TypeMapping typeMapping)
         {
             _container = container;
             _typeMapping = typeMapping;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="typename">The name of the handler type. This is the name of the type in the TypeMapping class</param>
         [Given(@"a handler of type (.*)")]
         public void GivenAHandlerOfType(string typename)
         {
             var type = _typeMapping[typename];
             _handler = (IConsumeEvent) _container.Resolve(type);
             _emittedEvents = new Dictionary<Type, List<IEvent>>();
-            var eventsEmittedByHandler = type.GetInterfaces()
-                .Where(i => i.IsAssignableTo(typeof(IProduceEvent)))    // All interfaces that are descendants of IProduceEvent
-                .Select(i => i.GetGenericArguments().First());          // Get the generic type argument of the interface
 
             var emitters = type.GetEvents()
                 .Where(i => i.EventHandlerType.IsGenericType)
@@ -41,6 +50,11 @@ namespace RaaLabs.Edge.Testing
             emitters.ForEach(emitter => SetupEventListeningForEmitter(emitter, _handler));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="typename">The name of the event type. This is the name of the type in the TypeMapping class</param>
+        /// <param name="table">A table containing the parameters for constructing the events. An EventInstanceFactory must be implemented for this type</param>
         [When(@"the following events of type (.*) is produced")]
         public void WhenTheFollowingEventsOfTypeIsProduced(string typename, Table table)
         {
@@ -48,12 +62,16 @@ namespace RaaLabs.Edge.Testing
             GetType().GetMethod("HandleEventsFromTable").MakeGenericMethod(eventType).Invoke(this, new object[] { table });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="typename">The name of the event type. This is the name of the type in the TypeMapping class</param>
+        /// <param name="table">A table containing parameters for verifying the produced event. An ProducedEventVerifier must be implemented for this type</param>
         [Then(@"the following events of type (.*) is produced")]
         public void ThenTheFollowingEventsOfTypeIsProduced(string typename, Table table)
         {
             var eventType = _typeMapping[typename];
             GetType().GetMethod("VerifyEventsProducedFromTable").MakeGenericMethod(eventType).Invoke(this, new object[] { table });
-
         }
 
         private void SetupEventListeningForEmitter(EventInfo emitter, IConsumeEvent handler)
@@ -64,17 +82,31 @@ namespace RaaLabs.Edge.Testing
             emitter.AddEventHandler(handler, del);
         }
 
+        /// <summary>
+        /// Function called when an event is triggered within the handler. This function can be ignored by the developer.
+        ///
+        /// IMPORTANT: This function appears to not be in use, but will be called at runtime using reflection.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="event"></param>
         public void HandleEvent<T>(T @event) where T: IEvent
         {
             _emittedEvents[typeof(T)].Add(@event);
         }
 
+        /// <summary>
+        /// Function called to simulate incoming events to the handler. This function can be ignored by the developer.
+        /// 
+        /// IMPORTANT: This function appears to not be in use, but will be called at runtime using reflection.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
         public void HandleEventsFromTable<T>(Table table)
             where T: IEvent
         {
             if (!_container.IsRegistered<IEventInstanceFactory<T>>())
             {
-                throw new Exceptions.EventInstanceFactoryNotRegistered(typeof(T));
+                throw new Exceptions.EventInstanceFactoryNotRegisteredException(typeof(T));
             }
 
             var eventTypeFactory = _container.Resolve<IEventInstanceFactory<T>>();
@@ -86,12 +118,19 @@ namespace RaaLabs.Edge.Testing
             }
         }
 
+        /// <summary>
+        /// Function called to verify outgoing events from the handler. This function can be ignored by the developer.
+        /// 
+        /// IMPORTANT: This function appears to not be in use, but will be called at runtime using reflection.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
         public void VerifyEventsProducedFromTable<T>(Table table)
             where T: IEvent
         {
             if (!_container.IsRegistered<IProducedEventVerifier<T>>())
             {
-                throw new Exceptions.ProducedEventVerifierNotRegistered(typeof(T));
+                throw new Exceptions.ProducedEventVerifierNotRegisteredException(typeof(T));
             }
             var verifier = _container.Resolve<IProducedEventVerifier<T>>();
             var emittedEvents = _emittedEvents[typeof(T)].Select(_ => (T) _).ToList();

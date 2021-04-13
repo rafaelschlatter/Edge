@@ -10,6 +10,23 @@ The HandlerSteps class provides bindings to SpecFlow for testing the mapping
 from input events to output events for a given handler class. The setup is
 a bit extensive, so we'll go through all the requirements here:
 
+### SpecFlow configuration file (specflow.json)
+Your must append RaaLabs.Edge.Testing to the list of external assemblies in specflow.json.
+
+Example:
+
+```json
+{
+    "allowDebugGeneratedFiles": true,
+    "stepAssemblies": [
+        {
+            "assembly": "RaaLabs.Edge.Testing"
+        }
+    ]
+}
+
+```
+
 ### Assembly registration
 For component scanning to work, you need to specify the assembly .dll file where the
 classes for the test is located. This can easily be done by adding the following class

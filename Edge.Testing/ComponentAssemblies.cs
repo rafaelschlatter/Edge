@@ -1,14 +1,17 @@
-using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Testing
 {
+    /// <summary>
+    /// A class holding all assemblies to perform component scan on
+    /// </summary>
     public class ComponentAssemblies : HashSet<Assembly>
     {
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ComponentAssemblies() : base() { }
     }
 }
