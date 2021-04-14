@@ -3,7 +3,7 @@ using System;
 namespace RaaLabs.Edge.Testing.Exceptions
 {
     /// <summary>
-    /// This class will be thrown if none of the scanned assemblies contains a class implementing IEventInstanceFactory<Type>.
+    /// This class will be thrown if none of the scanned assemblies contains a class implementing IEventInstanceFactory.
     /// </summary>
     public class EventInstanceFactoryNotRegisteredException : Exception
     {
