@@ -3,8 +3,9 @@ using System;
 namespace RaaLabs.Edge.Testing.Exceptions
 {
     /// <summary>
-    /// This class will be thrown if none of the scanned assemblies contains a class implementing IProducedEventVerifier<Type>.
+    /// This class will be thrown if none of the scanned assemblies contains a class implementing IProducedEventVerifier.
     /// </summary>
+    
     public class ProducedEventVerifierNotRegisteredException : Exception
     {
         /// <summary>

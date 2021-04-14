@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-      <TargetFramework>net5.0</TargetFramework>
-      <RootNamespace>RaaLabs.Edge.Testing</RootNamespace>
-      <AssemblyName>RaaLabs.Edge.Testing</AssemblyName>
-      <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>RaaLabs.Edge.Testing</RootNamespace>
+        <AssemblyName>RaaLabs.Edge.Testing</AssemblyName>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <ProjectReference Include="..\Edge\Edge.csproj" />
         <ProjectReference Include="..\Edge.Modules.EdgeHub\Edge.Modules.EdgeHub.csproj" />
         <PackageReference Include="SpecFlow" Version="3.7.38" />
