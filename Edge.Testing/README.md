@@ -29,7 +29,7 @@ Example:
 
 ### Assembly registration
 For component scanning to work, you need to specify the assembly .dll file where the
-classes for the test is located. This can easily be done by adding the following class
+classes for the test is located. This can easily be done by adding the following SpecFlow "hook" class
 to your test project:
 
 ```csharp
