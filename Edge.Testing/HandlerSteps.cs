@@ -129,16 +129,24 @@ namespace RaaLabs.Edge.Testing
         public void VerifyEventsProducedFromTable<T>(Table table)
             where T: IEvent
         {
-            if (!_container.IsRegistered<IProducedEventVerifier<T>>())
+            var emittedEvents = _emittedEvents[typeof(T)].Select(_ => (T)_).ToList();
+            if (_container.IsRegistered<IProducedEventVerifier<T>>())
+            {
+                emittedEvents.Count.Should().Be(table.Rows.Count);
+                var verifier = _container.Resolve<IProducedEventVerifier<T>>();
+                foreach (var (@event, expected) in emittedEvents.Zip(table.Rows))
+                {
+                    verifier.VerifyFromTableRow(@event, expected);
+                }
+            }
+            else if (_container.IsRegistered<IAllProducedEventsVerifier<T>>())
+            {
+                var verifier = _container.Resolve<IAllProducedEventsVerifier<T>>();
+                verifier.VerifyFromTable(emittedEvents, table);
+            }
+            else
             {
                 throw new Exceptions.ProducedEventVerifierNotRegisteredException(typeof(T));
-            }
-            var verifier = _container.Resolve<IProducedEventVerifier<T>>();
-            var emittedEvents = _emittedEvents[typeof(T)].Select(_ => (T) _).ToList();
-            emittedEvents.Count.Should().Be(table.Rows.Count);
-            foreach (var (@event, expected) in emittedEvents.Zip(table.Rows))
-            {
-                verifier.VerifyFromTableRow(@event, expected);
             }
         }
     }
