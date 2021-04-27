@@ -11,6 +11,9 @@ Classes implementing this interface will be instantiated in the application by l
 the file specified in the `Name` attribute for the class. The properties of the class
 will be used during deserialization.
 
+If the configuration class has a `RestartOnChange` attribute, it will trigger an
+application restart when the configuration file is changed on disk.
+
 Here is an example of a configuration file, a configuration class, and a class
 depending on the configuration:
 
@@ -22,6 +25,7 @@ depending on the configuration:
 
 ```csharp
 [Name("someconfiguration.json")]
+[RestartOnChange]
 class SomeConfiguration : IConfiguration
 {
     public string SomeValue { get; set; }

@@ -64,5 +64,10 @@ namespace RaaLabs.Edge.Specs.Steps
                 }
             }
         }
+
+        class AsyncCounterTask1 : AsyncCounterTask { }
+        class AsyncCounterTask2 : AsyncCounterTask { }
+        class AsyncCounterTask3 : AsyncCounterTask { }
+
     }
 }

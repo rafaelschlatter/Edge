@@ -15,7 +15,6 @@ namespace RaaLabs.Edge
     {
         private readonly ContainerBuilder _builder;
         private readonly List<Type> _handlers;
-        private readonly List<Type> _tasks;
 
         /// <summary>
         /// 
@@ -24,7 +23,6 @@ namespace RaaLabs.Edge
         {
             _builder = new ContainerBuilder();
             _handlers = new List<Type>();
-            _tasks = new List<Type>();
 
             _builder.Register(_ => CreateLogger()).As<ILogger>();
             _builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
@@ -74,8 +72,7 @@ namespace RaaLabs.Edge
         /// <returns></returns>
         public ApplicationBuilder WithTask<Task>() where Task : IRunAsync
         {
-            _tasks.Add(typeof(Task));
-            _builder.RegisterType<Task>();
+            _builder.RegisterType<Task>().AsImplementedInterfaces().AsSelf().InstancePerLifetimeScope();
             return this;
         }
 
@@ -115,7 +112,7 @@ namespace RaaLabs.Edge
         public Application Build()
         {
             IContainer container = _builder.Build();
-            return new Application(container, _handlers, _tasks);
+            return new Application(container, _handlers);
         }
 
         /// <summary>

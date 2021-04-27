@@ -14,6 +14,8 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
         // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 
         private readonly ScenarioContext _scenarioContext;
+        private MockFileSystem _fs;
+        private Moq.Mock<IApplicationRestartTrigger> _restartTrigger;
 
         public ConfigurationStepDefinitions(ScenarioContext scenarioContext)
         {
@@ -23,28 +25,32 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
         [Given("an ApplicationBuilder")]
         public void GivenAnApplicationBuilder()
         {
-            _scenarioContext.Add("builder", new ApplicationBuilder());
+            var builder = new ApplicationBuilder();
+            builder.WithTask<DummyTask>();
+            _scenarioContext.Add("builder", builder);
         }
 
         [Given("a mock filesystem containing configuration file")]
         public void GivenAMockFileSystem()
         {
             var builder = (ApplicationBuilder)_scenarioContext["builder"];
-            var fs = new MockFileSystem();
+            _fs = new MockFileSystem();
             var confFile = new MockFileData(@"
             {
                 ""someField"": ""yes""
             }
             ");
-            fs.AddFile("data/myconfiguration.json", confFile);
-            builder.WithManualRegistration(b => b.RegisterInstance(fs).As<IFileSystem>());
+            _fs.AddFile("data/myconfiguration.json", confFile);
+            builder.WithManualRegistration(b => b.RegisterInstance(_fs).As<IFileSystem>());
         }
 
         [Given("Configuration module is registered")]
         public void GivenConfigurationModuleIsRegistered()
         {
+            _restartTrigger = new Moq.Mock<IApplicationRestartTrigger>();
             var builder = (ApplicationBuilder)_scenarioContext["builder"];
             builder.WithModule<Configuration>();
+            builder.WithManualRegistration(_ => _.RegisterInstance(_restartTrigger.Object).As<IApplicationRestartTrigger>());
         }
 
         [Given("application has been built")]
@@ -53,6 +59,15 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
             var builder = (ApplicationBuilder)_scenarioContext["builder"];
             var application = builder.Build();
             _scenarioContext.Add("application", application);
+        }
+
+        [Given("application has been running for one second")]
+        public void GivenApplicationHasBeenStarted()
+        {
+            var application = (Application)_scenarioContext["application"];
+            var runningTask = application.Run();
+            _scenarioContext.Add("runningTask", runningTask);
+            Task.Delay(2000).Wait();
         }
 
         [Then("Starting lifetime scope should succeed")]
@@ -72,6 +87,19 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
             _scenarioContext.Add("conf", scope.Resolve<MyConfiguration>());
         }
 
+        [When("configuration file is changed")]
+        public void WhenChangingConfigurationFile()
+        {
+            _fs.File.SetLastWriteTimeUtc("data/myconfiguration.json", DateTime.UtcNow);
+        }
+
+        [Then("application restart will be triggered within two seconds")]
+        public void ThenApplicationRestartWillBeTriggered()
+        {
+            Task.Delay(2000).Wait();
+            _restartTrigger.Verify(_ => _.RestartApplication(), Moq.Times.AtLeastOnce);
+        }
+
         [Then("the configuration object should contain correct configuration data")]
         public void ThenTheConfigurationObjectShouldContainCorrectConfigurationData()
         {
@@ -79,10 +107,27 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
             conf.SomeField.Should().Be("yes");
         }
 
+        [RestartOnChange]
         [Name("myconfiguration.json")]
         class MyConfiguration : IConfiguration
         {
             public string SomeField { get; set; }
+        }
+
+        /// <summary>
+        /// Task to ensure that the configuration object is instantiated
+        /// </summary>
+        class DummyTask : IRunAsync
+        {
+            public DummyTask(MyConfiguration conf)
+            {
+
+            }
+
+            public async Task Run()
+            {
+                await Task.CompletedTask;
+            }
         }
     }
 }
