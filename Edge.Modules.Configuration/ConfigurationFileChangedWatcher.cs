@@ -6,6 +6,7 @@ using Serilog;
 using System.Threading.Tasks;
 using Autofac;
 using System.IO.Abstractions;
+using static RaaLabs.Edge.Modules.Configuration.ConfigurationFileFinder;
 
 namespace RaaLabs.Edge.Modules.Configuration
 {
@@ -16,7 +17,6 @@ namespace RaaLabs.Edge.Modules.Configuration
     /// </summary>
     class ConfigurationFileChangedWatcher : IRunAsync
     {
-        private static readonly string[] _searchPaths = { "data" };
         private readonly IApplicationShutdownTrigger _shutdownTrigger;
         private readonly ILogger _logger;
         private readonly IFileSystem _fs;
@@ -48,7 +48,7 @@ namespace RaaLabs.Edge.Modules.Configuration
                 .Select(cc => (cc.clazz, cc.attribute.Name))
                 .ToArray();
 
-            var filesToWatch = filenames.Select(_ => (_.clazz, path: FindConfigurationFilePath(_.Name))).ToArray();
+            var filesToWatch = filenames.Select(_ => (_.clazz, path: FindConfigurationFilePath(_fs, _.Name))).ToArray();
 
             // Neither FileSystemWatcher nor PhysicalFileProvider have worked platform-independently at watching files asynchronously,
             // not even with DOTNET_USE_POLLING_FILE_WATCHER=1. Because of this, we will watch all configuration files manually instead.
@@ -65,20 +65,5 @@ namespace RaaLabs.Edge.Modules.Configuration
             }
         }
 
-        private string FindConfigurationFilePath(string filename)
-        {
-            var pwd = _fs.Directory.GetCurrentDirectory();
-            var dirs = _searchPaths
-                .Select(_ => _fs.Path.Combine(pwd, _))
-                .Where(_ => _fs.Directory.Exists(_))
-                .ToArray();
-
-            var matchedFiles = dirs
-                .SelectMany(_ => _fs.Directory.EnumerateFiles(_fs.Path.Combine(pwd, _)))
-                .Where(_ => _fs.Path.GetFileName(_) == filename)
-                .ToArray();
-
-            return matchedFiles.First();
-        }
     }
 }

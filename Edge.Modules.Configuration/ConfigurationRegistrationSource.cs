@@ -70,7 +70,7 @@ namespace RaaLabs.Edge.Modules.Configuration
         private static IConfiguration LoadConfigurationObject(Type type, IFileSystem fs)
         {
             string filename = type.GetCustomAttribute<NameAttribute>().Name;
-            string path = Path.Join(fs.Directory.GetCurrentDirectory(), "data", filename);
+            var path = ConfigurationFileFinder.FindConfigurationFilePath(fs, filename);
             string content = fs.File.ReadAllText(path);
             IConfiguration configuration = (IConfiguration)JsonConvert.DeserializeObject(content, type);
 

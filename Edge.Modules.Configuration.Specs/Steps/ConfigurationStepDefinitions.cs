@@ -30,8 +30,8 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
             _scenarioContext.Add("builder", builder);
         }
 
-        [Given("a mock filesystem containing configuration file")]
-        public void GivenAMockFileSystem()
+        [Given("a mock filesystem containing configuration file in the (.*) directory")]
+        public void GivenAMockFileSystem(string directory)
         {
             var builder = (ApplicationBuilder)_scenarioContext["builder"];
             _fs = new MockFileSystem();
@@ -40,7 +40,7 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
                 ""someField"": ""yes""
             }
             ");
-            _fs.AddFile("data/myconfiguration.json", confFile);
+            _fs.AddFile($"{directory}/myconfiguration.json", confFile);
             builder.WithManualRegistration(b => b.RegisterInstance(_fs).As<IFileSystem>());
         }
 
