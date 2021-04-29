@@ -35,6 +35,7 @@ namespace RaaLabs.Edge.Testing
             var allTypes = _assemblies.SelectMany(assembly => assembly.GetTypes()).ToList();
             RegisterEventInstanceFactories(allTypes);
             RegisterProducedEventVerifiers(allTypes);
+            RegisterProducedEventVerifiersFullTable(allTypes);
         }
 
         /// <summary>
@@ -75,6 +76,25 @@ namespace RaaLabs.Edge.Testing
             }
         }
 
+        /// <summary>
+        /// Scan assemblies for implementations of IProducedEventVerifierFullTable, and register each of these types
+        /// into the test context.
+        /// </summary>
+        /// <param name="allTypes">a list of all types found in scanned assemblies</param>
+        public void RegisterProducedEventVerifiersFullTable(IEnumerable<Type> allTypes)
+        {
+            var producedEventVerifierFullTableTypes = allTypes
+                .Where(type => GetProducedEventVerifierFullTableInterface(type) != null)
+                .ToList();
+
+            foreach (var producedEventVerifierType in producedEventVerifierFullTableTypes)
+            {
+                var factoryForType = GetProducedEventVerifierFullTableInterface(producedEventVerifierType);
+                var registerTypeAs = typeof(IObjectContainer).GetMethod("RegisterTypeAs").MakeGenericMethod(producedEventVerifierType, factoryForType);
+                registerTypeAs.Invoke(_container, new object[] { null });
+            }
+        }
+
         private static Type GetEventInstanceFactoryInterface(Type type)
         {
             return type.GetInterfaces().FirstOrDefault(ifce => ifce.IsGenericType && ifce.GetGenericTypeDefinition() == typeof(IEventInstanceFactory<>));
@@ -83,6 +103,11 @@ namespace RaaLabs.Edge.Testing
         private static Type GetProducedEventVerifierInterface(Type type)
         {
             return type.GetInterfaces().FirstOrDefault(ifce => ifce.IsGenericType && ifce.GetGenericTypeDefinition() == typeof(IProducedEventVerifier<>));
+        }
+
+        private static Type GetProducedEventVerifierFullTableInterface(Type type)
+        {
+            return type.GetInterfaces().FirstOrDefault(ifce => ifce.IsGenericType && ifce.GetGenericTypeDefinition() == typeof(IAllProducedEventsVerifier<>));
         }
     }
 }
