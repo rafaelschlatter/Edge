@@ -41,7 +41,15 @@ namespace RaaLabs.Edge.Modules.Configuration
                 new DelegateActivator(serviceType, (c, p) =>
                 {
                     var fs = c.Resolve<IFileSystem>();
-                    return LoadConfigurationObject(serviceType, fs);
+                    var config = LoadConfigurationObject(serviceType, fs);
+
+                    if (serviceType.GetCustomAttribute<RestartOnChangeAttribute>() != null)
+                    {
+                        var fileWatcher = c.Resolve<ConfigurationFileChangedWatcher>();
+                        fileWatcher.WatchConfigurationClass(serviceType);
+                    }
+
+                    return config;
                 }),
                 new CurrentScopeLifetime(),
                 InstanceSharing.None,

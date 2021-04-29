@@ -17,19 +17,16 @@ namespace RaaLabs.Edge
         /// </summary>
         public IContainer Container { get; }
         private readonly List<Type> _handlers;
-        private readonly List<Type> _tasks;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="container"></param>
         /// <param name="handlers"></param>
-        /// <param name="tasks"></param>
-        public Application(IContainer container, List<Type> handlers, List<Type> tasks)
+        public Application(IContainer container, List<Type> handlers)
         {
             Container = container;
             _handlers = handlers;
-            _tasks = tasks;
         }
 
         /// <summary>
@@ -46,8 +43,8 @@ namespace RaaLabs.Edge
             var handlers = _handlers.Select(handlerType => scope.Resolve(handlerType)).ToList();
             logger.Information("Handlers started.");
             logger.Information("Starting up tasks...");
-            var tasks = _tasks
-                .Select(taskType => (IRunAsync) scope.Resolve(taskType))
+            var tasks = scope.Resolve<IEnumerable<IRunAsync>>();
+            var runningTasks = tasks
                 .Select(async task => await task.Run())
                 .ToList();
 

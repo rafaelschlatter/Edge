@@ -13,6 +13,8 @@ namespace RaaLabs.Edge.Modules.Configuration
         {
             builder.RegisterType<FileSystem>().As<IFileSystem>();
             builder.RegisterSource<ConfigurationRegistrationSource>();
+            builder.RegisterType<ApplicationShutdownTrigger>().As<IApplicationShutdownTrigger>();
+            builder.RegisterType<ConfigurationFileChangedWatcher>().AsSelf().As<IRunAsync>().InstancePerLifetimeScope();
         }
     }
 }

@@ -21,4 +21,15 @@ namespace RaaLabs.Edge.Modules.Configuration
             Name = name;
         }
     }
+
+    /// <summary>
+    /// An attribute for naming the configuration file to load into the type.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public class RestartOnChangeAttribute : Attribute
+    {
+        public RestartOnChangeAttribute()
+        {
+        }
+    }
 }
