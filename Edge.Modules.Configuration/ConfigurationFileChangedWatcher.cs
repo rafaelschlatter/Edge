@@ -17,7 +17,6 @@ namespace RaaLabs.Edge.Modules.Configuration
     /// </summary>
     class ConfigurationFileChangedWatcher : IRunAsync
     {
-        private static readonly string[] _searchPaths = { "data", "config" };
         private readonly IApplicationShutdownTrigger _shutdownTrigger;
         private readonly ILogger _logger;
         private readonly IFileSystem _fs;
