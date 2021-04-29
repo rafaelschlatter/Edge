@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using System.Linq;
-using RaaLabs.Edge;
 using Serilog;
 using System.Threading.Tasks;
 using Autofac;
@@ -19,23 +17,22 @@ namespace RaaLabs.Edge.Modules.Configuration
     class ConfigurationFileChangedWatcher : IRunAsync
     {
         private static readonly string[] _searchPaths = { "data" };
-        private readonly IApplicationRestartTrigger _restartTrigger;
+        private readonly IApplicationShutdownTrigger _shutdownTrigger;
         private readonly ILogger _logger;
         private readonly IFileSystem _fs;
         private readonly ISet<Type> _watchedConfigurationClasses;
-        //private List<PhysicalFileProvider> _watchers;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="typeFinder"></param>
-        /// <param name="logger"></param>
-        /// <param name="fileProvider"></param>
-        public ConfigurationFileChangedWatcher(IFileSystem fs, IApplicationRestartTrigger restartTrigger, ILogger logger)
+        /// <param name="fs">an abstraction of the file system</param>
+        /// <param name="shutdownTrigger">a shutdown button for the application</param>
+        /// <param name="logger">a logger</param>
+        public ConfigurationFileChangedWatcher(IFileSystem fs, IApplicationShutdownTrigger shutdownTrigger, ILogger logger)
         {
             _fs = fs;
             _logger = logger;
-            _restartTrigger = restartTrigger;
+            _shutdownTrigger = shutdownTrigger;
             _watchedConfigurationClasses = new HashSet<Type>();
         }
 
@@ -51,8 +48,6 @@ namespace RaaLabs.Edge.Modules.Configuration
                 .Select(cc => (cc.clazz, cc.attribute.Name))
                 .ToArray();
 
-            var pwd = _fs.Directory.GetCurrentDirectory();
-
             var filesToWatch = filenames.Select(_ => (_.clazz, path: FindConfigurationFilePath(_.Name))).ToArray();
 
             // Neither FileSystemWatcher nor PhysicalFileProvider have worked platform-independently at watching files asynchronously,
@@ -64,7 +59,7 @@ namespace RaaLabs.Edge.Modules.Configuration
                 if (filesChangedAt.Any(file => _fs.File.GetLastWriteTimeUtc(file.Key) != file.Value))
                 {
                     _logger.Information($"Configuration changed, restarting application...");
-                    _restartTrigger.RestartApplication();
+                    _shutdownTrigger.ShutdownApplication();
                 }
                 await Task.Delay(1000);
             }

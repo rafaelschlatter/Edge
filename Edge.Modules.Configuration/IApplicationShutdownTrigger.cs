@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Modules.Configuration
 {
-    public interface IApplicationRestartTrigger
+    public interface IApplicationShutdownTrigger
     {
-        public void RestartApplication();
+        public void ShutdownApplication();
     }
 }

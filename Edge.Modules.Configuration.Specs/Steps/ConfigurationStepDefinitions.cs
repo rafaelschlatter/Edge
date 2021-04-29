@@ -15,7 +15,7 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
 
         private readonly ScenarioContext _scenarioContext;
         private MockFileSystem _fs;
-        private Moq.Mock<IApplicationRestartTrigger> _restartTrigger;
+        private Moq.Mock<IApplicationShutdownTrigger> _restartTrigger;
 
         public ConfigurationStepDefinitions(ScenarioContext scenarioContext)
         {
@@ -47,10 +47,10 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
         [Given("Configuration module is registered")]
         public void GivenConfigurationModuleIsRegistered()
         {
-            _restartTrigger = new Moq.Mock<IApplicationRestartTrigger>();
+            _restartTrigger = new Moq.Mock<IApplicationShutdownTrigger>();
             var builder = (ApplicationBuilder)_scenarioContext["builder"];
             builder.WithModule<Configuration>();
-            builder.WithManualRegistration(_ => _.RegisterInstance(_restartTrigger.Object).As<IApplicationRestartTrigger>());
+            builder.WithManualRegistration(_ => _.RegisterInstance(_restartTrigger.Object).As<IApplicationShutdownTrigger>());
         }
 
         [Given("application has been built")]
@@ -62,12 +62,12 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
         }
 
         [Given("application has been running for one second")]
-        public void GivenApplicationHasBeenStarted()
+        public void GivenApplicationHasBeenRunningForOneSecond()
         {
             var application = (Application)_scenarioContext["application"];
             var runningTask = application.Run();
             _scenarioContext.Add("runningTask", runningTask);
-            Task.Delay(2000).Wait();
+            Task.Delay(1000).Wait();
         }
 
         [Then("Starting lifetime scope should succeed")]
@@ -97,7 +97,7 @@ namespace RaaLabs.Edge.Modules.Configuration.Specs.Steps
         public void ThenApplicationRestartWillBeTriggered()
         {
             Task.Delay(2000).Wait();
-            _restartTrigger.Verify(_ => _.RestartApplication(), Moq.Times.AtLeastOnce);
+            _restartTrigger.Verify(_ => _.ShutdownApplication(), Moq.Times.AtLeastOnce);
         }
 
         [Then("the configuration object should contain correct configuration data")]
