@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Text;
 using RaaLabs.Edge.Modules.EventHandling;
+using Newtonsoft.Json.Serialization;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {
@@ -59,7 +60,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             var outputName = ((OutputNameAttribute)typeof(T).GetCustomAttributes(typeof(OutputNameAttribute), true).First()).OutputName;
             eventHandler.Subscribe(async message =>
             {
-                var outputString = JsonConvert.SerializeObject(message);
+                var outputString = JsonConvert.SerializeObject(message, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
                 var outputBytes = Encoding.UTF8.GetBytes(outputString);
                 var outputMessage = new Message(outputBytes);
 
