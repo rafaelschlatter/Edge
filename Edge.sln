@@ -28,7 +28,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Testing", "Edge.Testin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Testing.Specs", "Edge.Testing.Specs\Edge.Testing.Specs.csproj", "{39B91336-6F20-428E-A6C7-6DE2AD3D13C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Modules.Scheduling", "Edge.Modules.Scheduling\Edge.Modules.Scheduling.csproj", "{A54024C3-3B0B-4538-9E9C-B3C3757FF351}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.Scheduling", "Edge.Modules.Scheduling\Edge.Modules.Scheduling.csproj", "{A54024C3-3B0B-4538-9E9C-B3C3757FF351}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.Scheduling.Specs", "Edge.Modules.Scheduling.Specs\Edge.Modules.Scheduling.Specs.csproj", "{2B52146C-843F-4BBC-9771-6FA66D1F065F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,10 @@ Global
 		{A54024C3-3B0B-4538-9E9C-B3C3757FF351}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A54024C3-3B0B-4538-9E9C-B3C3757FF351}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A54024C3-3B0B-4538-9E9C-B3C3757FF351}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B52146C-843F-4BBC-9771-6FA66D1F065F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B52146C-843F-4BBC-9771-6FA66D1F065F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B52146C-843F-4BBC-9771-6FA66D1F065F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B52146C-843F-4BBC-9771-6FA66D1F065F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

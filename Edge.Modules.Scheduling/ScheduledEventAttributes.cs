@@ -1,6 +1,6 @@
 using System;
 
-namespace RaaLabs.Edge.Modules.Scheduler
+namespace RaaLabs.Edge.Modules.Scheduling
 {
     /// <summary>
     /// Attribute for loading schedule from file
@@ -71,4 +71,32 @@ namespace RaaLabs.Edge.Modules.Scheduler
             Interval = interval;
         }
     }
+
+    /// <summary>
+    /// Attribute for creating a schedule from an interval
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public class ScheduleAttribute : Attribute
+    {
+        /// <summary>
+        /// The interval to use
+        /// </summary>
+        public double Interval { get; set; }
+
+        /// <summary>
+        /// The cron pattern to use
+        /// </summary>
+        public string Pattern { get; set; }
+
+        /// <summary>
+        /// The name of the file to load schedule from
+        /// </summary>
+        public string Filename { get; set; }
+
+        /// <summary>
+        /// A selector for which schedule objects in config to use. Set to null if all schedule objects will be used.
+        /// </summary>
+        public string Qualifier { get; set; }
+    }
+
 }

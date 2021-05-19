@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace RaaLabs.Edge.Modules.Scheduler
+namespace RaaLabs.Edge.Modules.Scheduling
 {
     /// <summary>
     /// Interface for class providing scheduling mapping for a type

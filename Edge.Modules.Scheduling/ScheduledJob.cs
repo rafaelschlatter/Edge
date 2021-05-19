@@ -2,7 +2,7 @@ using Quartz;
 using RaaLabs.Edge.Modules.EventHandling;
 using System.Threading.Tasks;
 
-namespace RaaLabs.Edge.Modules.Scheduler
+namespace RaaLabs.Edge.Modules.Scheduling
 {
     /// <summary>
     /// A scheduled jub

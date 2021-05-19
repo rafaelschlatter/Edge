@@ -13,12 +13,12 @@ using RaaLabs.Edge.Modules.Configuration;
 using RaaLabs.Edge.Modules.EventHandling;
 using Serilog;
 
-namespace RaaLabs.Edge.Modules.Scheduler
+namespace RaaLabs.Edge.Modules.Scheduling
 {
     /// <summary>
     /// Task for setting up scheduling
     /// </summary>
-    public class SchedulerTask : IRunAsync
+    public class SchedulingTask : IRunAsync
     {
         private readonly ILogger _logger;
         private readonly IFileSystem _fs;
@@ -34,7 +34,7 @@ namespace RaaLabs.Edge.Modules.Scheduler
         /// <param name="scope"></param>
         /// <param name="fs"></param>
         /// <param name="logger"></param>
-        public SchedulerTask(ILifetimeScope scope, IFileSystem fs, ILogger logger)
+        public SchedulingTask(ILifetimeScope scope, IFileSystem fs, ILogger logger)
         {
             _fs = fs;
             _logger = logger;
@@ -67,13 +67,15 @@ namespace RaaLabs.Edge.Modules.Scheduler
             where T : IScheduledEvent
         {
             var schedule = _scope.ResolveOptional<IScheduleForType<T>>();
-            var scheduleFilenameAttribute = typeof(T).GetCustomAttribute<ScheduleFileAttribute>(true);
-            var scheduleIntervalAttribute = typeof(T).GetCustomAttribute<ScheduleIntervalAttribute>(true);
-            var schedulePatternAttribute = typeof(T).GetCustomAttribute<SchedulePatternAttribute>(true);
+            var scheduleAttribute = typeof(T).GetCustomAttribute<ScheduleAttribute>(true);
 
-            if (scheduleFilenameAttribute != null) SetupSchedulingFile<T>(scheduleFilenameAttribute.Filename, scheduleFilenameAttribute.Qualifier);
-            if (scheduleIntervalAttribute != null) SetupSchedulingInterval<T>(scheduleIntervalAttribute.Interval);
-            if (schedulePatternAttribute != null) SetupSchedulingPattern<T>(schedulePatternAttribute.Pattern);
+            var intervalValue = scheduleAttribute?.Interval ?? 0.0;
+            var patternValue = scheduleAttribute?.Pattern ?? "";
+            var filenameValue = scheduleAttribute?.Filename ?? "";
+
+            if (intervalValue > 0.0) SetupSchedulingInterval<T>(intervalValue);
+            if (patternValue != "") SetupSchedulingPattern<T>(patternValue);
+            if (filenameValue != "") SetupSchedulingFile<T>(filenameValue);
 
             if (schedule != null)
             {

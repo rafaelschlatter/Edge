@@ -7,13 +7,16 @@ using Autofac.Core.Registration;
 using Autofac.Core.Resolving.Pipeline;
 using RaaLabs.Edge.Modules.EventHandling;
 
-namespace RaaLabs.Edge.Modules.Scheduler
+namespace RaaLabs.Edge.Modules.Scheduling
 {
-    class SchedulerModule : Module
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Scheduling : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<SchedulerTask>().AsSelf().AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<SchedulingTask>().AsSelf().AsImplementedInterfaces().InstancePerLifetimeScope();
         }
 
         /// <summary>
@@ -51,7 +54,7 @@ namespace RaaLabs.Edge.Modules.Scheduler
         public static void SetupSchedulingEvents<T>(ResolveRequestContext context)
             where T : IScheduledEvent
         {
-            var schedulerTask = context.Resolve<SchedulerTask>();
+            var schedulerTask = context.Resolve<SchedulingTask>();
 
             schedulerTask.SetupSchedulingForType<T>();
         }

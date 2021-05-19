@@ -1,6 +1,6 @@
 using RaaLabs.Edge.Modules.EventHandling;
 
-namespace RaaLabs.Edge.Modules.Scheduler
+namespace RaaLabs.Edge.Modules.Scheduling
 {
     /// <summary>
     /// An event triggered by the scheduler module
