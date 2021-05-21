@@ -1,9 +1,5 @@
-using RaaLabs.Edge.Modules.Scheduling;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
 {
@@ -13,7 +9,12 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
         {
             Add("EventHandling", typeof(EventHandling.EventHandling));
             Add("Scheduling", typeof(Scheduling));
-            Add("CronEventHandler", typeof(CronEventHandler));
+            Add("ScheduleHandler", typeof(ScheduleHandler));
+            Add("EventCounter", typeof(EventCounter));
+            Add("IntervalEvent", typeof(IntervalEvent));
+            Add("CronEvent", typeof(CronEvent));
+            Add("TypeScheduledEvent", typeof(TypeScheduledEvent));
+            Add("ScheduleConfig", typeof(ScheduleConfig));
         }
     }
 }

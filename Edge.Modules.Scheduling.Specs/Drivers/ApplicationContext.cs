@@ -2,9 +2,6 @@ using Autofac;
 using Autofac.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
 {
@@ -28,14 +25,25 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
             ApplicationBuilder.WithModule<T>();
         }
 
-        public void WithType<T>() where T : IModule, new()
+        public void WithType<T>() where T : new()
         {
-            ApplicationBuilder.WithModule<T>();
+            ApplicationBuilder.WithType<T>();
+        }
+
+        public void WithSingletonType<T>() where T : new()
+        {
+            ApplicationBuilder.WithManualRegistration(builder => builder.RegisterType<T>().AsSelf().AsImplementedInterfaces().SingleInstance());
         }
 
         public void WithHandler<T>()
         {
             ApplicationBuilder.WithHandler<T>();
+        }
+
+        public void WithInstance<T>(T instance)
+            where T : class
+        {
+            ApplicationBuilder.WithManualRegistration(builder => builder.RegisterInstance(instance).AsSelf().AsImplementedInterfaces());
         }
 
         public void Build()

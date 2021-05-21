@@ -4,12 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
-using RaaLabs.Edge.Modules.Configuration;
 using RaaLabs.Edge.Modules.EventHandling;
 using Serilog;
 
@@ -21,7 +18,6 @@ namespace RaaLabs.Edge.Modules.Scheduling
     public class SchedulingTask : IRunAsync
     {
         private readonly ILogger _logger;
-        private readonly IFileSystem _fs;
         private readonly ILifetimeScope _scope;
         private readonly StdSchedulerFactory _schedulerFactory;
         private readonly EdgeJobFactory _jobFactory;
@@ -34,9 +30,8 @@ namespace RaaLabs.Edge.Modules.Scheduling
         /// <param name="scope"></param>
         /// <param name="fs"></param>
         /// <param name="logger"></param>
-        public SchedulingTask(ILifetimeScope scope, IFileSystem fs, ILogger logger)
+        public SchedulingTask(ILifetimeScope scope, ILogger logger)
         {
-            _fs = fs;
             _logger = logger;
             _scope = scope;
             _schedulerFactory = new StdSchedulerFactory();
@@ -71,11 +66,14 @@ namespace RaaLabs.Edge.Modules.Scheduling
 
             var intervalValue = scheduleAttribute?.Interval ?? 0.0;
             var patternValue = scheduleAttribute?.Pattern ?? "";
-            var filenameValue = scheduleAttribute?.Filename ?? "";
+
+            if (schedule == null && intervalValue == 0.0 && patternValue == "")
+            {
+                throw new NoScheduleConfiguredException(typeof(T));
+            }
 
             if (intervalValue > 0.0) SetupSchedulingInterval<T>(intervalValue);
             if (patternValue != "") SetupSchedulingPattern<T>(patternValue);
-            if (filenameValue != "") SetupSchedulingFile<T>(filenameValue);
 
             if (schedule != null)
             {
@@ -92,43 +90,6 @@ namespace RaaLabs.Edge.Modules.Scheduling
                 {
                     _jobFactory.AddInstance(key, pattern.Payload);
                     SetupSchedulingPattern<T>(pattern.Value, key);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Setup scheduling for a class with an <see cref="ScheduleFileAttribute"/> attribute
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="filename">the scheduling file to load</param>
-        /// <param name="qualifier">only use schedule objects containing this qualifier. If null, all objects will be used.</param>
-        private void SetupSchedulingFile<T>(string filename, string qualifier = null)
-            where T : IScheduledEvent
-        {
-            var path = ConfigurationFileFinder.FindConfigurationFilePath(_fs, filename);
-            string content = _fs.File.ReadAllText(path);
-
-            var config = JsonConvert.DeserializeObject<Dictionary<string, JObject>>(content);
-            if (qualifier != null)
-            {
-                config = config.Where(c => c.Value["qualifier"]?.ToString() == qualifier)
-                    .ToDictionary(c => c.Key, c => c.Value);
-            }
-
-            foreach (var (name, payload) in config)
-            {
-                var interval = payload["interval"]?.ToObject<double>();
-                var pattern = payload["pattern"]?.ToString();
-                var typedConfig = payload.ToObject<T>();
-                _jobFactory.AddInstance(name, typedConfig);
-
-                if (interval != null)
-                {
-                    SetupSchedulingInterval<T>(interval.Value, name);
-                }
-                if (pattern != null)
-                {
-                    SetupSchedulingPattern<T>(pattern, name);
                 }
             }
         }
