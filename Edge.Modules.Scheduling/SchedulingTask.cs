@@ -77,13 +77,20 @@ namespace RaaLabs.Edge.Modules.Scheduling
 
             if (schedule != null)
             {
-                var intervals = schedule.GetIntervals();
-                var patterns = schedule.GetPatterns();
+                var allSchedules = schedule.Schedules;
+                var intervals = allSchedules
+                    .Where(s => IsInterval(s.Value))
+                    .ToDictionary(s => s.Key, s => s.Value);
+
+                var patterns = allSchedules
+                    .Where(s => IsPattern(s.Value))
+                    .ToDictionary(s => s.Key, s => s.Value as Pattern<T>);
 
                 foreach (var (key, interval) in intervals)
                 {
-                    _jobFactory.AddInstance(key, interval.Payload);
-                    SetupSchedulingInterval<T>(interval.Value, key);
+                    var intervall = interval as Interval<T>;
+                    _jobFactory.AddInstance(key, intervall.Payload);
+                    SetupSchedulingInterval<T>(intervall.Value, key);
                 }
 
                 foreach (var (key, pattern) in patterns)
@@ -93,6 +100,19 @@ namespace RaaLabs.Edge.Modules.Scheduling
                 }
             }
         }
+
+        private static bool IsInterval(ISchedule schedule)
+        {
+            if (!schedule.GetType().IsGenericType) return false;
+            return schedule.GetType().GetGenericTypeDefinition() == typeof(Interval<>);
+        }
+
+        private static bool IsPattern(ISchedule schedule)
+        {
+            if (!schedule.GetType().IsGenericType) return false;
+            return schedule.GetType().GetGenericTypeDefinition() == typeof(Pattern<>);
+        }
+
 
         /// <summary>
         /// Set up scheduling for an interval
@@ -254,5 +274,6 @@ namespace RaaLabs.Edge.Modules.Scheduling
                 }
             }
         }
+
     }
 }

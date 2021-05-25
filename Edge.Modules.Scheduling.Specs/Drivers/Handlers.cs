@@ -22,18 +22,18 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
 
     public class ScheduleConfig : IScheduleForType<TypeScheduledEvent>
     {
-        public Dictionary<string, Interval<TypeScheduledEvent>> GetIntervals()
-        {
-            return new Dictionary<string, Interval<TypeScheduledEvent>>();
-        }
+        private Dictionary<string, ISchedule> _schedules;
 
-        public Dictionary<string, Pattern<TypeScheduledEvent>> GetPatterns()
+        public ScheduleConfig()
         {
-            return new Dictionary<string, Pattern<TypeScheduledEvent>>
+            _schedules = new Dictionary<string, ISchedule>
             {
-                { "onceASecond", new Pattern<TypeScheduledEvent>{ Value = "*/1 * * * * ?", Payload = new TypeScheduledEvent { Tags = new List<string>{ "tag-1", "tag-2" } } } }
+                { "onceASecond", new Pattern<TypeScheduledEvent>{ Value = "*/1 * * * * ?", Payload = new TypeScheduledEvent { Tags = new List<string>{ "tag-1", "tag-2" } } } },
+                { "fourTimesASecond", new Interval<TypeScheduledEvent>{ Value = 0.25, Payload = new TypeScheduledEvent { Tags = new List<string>{ "tag-3", "tag-4" } } } }
             };
         }
+
+        public Dictionary<string, ISchedule> Schedules => _schedules;
     }
 
     public class ScheduleHandler : IConsumeEvent<CronEvent>, IConsumeEvent<IntervalEvent>, IConsumeEvent<TypeScheduledEvent>
@@ -47,38 +47,38 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
 
         public void Handle(CronEvent @event)
         {
-            _eventCounter.IncrementEventCountForType<CronEvent>();
+            _eventCounter.RegisterEventForType(@event);
         }
 
         public void Handle(IntervalEvent @event)
         {
-            _eventCounter.IncrementEventCountForType<IntervalEvent>();
+            _eventCounter.RegisterEventForType(@event);
         }
 
         public void Handle(TypeScheduledEvent @event)
         {
-            _eventCounter.IncrementEventCountForType<TypeScheduledEvent>();
+            _eventCounter.RegisterEventForType(@event);
         }
     }
 
     public class EventCounter
     {
-        private Dictionary<Type, int> _eventsProducedForType;
+        private Dictionary<Type, List<object>> _eventsProducedForType;
 
         public EventCounter()
         {
-            _eventsProducedForType = new Dictionary<Type, int>();
+            _eventsProducedForType = new Dictionary<Type, List<object>>();
         }
 
-        public void IncrementEventCountForType<T>()
+        public void RegisterEventForType<T>(T @event)
         {
             var type = typeof(T);
-            if (!_eventsProducedForType.ContainsKey(type)) _eventsProducedForType[type] = 0;
+            if (!_eventsProducedForType.ContainsKey(type)) _eventsProducedForType[type] = new List<object>();
 
-            _eventsProducedForType[type]++;
+            _eventsProducedForType[type].Add(@event);
         }
 
-        public int GetEventsProducedForType(Type type)
+        public List<object> GetEventsProducedForType(Type type)
         {
             return _eventsProducedForType.GetValueOrDefault(type);
         }

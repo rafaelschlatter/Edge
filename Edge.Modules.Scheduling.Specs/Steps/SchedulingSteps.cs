@@ -3,6 +3,8 @@ using TechTalk.SpecFlow;
 using FluentAssertions;
 using RaaLabs.Edge.Modules.Scheduling.Specs.Drivers;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace RaaLabs.Edge.Modules.Scheduling.Specs.Steps
 {
@@ -35,11 +37,29 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Steps
             {
                 var eventType = _typeMapping[row["EventType"]];
                 var eventsProduced = eventCounter.GetEventsProducedForType(eventType);
-                eventsProduced.Should().BeGreaterThan(int.Parse(row["Count"]));
+                var numEventsProduced = eventsProduced?.Count ?? 0;
+                numEventsProduced.Should().BeGreaterThan(int.Parse(row["Count"]));
             }
         }
 
+        [Then(@"events with payload should contain the correct payload")]
+        public void ThenEventsWithPayloadShouldContainTheCorrectPayload()
+        {
+            var eventCounter = _appContext.Application.Container.Resolve<EventCounter>();
+            var eventsProduced = eventCounter.GetEventsProducedForType(typeof(TypeScheduledEvent))
+                .Select(_ => _ as TypeScheduledEvent)
+                .ToList();
 
+            var tagsProduced = eventsProduced
+                .SelectMany(e => e.Tags)
+                .GroupBy(tag => tag)
+                .ToDictionary(uniqueTag => uniqueTag.Key, uniqueTag => uniqueTag.Count());
+
+            // events containing "tag-3" and "tag-4" should be produced 4 times as often as the events
+            // containing "tag-1" and "tag-2".
+            var fraction = tagsProduced["tag-3"] / (double)tagsProduced["tag-1"];
+            fraction.Should().BeGreaterThan(2.0);
+        }
 
     }
 }

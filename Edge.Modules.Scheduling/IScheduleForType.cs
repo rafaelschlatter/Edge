@@ -10,23 +10,18 @@ namespace RaaLabs.Edge.Modules.Scheduling
         where T : IScheduledEvent
     {
         /// <summary>
-        /// Get all intervals scheduled for event type
+        /// Property for all configured schedules for a given type
         /// </summary>
-        /// <returns>all intervals scheduled for event type</returns>
-        public Dictionary<string, Interval<T>> GetIntervals();
-
-        /// <summary>
-        /// Get all patterns scheduled for event type
-        /// </summary>
-        /// <returns>all patterns scheduled for event type</returns>
-        public Dictionary<string, Pattern<T>> GetPatterns();
+        public Dictionary<string, ISchedule> Schedules { get; }
     }
+
+    public interface ISchedule { }
 
     /// <summary>
     /// A scheduled interval
     /// </summary>
     /// <typeparam name="T">the event type</typeparam>
-    public class Interval<T>
+    public class Interval<T> : ISchedule
     {
         /// <summary>
         /// The interval, in seconds
@@ -43,7 +38,7 @@ namespace RaaLabs.Edge.Modules.Scheduling
     /// A scheduled pattern
     /// </summary>
     /// <typeparam name="T">the event type</typeparam>
-    public class Pattern<T>
+    public class Pattern<T> : ISchedule
     {
         /// <summary>
         /// The cron pattern
