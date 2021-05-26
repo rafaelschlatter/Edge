@@ -4,7 +4,6 @@ using FluentAssertions;
 using RaaLabs.Edge.Modules.Scheduling.Specs.Drivers;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace RaaLabs.Edge.Modules.Scheduling.Specs.Steps
 {
