@@ -223,14 +223,20 @@ namespace RaaLabs.Edge.Modules.Scheduling
                     try
                     {
                         jobFactory = (IJobFactory)_scope.Resolve(typeof(JobFactoryForType<>).MakeGenericType(eventType));
-                        var method = typeof(JobFactoryForType<>).MakeGenericType(eventType).GetMethod("SetInstances");
-                        method.Invoke(jobFactory, new object[] { _instancesForFactories[eventType] });
+                        var instances = _instancesForFactories.GetValueOrDefault(eventType);
+
+                        if (instances != null)
+                        {
+                            var method = typeof(JobFactoryForType<>).MakeGenericType(eventType).GetMethod("SetInstances");
+                            method.Invoke(jobFactory, new object[] { instances });
+                        }
                         _jobFactories[eventType] = jobFactory;
 
                     }
                     catch(System.Exception e)
                     {
                         System.Console.WriteLine($"Exception: {e.Message}");
+                        throw;
                     }
                 }
 
@@ -268,7 +274,7 @@ namespace RaaLabs.Edge.Modules.Scheduling
                     (job as System.IDisposable)?.Dispose();
                 }
 
-                public void SetInstances(Dictionary<string, object> instances)
+                public void SetInstances(Dictionary<string, object>? instances)
                 {
                     _instances = instances.ToDictionary(_ => _.Key, _ => (T)_.Value);
                 }
