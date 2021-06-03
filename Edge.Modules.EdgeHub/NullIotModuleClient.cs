@@ -1,8 +1,10 @@
 using Microsoft.Azure.Devices.Client;
 using Serilog;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Channels;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {
@@ -13,14 +15,14 @@ namespace RaaLabs.Edge.Modules.EdgeHub
     {
         private readonly ILogger _logger;
 
-        private readonly Dictionary<string, MessageHandler> _messageHandlers;
+        private readonly ConcurrentDictionary<string, Channel<Message>> _messagesToSend;
         public List<(string, string)> MessagesSent { get; }
 
         public NullIotModuleClient(ILogger logger)
         {
             _logger = logger;
-            _messageHandlers = new Dictionary<string, MessageHandler>();
             MessagesSent = new List<(string, string)>();
+            _messagesToSend = new ConcurrentDictionary<string, Channel<Message>>();
         }
 
         public Task SendEventAsync(string outputName, Message message)
@@ -37,16 +39,37 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             return Task.CompletedTask;
         }
 
-        public Task SetInputMessageHandlerAsync(string inputName, MessageHandler messageHandler, object userContext)
+        public async Task SetInputMessageHandlerAsync(string inputName, MessageHandler messageHandler, object userContext)
         {
-            _messageHandlers[inputName] = messageHandler;
-            return Task.CompletedTask;
+            var channel = Channel.CreateUnbounded<Message>();
+            _messagesToSend[inputName] = channel;
+            var channelReader = channel.Reader;
+
+            while (true)
+            {
+                var message = await channelReader.ReadAsync();
+                await messageHandler(message, null);
+            }
         }
 
         public void SimulateIncomingEvent(string inputName, string value)
         {
             var message = new Message(Encoding.UTF8.GetBytes(value));
-            _messageHandlers[inputName](message, null);
+            var messageChannel = _messagesToSend[inputName];
+            if (messageChannel != null)
+            {
+                messageChannel.Writer.WriteAsync(message).AsTask().Wait();
+            }
+        }
+
+        public async Task SimulateIncomingEventAsync(string inputName, string value)
+        {
+            var message = new Message(Encoding.UTF8.GetBytes(value));
+            var messageChannel = _messagesToSend[inputName];
+            if (messageChannel != null)
+            {
+                await messageChannel.Writer.WriteAsync(message).AsTask();
+            }
         }
     }
 }

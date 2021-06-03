@@ -2,14 +2,9 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
 using Autofac.Core.Resolving.Pipeline;
-using Microsoft.Azure.Devices.Client;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RaaLabs.Edge.Modules.EventHandling;
-using Serilog;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {
@@ -53,46 +48,9 @@ namespace RaaLabs.Edge.Modules.EdgeHub
         public static void SetupEdgeHubIncomingEvents<T>(ResolveRequestContext context)
             where T : IEvent
         {
-            var logger = context.Resolve<ILogger>();
-            var client = context.Resolve<IIotModuleClient>();
-            EventHandling.EventHandler<T> eventHandler = (EventHandling.EventHandler<T>)context.Instance;
-            var inputName = ((InputNameAttribute)typeof(T).GetCustomAttributes(typeof(InputNameAttribute), true).First()).InputName;
+            var subscriberTask = context.Resolve<IncomingEventsSubscriberTask>();
 
-            client.SetInputMessageHandlerAsync(inputName, async (message, context) =>
-            {
-                logger.Information("Handling incoming event for input {InputName}", inputName);
-                return await HandleSubscriber(eventHandler, message, logger);
-            }, null);
-        }
-
-        /// <summary>
-        /// Deserialize incoming EdgeHub message and publish the event to the application.
-        /// </summary>
-        /// <typeparam name="T">The event type to deserialize the incoming data to</typeparam>
-        /// <param name="eventHandler">The event handler for the given event type</param>
-        /// <param name="message">The incoming EdgeHub message</param>
-        /// <param name="logger">a logger</param>
-        /// <returns></returns>
-        async static Task<MessageResponse> HandleSubscriber<T>(EventHandling.EventHandler<T> eventHandler, Message message, ILogger logger)
-            where T : IEvent
-        {
-            try
-            {
-                var messageBytes = message.GetBytes();
-                var messageString = Encoding.UTF8.GetString(messageBytes);
-
-                var deserialized = JsonConvert.DeserializeObject<T>(messageString);
-                eventHandler.Produce(deserialized);
-
-                logger.Information("New incoming message: {IncomingMessage}", messageString);
-
-                await Task.CompletedTask;
-                return MessageResponse.Completed;
-            }
-            catch (Exception ex)
-            {
-                return MessageResponse.Abandoned;
-            }
+            subscriberTask.SetupSubscriptionForEventHandler<T>();
         }
 
         /// <summary>

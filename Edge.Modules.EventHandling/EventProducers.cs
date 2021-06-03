@@ -51,7 +51,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
 
             var emitters = producer.GetType().GetEvents()
                 .Where(i => i.EventHandlerType.IsGenericType)
-                .Where(i => i.EventHandlerType.GetGenericTypeDefinition() == typeof(EventEmitter<>))
+                .Where(i => i.EventHandlerType.GetGenericTypeDefinition() == typeof(EventEmitter<>) || i.EventHandlerType.GetGenericTypeDefinition() == typeof(AsyncEventEmitter<>))
                 .ToList();
 
             var messageTypeToEmitter = emitters.ToDictionary(em => em.EventHandlerType.GetGenericArguments().First(), em => em);
@@ -84,8 +84,19 @@ namespace RaaLabs.Edge.Modules.EventHandling
         public static void SetupEventEmitter<T>(IComponentContext context, IProduceEvent producer, EventInfo emitter)
             where T : IEvent
         {
+            bool isAsync = emitter.EventHandlerType.GetGenericTypeDefinition() == typeof(AsyncEventEmitter<>);
+
             var eventHandler = context.Resolve<EventHandler<T>>();
-            var eventDelegate = Delegate.CreateDelegate(typeof(EventEmitter<T>), eventHandler, "Produce", false);
+
+            Delegate eventDelegate;
+            if (isAsync)
+            {
+                eventDelegate = Delegate.CreateDelegate(typeof(AsyncEventEmitter<T>), eventHandler, "ProduceAsync", false);
+            }
+            else
+            {
+                eventDelegate = Delegate.CreateDelegate(typeof(EventEmitter<T>), eventHandler, "Produce", false);
+            }
             emitter.AddEventHandler(producer, eventDelegate);
         }
 

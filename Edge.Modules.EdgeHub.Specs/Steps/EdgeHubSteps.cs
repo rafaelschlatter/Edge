@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using FluentAssertions;
 using RaaLabs.Edge.Modules.EventHandling.Specs.Drivers;
@@ -17,6 +18,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
     {
         private readonly ApplicationContext _appContext;
         private readonly TypeMapping _typeMapping;
+        private Task _subscribersTask;
 
         public EdgeHubSteps(ApplicationContext appContext, TypeMapping typeMapping)
         {
@@ -28,6 +30,10 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
         public void WhenEdgeHubInputReceivesTheFollowingValues(string inputName, Table table)
         {
             NullIotModuleClient client = (NullIotModuleClient)_appContext.Scope.Resolve<IIotModuleClient>();
+            if (_subscribersTask == null)
+            {
+                _subscribersTask = _appContext.Scope.Resolve<IncomingEventsSubscriberTask>().Run();
+            }
             foreach (var row in table.Rows)
             {
                 int value = int.Parse(row["Value"]);
@@ -40,6 +46,10 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
         public void WhenEventProducerProducesTheFollowingValues(string producer, Table table)
         {
             var handler = (IntegerOutputHandler)_appContext.Instances["outputHandler"];
+            if (_subscribersTask == null)
+            {
+                _subscribersTask = _appContext.Scope.Resolve<IncomingEventsSubscriberTask>().Run();
+            }
             foreach (var row in table.Rows)
             {
                 int value = int.Parse(row["Value"]);

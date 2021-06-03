@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using System.Threading.Tasks;
 
 namespace Edge.Modules.EventHandling.Specs.Steps
 {
@@ -50,12 +51,29 @@ namespace Edge.Modules.EventHandling.Specs.Steps
             _types[producerName] = (type, producerType);
         }
 
+        [Given("an async producer for (.*) named (.*)")]
+        public void GivenAnAsyncProducerForType(string typeAsString, string producerName)
+        {
+            var type = Type.GetType(typeAsString);
+            var producerType = typeof(AsyncProducer<>).MakeGenericType(type);
+            _builder.RegisterType(producerType).AsSelf();
+            _types[producerName] = (type, producerType);
+        }
 
         [Given("a consumer for (.*) named (.*)")]
         public void GivenAConsumerForType(string typeAsString, string consumerName)
         {
             var type = Type.GetType(typeAsString);
             var producerType = typeof(Consumer<>).MakeGenericType(type);
+            _builder.RegisterType(producerType).AsSelf();
+            _types[consumerName] = (type, producerType);
+        }
+
+        [Given("an async consumer for (.*) named (.*)")]
+        public void GivenAnAsyncConsumerForType(string typeAsString, string consumerName)
+        {
+            var type = Type.GetType(typeAsString);
+            var producerType = typeof(AsyncConsumer<>).MakeGenericType(type);
             _builder.RegisterType(producerType).AsSelf();
             _types[consumerName] = (type, producerType);
         }
@@ -129,6 +147,21 @@ namespace Edge.Modules.EventHandling.Specs.Steps
         }
     }
 
+    class AsyncProducer<T> : IProduceEvent<Event<T>>
+    {
+        public event AsyncEventEmitter<Event<T>> ProduceEvent;
+
+        public AsyncProducer()
+        {
+
+        }
+
+        public async Task Produce(T value)
+        {
+            await ProduceEvent(new Event<T>(value));
+        }
+    }
+
     class Consumer<T> : IConsumeEvent<Event<T>>
     {
         public List<T> ReceivedEvents { get; }
@@ -140,6 +173,21 @@ namespace Edge.Modules.EventHandling.Specs.Steps
         public void Handle(Event<T> @event)
         {
             ReceivedEvents.Add(@event.Payload);
+        }
+    }
+
+    class AsyncConsumer<T> : IConsumeEventAsync<Event<T>>
+    {
+        public List<T> ReceivedEvents { get; }
+        public AsyncConsumer()
+        {
+            ReceivedEvents = new List<T>();
+        }
+
+        public async Task HandleAsync(Event<T> @event)
+        {
+            ReceivedEvents.Add(@event.Payload);
+            await Task.CompletedTask;
         }
     }
 

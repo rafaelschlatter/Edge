@@ -49,7 +49,14 @@ namespace RaaLabs.Edge.Modules.EventHandling
                 .Select(i => i.GetGenericArguments().First())
                 .ToList();
 
+            List<Type> allMessageTypesToConsumeAsync = consumer.GetType().GetInterfaces()
+                .Where(i => i.IsGenericType)
+                .Where(i => i.GetGenericTypeDefinition() == typeof(IConsumeEventAsync<>))
+                .Select(i => i.GetGenericArguments().First())
+                .ToList();
+
             SetupSubscriptions(context, consumer, allMessageTypesToConsume);
+            SetupAsyncSubscriptions(context, consumer, allMessageTypesToConsumeAsync);
         }
 
         private void SetupSubscriptions(IComponentContext context, IConsumeEvent consumer, List<Type> messageTypesToConsume)
@@ -57,6 +64,15 @@ namespace RaaLabs.Edge.Modules.EventHandling
             foreach (var messageType in messageTypesToConsume)
             {
                 var subscribeFunction = typeof(EventConsumers).GetMethod("SubscribeToEvent").MakeGenericMethod(messageType);
+                var unsubscriber = subscribeFunction.Invoke(this, new object[] { context, consumer });
+            }
+        }
+
+        private void SetupAsyncSubscriptions(IComponentContext context, IConsumeEvent consumer, List<Type> messageTypesToConsume)
+        {
+            foreach (var messageType in messageTypesToConsume)
+            {
+                var subscribeFunction = typeof(EventConsumers).GetMethod("SubscribeToEventAsync").MakeGenericMethod(messageType);
                 var unsubscriber = subscribeFunction.Invoke(this, new object[] { context, consumer });
             }
         }
@@ -71,6 +87,22 @@ namespace RaaLabs.Edge.Modules.EventHandling
         /// <param name="consumer">The class which will consume the event</param>
         /// <returns></returns>
         public static Unsubscriber<T> SubscribeToEvent<T>(IComponentContext context, IConsumeEvent<T> consumer)
+            where T : IEvent
+        {
+            var eventHandler = context.Resolve<EventHandler<T>>();
+            return (Unsubscriber<T>)eventHandler.Subscribe(consumer);
+        }
+
+        /// <summary>
+        /// Set up subscription to a given event type T for a consumer.
+        /// 
+        /// IMPORTANT: This function appears to not be in use, but will be called at runtime using reflection.
+        /// </summary>
+        /// <typeparam name="T">The event type to subscribe to</typeparam>
+        /// <param name="context">The Autofac context</param>
+        /// <param name="consumer">The class which will consume the event</param>
+        /// <returns></returns>
+        public static Unsubscriber<T> SubscribeToEventAsync<T>(IComponentContext context, IConsumeEventAsync<T> consumer)
             where T : IEvent
         {
             var eventHandler = context.Resolve<EventHandler<T>>();

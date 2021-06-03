@@ -23,4 +23,11 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// <typeparam name="T"></typeparam>
     /// <param name="event"></param>
     public delegate void EventEmitter<in T>(T @event) where T: IEvent;
+
+    /// <summary>
+    /// A delegate function connected to the "ProduceAsync(...)" function of the Event Handler for the specified data type T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="event"></param>
+    public delegate Task AsyncEventEmitter<in T>(T @event) where T : IEvent;
 }

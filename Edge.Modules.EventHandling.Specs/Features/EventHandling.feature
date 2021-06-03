@@ -59,3 +59,48 @@ Scenario: Sending message from multiple producers to a single consumer
 	And producer2 produces 23
 	And producer3 produces 14
 	Then consumer1 receives [65, 23, 14]
+
+Scenario: Sending message from an async producer to an async consumer
+	Given an Autofac context
+	Given module RaaLabs.Edge.Modules.EventHandling.EventHandling from RaaLabs.Edge.Modules.EventHandling is registered
+
+	Given an async producer for System.Int32 named IntProducer
+	And an async consumer for System.Int32 named IntConsumer
+
+	Given application container has been built
+
+	Given an instance of IntProducer named producer1
+	And an instance of IntConsumer named consumer1
+
+	When producer1 produces 1
+	Then consumer1 receives [1]
+
+Scenario: Sending message from a sync producer to an async consumer
+	Given an Autofac context
+	Given module RaaLabs.Edge.Modules.EventHandling.EventHandling from RaaLabs.Edge.Modules.EventHandling is registered
+
+	Given a producer for System.Int32 named IntProducer
+	And an async consumer for System.Int32 named IntConsumer
+
+	Given application container has been built
+
+	Given an instance of IntProducer named producer1
+	And an instance of IntConsumer named consumer1
+
+	When producer1 produces 1
+	Then consumer1 receives [1]
+
+Scenario: Sending message from an async producer to a sync consumer
+	Given an Autofac context
+	Given module RaaLabs.Edge.Modules.EventHandling.EventHandling from RaaLabs.Edge.Modules.EventHandling is registered
+
+	Given an async producer for System.Int32 named IntProducer
+	And a consumer for System.Int32 named IntConsumer
+
+	Given application container has been built
+
+	Given an instance of IntProducer named producer1
+	And an instance of IntConsumer named consumer1
+
+	When producer1 produces 1
+	Then consumer1 receives [1]
