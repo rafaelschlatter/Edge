@@ -12,10 +12,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
         protected override void Load(ContainerBuilder builder)
         {
             // Register one EventHandler<> per event type
-            builder.RegisterGeneric((ctxt, types, parameters) =>
-            {
-                return Activator.CreateInstance(typeof(EventHandler<>).MakeGenericType(types));
-            }).As(typeof(EventHandler<>)).InstancePerLifetimeScope();
+            builder.RegisterGeneric(typeof(EventHandler<>)).AsSelf().InstancePerLifetimeScope();
         }
     }
 }

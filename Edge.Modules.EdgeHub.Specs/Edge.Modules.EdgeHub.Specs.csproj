@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <SpecFlowObsoleteCodeBehindFiles Remove="Features\EdgeHub - Copy.feature.cs" />
     <SpecFlowObsoleteCodeBehindFiles Remove="Features\EventHandling.feature.cs" />
   </ItemGroup>
 
