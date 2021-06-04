@@ -39,7 +39,8 @@ namespace RaaLabs.Edge
             var logger = scope.Resolve<Serilog.ILogger>();
 
             logger.Information("Starting up handlers...");
-            // Instantiate all handlers
+
+            // Instantiate all handlers. Assigned to a variable to ensure they are not removed by the Garbage Collector.
             var handlers = _handlers.Select(handlerType => scope.Resolve(handlerType)).ToList();
             logger.Information("Handlers started.");
             logger.Information("Starting up tasks...");
@@ -49,6 +50,8 @@ namespace RaaLabs.Edge
                 .ToList();
 
             logger.Information("Tasks started.");
+
+            await Task.WhenAll(runningTasks);
 
             while (true)
             {

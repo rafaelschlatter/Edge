@@ -274,7 +274,7 @@ namespace RaaLabs.Edge.Modules.Scheduling
                     (job as System.IDisposable)?.Dispose();
                 }
 
-                public void SetInstances(Dictionary<string, object>? instances)
+                public void SetInstances(Dictionary<string, object> instances)
                 {
                     _instances = instances.ToDictionary(_ => _.Key, _ => (T)_.Value);
                 }

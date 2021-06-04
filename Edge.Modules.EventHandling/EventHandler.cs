@@ -19,10 +19,10 @@ namespace RaaLabs.Edge.Modules.EventHandling
     public class EventHandler<T> : IEventHandler
         where T: IEvent
     {
-        private List<IConsumeEvent<T>> _observers;
-        private List<IConsumeEventAsync<T>> _asyncObservers;
-        private List<Action<T>> _observerFunctions;
-        private List<Func<T, Task>> _asyncObserverFunctions;
+        private readonly List<IConsumeEvent<T>> _observers;
+        private readonly List<IConsumeEventAsync<T>> _asyncObservers;
+        private readonly List<Action<T>> _observerFunctions;
+        private readonly List<Func<T, Task>> _asyncObserverFunctions;
 
         public EventHandler()
         {
@@ -126,9 +126,9 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// <typeparam name="T">the event type</typeparam>
     public class Unsubscriber<T> : IDisposable
     {
-        private List<IConsumeEvent<T>> _observers;
-        private List<IConsumeEventAsync<T>> _asyncObservers;
-        private IConsumeEvent _observer;
+        private readonly List<IConsumeEvent<T>> _observers;
+        private readonly List<IConsumeEventAsync<T>> _asyncObservers;
+        private readonly IConsumeEvent _observer;
 
         internal Unsubscriber(List<IConsumeEvent<T>> observers, IConsumeEvent<T> observer)
         {
@@ -162,10 +162,10 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// <typeparam name="T">the event type</typeparam>
     public class UnsubscriberFunction<T> : IDisposable
     {
-        private List<Action<T>> _observerFunctions;
-        private List<Func<T, Task>> _asyncObserverFunctions;
-        private Action<T> _observerFunction;
-        private Func<T, Task> _asyncObserverFunction;
+        private readonly List<Action<T>> _observerFunctions;
+        private readonly List<Func<T, Task>> _asyncObserverFunctions;
+        private readonly Action<T> _observerFunction;
+        private readonly Func<T, Task> _asyncObserverFunction;
         internal UnsubscriberFunction(List<Action<T>> observerFunctions, Action<T> observerFunction)
         {
             _observerFunctions = observerFunctions;
