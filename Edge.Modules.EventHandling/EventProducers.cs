@@ -100,7 +100,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
             emitter.AddEventHandler(producer, eventDelegate);
         }
 
-        private bool HasInterface<T>(IComponentRegistration registration)
+        private static bool HasInterface<T>(IComponentRegistration registration)
         {
             return registration.Services.Any(s => s is IServiceWithType && typeof(T).IsAssignableFrom(((IServiceWithType)s).ServiceType));
         }
