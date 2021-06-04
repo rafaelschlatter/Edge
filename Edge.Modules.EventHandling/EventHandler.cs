@@ -19,10 +19,10 @@ namespace RaaLabs.Edge.Modules.EventHandling
     public class EventHandler<T> : IEventHandler
         where T: IEvent
     {
-        private List<IConsumeEvent<T>> _observers;
-        private List<IConsumeEventAsync<T>> _asyncObservers;
-        private List<Action<T>> _observerFunctions;
-        private List<Func<T, Task>> _asyncObserverFunctions;
+        private readonly List<IConsumeEvent<T>> _observers;
+        private readonly List<IConsumeEventAsync<T>> _asyncObservers;
+        private readonly List<Action<T>> _observerFunctions;
+        private readonly List<Func<T, Task>> _asyncObserverFunctions;
 
         public EventHandler()
         {
