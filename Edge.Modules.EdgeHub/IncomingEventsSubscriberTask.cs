@@ -89,6 +89,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             }
             catch (Exception ex)
             {
+                logger.Warning(ex.Message);
                 return MessageResponse.Abandoned;
             }
         }
