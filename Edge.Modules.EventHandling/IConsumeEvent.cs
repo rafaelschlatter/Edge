@@ -11,7 +11,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// 
     /// </summary>
     /// <typeparam name="T">the type to consume</typeparam>
-    public interface IConsumeEvent<T> : IConsumeEvent
+    public interface IConsumeEvent<in T> : IConsumeEvent
     {
         public void Handle(T @event);
 
@@ -23,7 +23,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// 
     /// </summary>
     /// <typeparam name="T">the type to consume</typeparam>
-    public interface IConsumeEventAsync<T> : IConsumeEvent
+    public interface IConsumeEventAsync<in T> : IConsumeEvent
     {
         public Task HandleAsync(T @event);
 
