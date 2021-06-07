@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.Scheduling", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.Scheduling.Specs", "Edge.Modules.Scheduling.Specs\Edge.Modules.Scheduling.Specs.csproj", "{2B52146C-843F-4BBC-9771-6FA66D1F065F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.EventHub", "Edge.Modules.EventHub\Edge.Modules.EventHub.csproj", "{4FA13868-094A-42FB-8234-4C49188E48FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{2B52146C-843F-4BBC-9771-6FA66D1F065F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B52146C-843F-4BBC-9771-6FA66D1F065F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B52146C-843F-4BBC-9771-6FA66D1F065F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA13868-094A-42FB-8234-4C49188E48FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA13868-094A-42FB-8234-4C49188E48FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA13868-094A-42FB-8234-4C49188E48FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA13868-094A-42FB-8234-4C49188E48FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
