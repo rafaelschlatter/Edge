@@ -25,25 +25,13 @@ namespace RaaLabs.Edge.Modules.EventHub
     /// Attribute for the EventHub input name. All classes implementing IEventHubIncomingEvent should use this annotation.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class InputNameAttribute : Attribute
+    public class EventHubNameAttribute : Attribute
     {
-        public string InputName { get; }
-        public InputNameAttribute(string inputName)
+        public string EventHubName { get; }
+        public EventHubNameAttribute(string eventHubName)
         {
-            InputName = inputName;
+            EventHubName = eventHubName;
         }
     }
 
-    /// <summary>
-    /// Attribute for the EventHub output name. All classes implementing IEventHubOutgoingEvent should use this annotation.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class OutputNameAttribute : Attribute
-    {
-        public string OutputName { get; }
-        public OutputNameAttribute(string outputName)
-        {
-            OutputName = outputName;
-        }
-    }
 }

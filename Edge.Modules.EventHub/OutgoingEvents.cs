@@ -57,7 +57,7 @@ namespace RaaLabs.Edge.Modules.EventHub
             var client = context.Resolve<IEventHubModuleClient>();
             var logger = context.Resolve<ILogger>();
             EventHandling.EventHandler<T> eventHandler = (EventHandling.EventHandler<T>)context.Instance;
-            var outputName = ((OutputNameAttribute)typeof(T).GetCustomAttributes(typeof(OutputNameAttribute), true).First()).OutputName;
+            var outputName = ((EventHubNameAttribute)typeof(T).GetCustomAttributes(typeof(EventHubNameAttribute), true).First()).EventHubName;
             eventHandler.Subscribe(async message =>
             {
                 var outputString = JsonConvert.SerializeObject(message, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });

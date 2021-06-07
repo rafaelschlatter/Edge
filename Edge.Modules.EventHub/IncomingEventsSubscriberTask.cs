@@ -9,6 +9,7 @@ using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
 using RaaLabs.Edge.Modules.EventHandling;
 using Serilog;
+using RaaLabs.Edge.Modules.EventHub.Client;
 
 namespace RaaLabs.Edge.Modules.EventHub
 {
@@ -105,17 +106,18 @@ namespace RaaLabs.Edge.Modules.EventHub
             }
         }
 
-        private Task SetupSubscriber<T>()
+        private async Task SetupSubscriber<T>()
             where T : IEvent
         {
             var eventHandler = _scope.Resolve<EventHandling.EventHandler<T>>();
-            var inputName = ((InputNameAttribute)typeof(T).GetCustomAttributes(typeof(InputNameAttribute), true).First()).InputName;
+            var eventHubName = ((EventHubNameAttribute)typeof(T).GetCustomAttributes(typeof(EventHubNameAttribute), true).First()).EventHubName;
 
-            return _client.SetInputMessageHandlerAsync(inputName, async (message, context) =>
-            {
-                _logger.Information("Handling incoming event for input {InputName}", inputName);
-                return await HandleSubscriber(eventHandler, message, _logger);
-            }, null);
+            var eventHubProcessor = EventHubProcessor<T>.FromEventHubName(eventHubName, async message => {
+                _logger.Information("Handling incoming event for eventHub {EventHubName}", eventHubName);
+                await eventHandler.ProduceAsync(message);
+            });
+            await eventHubProcessor.StartProcessingAsync();
         }
     }
 }
+
