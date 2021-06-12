@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Serilog;
 using Autofac;
+using static RaaLabs.Edge.Application;
 
 namespace RaaLabs.Edge.Modules.EventHandling
 {
@@ -27,9 +28,11 @@ namespace RaaLabs.Edge.Modules.EventHandling
         private readonly IList<IEventPropagator<T>> _supertypeHandlers;
         private readonly IDictionary<Type, Action<T, ISet<object>>> _subtypeHandlers;
         private readonly IDictionary<Type, Func<T, ISet<object>, Task>> _asyncSubtypeHandlers;
+        private readonly ILogger _logger;
 
         public EventHandler(ILifetimeScope scope, ILogger logger)
         {
+            _logger = logger;
             _observers = new List<IConsumeEvent<T>>();
             _asyncObservers = new List<IConsumeEventAsync<T>>();
             _observerFunctions = new List<Action<T>>();
@@ -184,6 +187,16 @@ namespace RaaLabs.Edge.Modules.EventHandling
             return _subtypeHandlers.Keys.ToHashSet();
         }
 
+        /// <summary>
+        /// Initialize supertype EventHandler for this EventHandler.
+        /// 
+        /// IMPORTANT: Static code analysis will claim that this function is never called, but it will be invoked from the constructor in runtime using reflection.
+        /// </summary>
+        /// <typeparam name="Ty">This type</typeparam>
+        /// <typeparam name="IFace">The supertype to initialize</typeparam>
+        /// <param name="scope">The current scope</param>
+        /// <param name="child">The current EventHandler</param>
+        /// <returns></returns>
         private static IEventPropagator<IFace> InitializeSupertypeEventHandler<Ty, IFace>(ILifetimeScope scope, IEventPropagator<Ty> child)
             where Ty : IFace
             where IFace : IEvent

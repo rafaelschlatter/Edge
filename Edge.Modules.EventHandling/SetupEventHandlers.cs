@@ -2,42 +2,48 @@ using Autofac;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
 using System.Reflection;
 using Serilog;
 
 namespace RaaLabs.Edge.Modules.EventHandling
 {
-    class SetupEventHandlers : IBootloader
+    /// <summary>
+    /// This class will add support for <see cref="EventHandlers"/> to the application.
+    /// </summary>
+    class SetupEventHandlers : IBootloader, IPreRegistrationStage, IRegistrationStage, IPostRegistrationStage
     {
-        private readonly IEnumerable<Assembly> _assemblies;
-        private readonly ILifetimeScope _scope;
-        private readonly ILogger _logger;
+        private IList<Type> _allEventTypes;
+        private IList<IEventHandler> _eventHandlers;
 
         public Status Status { get; private set; } = Status.Ready;
 
-        public SetupEventHandlers(ILifetimeScope scope, IEnumerable<Assembly> assemblies, ILogger logger)
-        {
-            _scope = scope;
-            _assemblies = assemblies;
-            _logger = logger;
-        }
 
-        public void RunBootloader(ContainerBuilder builder)
+        public void PreRegistration(ILifetimeScope oldScope)
         {
-            var allEventTypes = _assemblies
+            var assemblies = oldScope.Resolve<IEnumerable<Assembly>>();
+            var allTypes = assemblies
                 .SelectMany(assembly => assembly.GetTypes())
                 .Distinct()
-                .Where(type => type.IsAssignableTo<IEvent>());
+                .ToList();
 
-            foreach (var type in allEventTypes)
+            _allEventTypes = allTypes
+                .Where(type => type.IsAssignableTo<IEvent>())
+                .ToList();
+        }
+
+        public void RegistrationStage(ContainerBuilder builder)
+        {
+            foreach (var type in _allEventTypes)
             {
-                builder.RegisterType(typeof(EventHandler<>).MakeGenericType(type)).AsSelf().SingleInstance();
+                builder.RegisterType(typeof(EventHandler<>).MakeGenericType(type)).AsSelf().As<IEventHandler>().SingleInstance();
             }
 
             Status = Status.Complete;
+        }
+
+        public void PostRegistration(ILifetimeScope newScope)
+        {
+            _eventHandlers = newScope.Resolve<IEnumerable<IEventHandler>>().ToList();
         }
     }
 }

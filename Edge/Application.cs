@@ -38,15 +38,15 @@ namespace RaaLabs.Edge
             using var buildScope = Container.BeginLifetimeScope();
             var logger = buildScope.Resolve<Serilog.ILogger>();
 
-            var bootloaders = buildScope.Resolve<IEnumerable<IBootloader>>();
-
-            var runtimeScope = await BuildRuntimeScope(buildScope, bootloaders.ToHashSet());
+            var bootloaders = buildScope.Resolve<IEnumerable<IBootloader>>().ToHashSet();
+            var runtimeScope = BuildRuntimeScope(buildScope, bootloaders);
 
             logger.Information("Starting up handlers...");
 
             // Instantiate all handlers. Assigned to a variable to ensure they are not removed by the Garbage Collector.
             var handlers = _handlers.Select(handlerType => runtimeScope.Resolve(handlerType)).ToList();
             logger.Information("Handlers started.");
+
             logger.Information("Starting up tasks...");
             var tasks = runtimeScope.Resolve<IEnumerable<IRunAsync>>();
             var runningTasks = tasks
@@ -63,37 +63,57 @@ namespace RaaLabs.Edge
             }
         }
 
-        private async Task<ILifetimeScope> BuildRuntimeScope(ILifetimeScope scope, ISet<IBootloader> bootloaders)
+        /// <summary>
+        /// Recursively build new runtime scopes while running all available bootloaders for each scope.
+        /// Once all bootloaders have completed, tag the current scope as "runtime" and return it.
+        /// </summary>
+        /// <param name="scope"></param>
+        /// <param name="bootloaders"></param>
+        /// <returns>The runtime scope of the application</returns>
+        private ILifetimeScope BuildRuntimeScope(ILifetimeScope scope, ISet<IBootloader> bootloaders)
         {
             var logger = scope.Resolve<Serilog.ILogger>();
 
-            var scopeHasPerformedBootloaders = false;
+            var readyBootloaders = bootloaders.Where(b => b.Status == Status.Ready).ToList();
+            var preRegistrationStageBootloaders = readyBootloaders.Where(b => b.GetType().IsAssignableTo<IPreRegistrationStage>()).Select(b => (IPreRegistrationStage) b).ToList();
+            var registrationStageBootloaders = readyBootloaders.Where(b => b.GetType().IsAssignableTo<IRegistrationStage>()).Select(b => (IRegistrationStage)b).ToList();
+            var postRegistrationStageBootloaders = readyBootloaders.Where(b => b.GetType().IsAssignableTo<IPostRegistrationStage>()).Select(b => (IPostRegistrationStage)b).ToList();
+
+            foreach (var preRegistrationBootloader in preRegistrationStageBootloaders)
+            {
+                preRegistrationBootloader.PreRegistration(scope);
+            }
+
             var newScope = scope.BeginLifetimeScope(builder =>
             {
-                var readyBootloaders = bootloaders
-                    .Where(bootloader => bootloader.Status == Status.Ready)
-                    .ToArray();
-
-                foreach (var bootloader in readyBootloaders)
+                foreach (var bootloader in registrationStageBootloaders)
                 {
-                    bootloader.RunBootloader(builder);
-                    bootloaders.Remove(bootloader);
-                    scopeHasPerformedBootloaders = true;
+                    bootloader.RegistrationStage(builder);
                 }
             });
 
-            if (!scopeHasPerformedBootloaders)
+            foreach (var bootloader in postRegistrationStageBootloaders)
+            {
+                bootloader.PostRegistration(newScope);
+            }
+
+            foreach (var bootloader in readyBootloaders)
+            {
+                bootloaders.Remove(bootloader);
+            }
+
+            if (readyBootloaders.Count == 0)
             {
                 throw new Exception("Some bootloaders never ran.");
             }
 
             if (bootloaders.Count > 0)
             {
-                return await BuildRuntimeScope(newScope, bootloaders);
+                return BuildRuntimeScope(newScope, bootloaders);
             }
             else
             {
-                return await Task.FromResult(newScope);
+                return newScope.BeginLifetimeScope("runtime");
             }
         }
     }

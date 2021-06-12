@@ -70,14 +70,16 @@ namespace RaaLabs.Edge
         }
 
         /// <summary>
-        /// 
+        /// Register a singleton class for the runtime.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The class to register</typeparam>
+        /// <typeparam name="I">The interface to register as</typeparam>
         /// <returns></returns>
-        public ApplicationBuilder WithSingleton<T>()
+        public ApplicationBuilder WithSingletonType<T, I>()
+            where T : I
         {
             _assemblies.Add(typeof(T).Assembly);
-            _builder.RegisterType<T>().AsSelf().AsImplementedInterfaces().SingleInstance();
+            _builder.RegisterType<T>().AsSelf().As<I>().InstancePerMatchingLifetimeScope("runtime");
             return this;
         }
 
@@ -90,7 +92,7 @@ namespace RaaLabs.Edge
         public ApplicationBuilder WithTask<Task>() where Task : IRunAsync
         {
             _assemblies.Add(typeof(Task).Assembly);
-            _builder.RegisterType<Task>().AsImplementedInterfaces().AsSelf().InstancePerLifetimeScope();
+            _builder.RegisterType<Task>().AsImplementedInterfaces().AsSelf().InstancePerMatchingLifetimeScope("runtime");
             return this;
         }
 
@@ -125,7 +127,7 @@ namespace RaaLabs.Edge
         }
 
         /// <summary>
-        /// 
+        /// Manually register an assembly used by the application.
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns></returns>
@@ -143,7 +145,7 @@ namespace RaaLabs.Edge
         {
             foreach (var assembly in _assemblies)
             {
-                _builder.RegisterInstance(assembly).As<Assembly>().SingleInstance();
+                _builder.RegisterInstance(assembly).As<Assembly>();
             }
 
             IContainer container = _builder.Build();
