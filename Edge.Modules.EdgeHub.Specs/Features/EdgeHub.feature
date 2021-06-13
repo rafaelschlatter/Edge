@@ -12,8 +12,10 @@ Scenario: Receiving an event from EdgeHub
 		| Kind    | Type                        |
 		| Module  | EventHandling               |
 		| Module  | EdgeHub                     |
-		| Handler | IntegerInputHandler         |
-		| Handler | IntegerInputSquaringHandler |
+		| Type    | IntegerInputHandler         |
+		| Type    | IntegerInputSquaringHandler |
+    And the application is running
+
 	And a lifetime scope with the following instances
 		| Name                  | Type                        |
 		| inputHandler1         | IntegerInputHandler         |
@@ -35,7 +37,9 @@ Scenario: Sending an event to EdgeHub
 		| Kind    | Type                 |
 		| Module  | EventHandling        |
 		| Module  | EdgeHub              |
-		| Handler | IntegerOutputHandler |
+		| Type    | IntegerOutputHandler |
+    And the application is running
+
 	And a lifetime scope with the following instances
 		| Name          | Type                 |
 		| outputHandler | IntegerOutputHandler |

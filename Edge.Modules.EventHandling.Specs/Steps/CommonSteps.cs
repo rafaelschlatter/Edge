@@ -1,12 +1,12 @@
 using Autofac.Core;
-using RaaLabs.Edge.Modules.EdgeHub.Specs.Drivers;
+using RaaLabs.Edge.Modules.EventHandling.Specs.Drivers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TechTalk.SpecFlow;
 
-namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
+namespace RaaLabs.Edge.Modules.EventHandling.Specs.Steps
 {
     [Binding]
     public sealed class CommonSteps

@@ -10,7 +10,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// <summary>
     /// This class will add support for <see cref="EventHandlers"/> to the application.
     /// </summary>
-    class SetupEventHandlers : IBootloader, IPreRegistrationStage, IRegistrationStage, IPostRegistrationStage
+    public class SetupEventHandlers : IBootloader, IPreRegistrationStage, IRegistrationStage, IPostRegistrationStage
     {
         private IList<Type> _allEventTypes;
         private IList<IEventHandler> _eventHandlers;

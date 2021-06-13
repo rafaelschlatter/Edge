@@ -85,6 +85,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
             where T : IEvent
         {
             bool isAsync = emitter.EventHandlerType.GetGenericTypeDefinition() == typeof(AsyncEventEmitter<>);
+            var eventType = typeof(T);
 
             var eventHandler = context.Resolve<EventHandler<T>>();
 
