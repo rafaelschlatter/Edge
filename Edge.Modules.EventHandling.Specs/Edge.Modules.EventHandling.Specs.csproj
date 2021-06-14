@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Drivers\" />
     <Folder Include="Hooks\" />
   </ItemGroup>
 
@@ -28,9 +29,6 @@
   <ItemGroup>
     <Compile Update="Features\EventHandling.feature.cs">
       <DependentUpon>EventHandling.feature</DependentUpon>
-    </Compile>
-    <Compile Update="Steps\CommonSteps.cs">
-      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 

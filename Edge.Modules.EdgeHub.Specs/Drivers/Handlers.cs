@@ -8,7 +8,7 @@ using FluentAssertions;
 using RaaLabs.Edge.Modules.EdgeHub;
 using Newtonsoft.Json;
 
-namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Drivers
+namespace RaaLabs.Edge.Modules.EventHandling.Specs.Drivers
 {
 
     [InputName("IntegerInput")]

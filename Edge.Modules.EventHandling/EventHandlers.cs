@@ -11,7 +11,8 @@ namespace RaaLabs.Edge.Modules.EventHandling
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<SetupEventHandlers>().AsSelf().As<IBootloader>().SingleInstance();
+            // Register one EventHandler<> per event type
+            builder.RegisterGeneric(typeof(EventHandler<>)).AsSelf().InstancePerLifetimeScope();
         }
     }
 }

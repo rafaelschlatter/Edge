@@ -32,7 +32,7 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
 
         public void WithSingletonType<T>() where T : new()
         {
-            ApplicationBuilder.WithSingletonType<T, T>();
+            ApplicationBuilder.WithManualRegistration(builder => builder.RegisterType<T>().AsSelf().AsImplementedInterfaces().SingleInstance());
         }
 
         public void WithHandler<T>()
@@ -57,12 +57,6 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
             Scope = container.BeginLifetimeScope();
 
             return Scope;
-        }
-
-        public void Start()
-        {
-            Application.Startup();
-            Scope = Application.RuntimeScope;
         }
 
         public object ResolveInstance(string name, Type type)

@@ -15,7 +15,6 @@ namespace RaaLabs.Edge
     {
         private readonly ContainerBuilder _builder;
         private readonly List<Type> _handlers;
-        private readonly ISet<Assembly> _assemblies;
 
         /// <summary>
         /// 
@@ -24,7 +23,6 @@ namespace RaaLabs.Edge
         {
             _builder = new ContainerBuilder();
             _handlers = new List<Type>();
-            _assemblies = new HashSet<Assembly>();
 
             _builder.Register(_ => CreateLogger()).As<ILogger>();
             _builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
@@ -37,7 +35,6 @@ namespace RaaLabs.Edge
         /// <returns></returns>
         public ApplicationBuilder WithModule<TModule>() where TModule : Autofac.Core.IModule, new()
         {
-            _assemblies.Add(typeof(TModule).Assembly);
             _builder.RegisterModule<TModule>();
             return this;
         }
@@ -50,7 +47,6 @@ namespace RaaLabs.Edge
         /// <returns></returns>
         public ApplicationBuilder WithHandler<THandler>()
         {
-            _assemblies.Add(typeof(THandler).Assembly);
             _builder.RegisterType<THandler>();
             _handlers.Add(typeof(THandler));
             return this;
@@ -64,22 +60,7 @@ namespace RaaLabs.Edge
         /// <returns></returns>
         public ApplicationBuilder WithType<T>()
         {
-            _assemblies.Add(typeof(T).Assembly);
             _builder.RegisterType<T>().AsImplementedInterfaces().AsSelf();
-            return this;
-        }
-
-        /// <summary>
-        /// Register a singleton class for the runtime.
-        /// </summary>
-        /// <typeparam name="T">The class to register</typeparam>
-        /// <typeparam name="I">The interface to register as</typeparam>
-        /// <returns></returns>
-        public ApplicationBuilder WithSingletonType<T, I>()
-            where T : I
-        {
-            _assemblies.Add(typeof(T).Assembly);
-            _builder.RegisterType<T>().AsSelf().As<I>().InstancePerMatchingLifetimeScope("runtime");
             return this;
         }
 
@@ -91,8 +72,7 @@ namespace RaaLabs.Edge
         /// <returns></returns>
         public ApplicationBuilder WithTask<Task>() where Task : IRunAsync
         {
-            _assemblies.Add(typeof(Task).Assembly);
-            _builder.RegisterType<Task>().AsImplementedInterfaces().AsSelf().InstancePerMatchingLifetimeScope("runtime");
+            _builder.RegisterType<Task>().AsImplementedInterfaces().AsSelf().InstancePerLifetimeScope();
             return this;
         }
 
@@ -116,7 +96,6 @@ namespace RaaLabs.Edge
         /// <returns></returns>
         public ApplicationBuilder WithAllImplementationsOf<I>() where I : class
         {
-            _assemblies.Add(typeof(I).Assembly);
             var dataAccess = typeof(I).Assembly;
             _builder.RegisterAssemblyTypes(dataAccess)
                 .Where(type => type.IsAssignableTo<I>())
@@ -127,27 +106,11 @@ namespace RaaLabs.Edge
         }
 
         /// <summary>
-        /// Manually register an assembly used by the application.
-        /// </summary>
-        /// <param name="assembly"></param>
-        /// <returns></returns>
-        public ApplicationBuilder WithAssembly(Assembly assembly)
-        {
-            _assemblies.Add(assembly);
-            return this;
-        }
-
-        /// <summary>
         /// Build the application.
         /// </summary>
         /// <returns>The application containing all tasks and handlers to start up</returns>
         public Application Build()
         {
-            foreach (var assembly in _assemblies)
-            {
-                _builder.RegisterInstance(assembly).As<Assembly>();
-            }
-
             IContainer container = _builder.Build();
             return new Application(container, _handlers);
         }

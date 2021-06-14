@@ -35,12 +35,6 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
             _appContext.Build();
         }
 
-        [Given(@"the application is running")]
-        public void GivenTheApplicationIsRunning()
-        {
-            _appContext.Start();
-        }
-
         [Given(@"a lifetime scope with the following instances")]
         public void GivenTheFollowingInstances(Table table)
         {
@@ -48,7 +42,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
 
             var sources = mappings.GroupBy(_ => _.Source);
 
-            var scope = _appContext.Scope;
+            var scope = _appContext.StartScope();
             foreach (var row in table.Rows)
             {
                 var name = row["Name"];

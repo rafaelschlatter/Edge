@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using System.Threading.Tasks;
-using RaaLabs.Edge.Modules.EventHandling.Specs.Drivers;
 
 namespace Edge.Modules.EventHandling.Specs.Steps
 {
@@ -14,60 +13,190 @@ namespace Edge.Modules.EventHandling.Specs.Steps
     public sealed class EventHandlingStepDefinitions
     {
 
+        // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 
-        private readonly ApplicationContext _appContext;
-        private readonly TypeMapping _typeMapping;
+        private readonly ScenarioContext _scenarioContext;
+        private ContainerBuilder _builder;
+        private IContainer _container;
+        private IDictionary<string, (Type, Type)> _types;
+        private IDictionary<string, (Type, object)> _instances;
 
-        public EventHandlingStepDefinitions(ApplicationContext appContext, TypeMapping typeMapping)
+        public EventHandlingStepDefinitions(ScenarioContext scenarioContext)
         {
-            _appContext = appContext;
-            _typeMapping = typeMapping;
+            _scenarioContext = scenarioContext;
+            _types = new Dictionary<string, (Type, Type)>();
+            _instances = new Dictionary<string, (Type, object)>();
         }
 
-        [When(@"event producer (.*) produces the following values")]
-        public async Task WhenEventProducerProducesTheFollowingValues(string producerName, Table table)
+        [Given("an Autofac context")]
+        public void GivenAnAutofacContext()
         {
-            await Task.Delay(100);
-            var producer = _appContext.Instances[producerName];
-            if (producer.GetType().IsAssignableTo<IProducer>())
-            {
-                var syncProducer = (IProducer)producer;
-                foreach (var row in table.Rows)
-                {
-                    int value = int.Parse(row["Value"]);
-                    syncProducer.Produce(value);
-                }
-            }
-            else
-            {
-                var asyncProducer = (IAsyncProducer)producer;
-                foreach (var row in table.Rows)
-                {
-                    int value = int.Parse(row["Value"]);
-                    await asyncProducer.Produce(value);
-                }
-            }
+            _builder = new ContainerBuilder();
         }
 
-        [Then(@"handlers should receive the following values")]
-        public void ThenHandlersShouldReceiveTheFollowingValues(Table table)
+        [Given("module (.*) from (.*) is registered")]
+        public void GivenEventHandlingModuleIsRegistered(string moduleName, string assemblyName)
         {
-            var handlers = table.Header.ToList();
-            var expectedValuesForHandler = handlers.ToDictionary(_ => _, _ => new List<int>());
+            var moduleType = Type.GetType($"{moduleName}, {assemblyName}");
+            var module = (Autofac.Core.IModule) Activator.CreateInstance(moduleType);
+            _builder.RegisterModule(module);
+        }
 
-            foreach (var row in table.Rows)
-            {
-                foreach (var handler in handlers)
-                {
-                    expectedValuesForHandler[handler].Add(int.Parse(row[handler]));
-                }
-            }
+        [Given("a producer for (.*) named (.*)")]
+        public void GivenAProducerForType(string typeAsString, string producerName)
+        {
+            var type = Type.GetType(typeAsString);
+            var producerType = typeof(Producer<>).MakeGenericType(type);
+            _builder.RegisterType(producerType).AsSelf();
+            _types[producerName] = (type, producerType);
+        }
 
-            foreach (var (handler, expected) in expectedValuesForHandler)
-            {
-                var instance = (IConsumer)_appContext.Instances[handler];
-                instance.ReceivedEvents.Should().BeEquivalentTo(expected);
-            }
+        [Given("an async producer for (.*) named (.*)")]
+        public void GivenAnAsyncProducerForType(string typeAsString, string producerName)
+        {
+            var type = Type.GetType(typeAsString);
+            var producerType = typeof(AsyncProducer<>).MakeGenericType(type);
+            _builder.RegisterType(producerType).AsSelf();
+            _types[producerName] = (type, producerType);
+        }
+
+        [Given("a consumer for (.*) named (.*)")]
+        public void GivenAConsumerForType(string typeAsString, string consumerName)
+        {
+            var type = Type.GetType(typeAsString);
+            var producerType = typeof(Consumer<>).MakeGenericType(type);
+            _builder.RegisterType(producerType).AsSelf();
+            _types[consumerName] = (type, producerType);
+        }
+
+        [Given("an async consumer for (.*) named (.*)")]
+        public void GivenAnAsyncConsumerForType(string typeAsString, string consumerName)
+        {
+            var type = Type.GetType(typeAsString);
+            var producerType = typeof(AsyncConsumer<>).MakeGenericType(type);
+            _builder.RegisterType(producerType).AsSelf();
+            _types[consumerName] = (type, producerType);
+        }
+
+        [Given("application container has been built")]
+        public void GivenApplicationContainerHasBeenBuilt()
+        {
+            _container = _builder.Build();
+        }
+
+        [Given("an instance of (.*) named (.*)")]
+        public void GivenAnInstanceOfTypeNamed(string typeAsString, string instanceName)
+        {
+            var (eventType, type) = _types[typeAsString];
+            _instances[instanceName] = (eventType, _container.Resolve(type));
+        }
+
+        [When("Building application container")]
+        public void WhenBuildingContainer()
+        {
+            _container = _builder.Build();
+        }
+
+        [When("(.*) produces (.*)")]
+        public void WhenProducerProducesValue(string instanceName, string eventValue)
+        {
+            var (eventType, instance) = _instances[instanceName];
+            instance.GetType().GetMethod("Produce").Invoke(instance, new object[] { Convert.ChangeType(eventValue, eventType) });
+
+        }
+
+        [Then("Starting lifetime scope should succeed")]
+        public void ThenBuildingScopeShouldSucceed()
+        {
+            using var scope = _container.BeginLifetimeScope();
+        }
+
+        [Then("(.*) receives \\[(.*)\\]")]
+        public void ThenConsumerReceivesEvent(string instanceName, string expectedValues)
+        {
+            var (eventType, instance) = _instances[instanceName];
+            var events = instance.GetType().GetProperty("ReceivedEvents").GetValue(instance);
+            var evs = Convert.ChangeType(events, typeof(List<>).MakeGenericType(eventType));
+            var eventValueList = GetType().GetMethod("ListFromExpectedValuesString").MakeGenericMethod(eventType).Invoke(null, new object[] { expectedValues });
+            GetType().GetMethod("AssertReceivedEvent").MakeGenericMethod(eventType).Invoke(null, new object[] { evs, eventValueList });
+        }
+
+        public static void AssertReceivedEvent<T>(List<T> actual, List<T> expected)
+        {
+            actual.Should().BeEquivalentTo(expected);
+        }
+
+        public static List<T> ListFromExpectedValuesString<T>(string expectedValues)
+        {
+            return expectedValues.Split(",").Select(v => v.Trim()).Select(v => (T) Convert.ChangeType(v, typeof(T))).ToList();
+        }
+    }
+
+    class Producer<T> : IProduceEvent<Event<T>>
+    {
+        public event EventEmitter<Event<T>> ProduceEvent;
+
+        public Producer()
+        {
+
+        }
+
+        public void Produce(T value)
+        {
+            ProduceEvent(new Event<T>(value));
+        }
+    }
+
+    class AsyncProducer<T> : IProduceEvent<Event<T>>
+    {
+        public event AsyncEventEmitter<Event<T>> ProduceEvent;
+
+        public AsyncProducer()
+        {
+
+        }
+
+        public async Task Produce(T value)
+        {
+            await ProduceEvent(new Event<T>(value));
+        }
+    }
+
+    class Consumer<T> : IConsumeEvent<Event<T>>
+    {
+        public List<T> ReceivedEvents { get; }
+        public Consumer()
+        {
+            ReceivedEvents = new List<T>();
+        }
+
+        public void Handle(Event<T> @event)
+        {
+            ReceivedEvents.Add(@event.Payload);
+        }
+    }
+
+    class AsyncConsumer<T> : IConsumeEventAsync<Event<T>>
+    {
+        public List<T> ReceivedEvents { get; }
+        public AsyncConsumer()
+        {
+            ReceivedEvents = new List<T>();
+        }
+
+        public async Task HandleAsync(Event<T> @event)
+        {
+            ReceivedEvents.Add(@event.Payload);
+            await Task.CompletedTask;
+        }
+    }
+
+    class Event<T> : IEvent
+    {
+        public T Payload { get; }
+        public Event(T payload)
+        {
+            this.Payload = payload;
         }
     }
 }

@@ -13,8 +13,6 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Drivers
         public ApplicationBuilder ApplicationBuilder { get; private set; }
         public Application Application { get; private set; }
 
-        public Task RunningApplication { get; private set; }
-
         public ILifetimeScope Scope { get; private set; }
 
         public IDictionary<string, object> Instances { get; private set; }
@@ -30,9 +28,9 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Drivers
             ApplicationBuilder.WithModule<T>();
         }
 
-        public void WithType<T>() where T : new()
+        public void WithType<T>() where T : IModule, new()
         {
-            ApplicationBuilder.WithType<T>();
+            ApplicationBuilder.WithModule<T>();
         }
 
         public void WithHandler<T>()
@@ -47,15 +45,10 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Drivers
 
         public ILifetimeScope StartScope()
         {
-            Scope = Application.BuildRuntimeScope();
+            var container = Application.Container;
+            Scope = container.BeginLifetimeScope();
 
             return Scope;
-        }
-
-        public void Start()
-        {
-            Application.Startup();
-            Scope = Application.RuntimeScope;
         }
 
         public object ResolveInstance(string name, Type type)

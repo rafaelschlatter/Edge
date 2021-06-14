@@ -1,23 +1,18 @@
-using System;
-using System.Linq;
 using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
 using Autofac.Core.Resolving.Pipeline;
+using System;
+using System.Linq;
 using RaaLabs.Edge.Modules.EventHandling;
 
-namespace RaaLabs.Edge.Modules.Scheduling
+namespace RaaLabs.Edge.Modules.EdgeHub
 {
     /// <summary>
-    /// 
+    /// Module for bridging EdgeHub input messages to Event Handling classes.
     /// </summary>
-    public class Scheduling : Module
+    class IncomingEvents : Module
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            builder.RegisterType<SchedulingTask>().AsSelf().AsImplementedInterfaces().InstancePerLifetimeScope();
-        }
-
         /// <summary>
         /// This function will detect event classes implementing IEdgeHubIncomingEvent when they are being activated, and will
         /// set up the EdgeHub client to publish messages to these events.
@@ -26,36 +21,36 @@ namespace RaaLabs.Edge.Modules.Scheduling
         /// <param name="registration"></param>
         protected override void AttachToComponentRegistration(IComponentRegistryBuilder componentRegistry, IComponentRegistration registration)
         {
-            if (IsHandlerForScheduledEvent(registration, out Type eventType))
+            Type eventType;
+
+            if (IsEventHandlerForEdgeHubIncomingEvent(registration, out eventType))
             {
                 registration.PipelineBuilding += (sender, pipeline) =>
                 {
                     pipeline.Use(PipelinePhase.Activation, MiddlewareInsertionMode.EndOfPhase, (c, next) =>
                     {
                         next(c);
-                        var eventSetupFunction = GetType().GetMethod("SetupSchedulingEvents").MakeGenericMethod(eventType);
+                        var eventSetupFunction = typeof(IncomingEvents).GetMethod("SetupEdgeHubIncomingEvents").MakeGenericMethod(eventType);
                         eventSetupFunction.Invoke(this, new object[] { c });
                     });
                 };
-
             }
-
         }
 
         /// <summary>
-        /// This function will set up the application to publish scheduled events to the specified event type T.
+        /// This function will set up EdgeHub to publish incoming events to the specified event type T.
         /// 
-        /// IMPORTANT: This function will appear to not be in use, but will be called at runtime using reflection.
+        /// IMPORTANT: This function appears to not be in use, but will be called at runtime using reflection.
         /// 
         /// </summary>
         /// <typeparam name="T">The event handling class receiving the incoming input</typeparam>
         /// <param name="context">The autofac scope for resolving dependencies</param>
-        public static void SetupSchedulingEvents<T>(ResolveRequestContext context)
-            where T : IScheduledEvent
+        public static void SetupEdgeHubIncomingEvents<T>(ResolveRequestContext context)
+            where T : IEvent
         {
-            var schedulerTask = context.Resolve<SchedulingTask>();
+            var subscriberTask = context.Resolve<IncomingEventsSubscriberTask>();
 
-            schedulerTask.SetupSchedulingForType<T>();
+            subscriberTask.SetupSubscriptionForEventHandler<T>();
         }
 
         /// <summary>
@@ -65,13 +60,13 @@ namespace RaaLabs.Edge.Modules.Scheduling
         /// <param name="registration"></param>
         /// <param name="eventType"></param>
         /// <returns></returns>
-        private static bool IsHandlerForScheduledEvent(IComponentRegistration registration, out Type eventType)
+        private static bool IsEventHandlerForEdgeHubIncomingEvent(IComponentRegistration registration, out Type eventType)
         {
             eventType = null;
             var eventHandlers = registration.Services
                 .Where(s => s is IServiceWithType && typeof(IEventHandler).IsAssignableFrom(((IServiceWithType)s).ServiceType))
                 .Select(s => ((IServiceWithType)s).ServiceType)
-                .Where(eh => eh.GetGenericArguments().First().GetInterfaces().Any(i => typeof(IScheduledEvent).IsAssignableFrom(i)))
+                .Where(eh => eh.GetGenericArguments().First().GetInterfaces().Any(i => typeof(IEdgeHubIncomingEvent).IsAssignableFrom(i)))
                 .ToList();
 
             if (eventHandlers.Count == 0)
@@ -83,6 +78,5 @@ namespace RaaLabs.Edge.Modules.Scheduling
 
             return true;
         }
-
     }
 }

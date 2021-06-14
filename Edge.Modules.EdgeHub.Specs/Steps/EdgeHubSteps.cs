@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using FluentAssertions;
+using RaaLabs.Edge.Modules.EventHandling.Specs.Drivers;
 
 namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
 {
@@ -17,6 +18,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
     {
         private readonly ApplicationContext _appContext;
         private readonly TypeMapping _typeMapping;
+        private Task _subscribersTask;
 
         public EdgeHubSteps(ApplicationContext appContext, TypeMapping typeMapping)
         {
@@ -25,10 +27,13 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
         }
 
         [When(@"EdgeHub input (.*) receives the following values")]
-        public async Task WhenEdgeHubInputReceivesTheFollowingValues(string inputName, Table table)
+        public void WhenEdgeHubInputReceivesTheFollowingValues(string inputName, Table table)
         {
-            await Task.Delay(100);
             NullIotModuleClient client = (NullIotModuleClient)_appContext.Scope.Resolve<IIotModuleClient>();
+            if (_subscribersTask == null)
+            {
+                _subscribersTask = _appContext.Scope.Resolve<IncomingEventsSubscriberTask>().Run();
+            }
             foreach (var row in table.Rows)
             {
                 int value = int.Parse(row["Value"]);
@@ -38,10 +43,13 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
         }
 
         [When(@"event producer (.*) produces the following values")]
-        public async Task WhenEventProducerProducesTheFollowingValues(string producer, Table table)
+        public void WhenEventProducerProducesTheFollowingValues(string producer, Table table)
         {
-            await Task.Delay(100);
             var handler = (IntegerOutputHandler)_appContext.Instances["outputHandler"];
+            if (_subscribersTask == null)
+            {
+                _subscribersTask = _appContext.Scope.Resolve<IncomingEventsSubscriberTask>().Run();
+            }
             foreach (var row in table.Rows)
             {
                 int value = int.Parse(row["Value"]);
@@ -71,9 +79,8 @@ namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Steps
         }
 
         [Then(@"EdgeHub output (.*) sends the following values")]
-        public async Task ThenEdgeHubOutputSendsTheFollowingValues(string outputName, Table table)
+        public void ThenEdgeHubOutputSendsTheFollowingValues(string outputName, Table table)
         {
-            await Task.Delay(50);
             NullIotModuleClient client = (NullIotModuleClient)_appContext.Scope.Resolve<IIotModuleClient>();
             client.MessagesSent
                 .Where(message => message.Item1 == outputName)

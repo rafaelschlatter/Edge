@@ -3,8 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Serilog;
-using Autofac;
-using static RaaLabs.Edge.Application;
 
 namespace RaaLabs.Edge.Modules.EventHandling
 {
@@ -18,34 +16,20 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// For normal development, this class can be ignored by the developer.
     /// </summary>
     /// <typeparam name="T">the event type</typeparam>
-    public class EventHandler<T> : IEventHandler, IEventPropagator<T>
+    public class EventHandler<T> : IEventHandler
         where T: IEvent
     {
-        private readonly IList<IConsumeEvent<T>> _observers;
-        private readonly IList<IConsumeEventAsync<T>> _asyncObservers;
-        private readonly IList<Action<T>> _observerFunctions;
-        private readonly IList<Func<T, Task>> _asyncObserverFunctions;
-        private readonly IList<IEventPropagator<T>> _supertypeHandlers;
-        private readonly IDictionary<Type, Action<T, ISet<object>>> _subtypeHandlers;
-        private readonly IDictionary<Type, Func<T, ISet<object>, Task>> _asyncSubtypeHandlers;
-        private readonly ILogger _logger;
+        private readonly List<IConsumeEvent<T>> _observers;
+        private readonly List<IConsumeEventAsync<T>> _asyncObservers;
+        private readonly List<Action<T>> _observerFunctions;
+        private readonly List<Func<T, Task>> _asyncObserverFunctions;
 
-        public EventHandler(ILifetimeScope scope, ILogger logger)
+        public EventHandler()
         {
-            _logger = logger;
             _observers = new List<IConsumeEvent<T>>();
             _asyncObservers = new List<IConsumeEventAsync<T>>();
             _observerFunctions = new List<Action<T>>();
             _asyncObserverFunctions = new List<Func<T, Task>>();
-            _subtypeHandlers = new Dictionary<Type, Action<T, ISet<object>>>();
-            _asyncSubtypeHandlers = new Dictionary<Type, Func<T, ISet<object>, Task>>();
-
-            _supertypeHandlers = typeof(T).GetInterfaces().Select(iface =>
-            {
-                var initializeSupertypeEventHandlerMethod = GetType().GetMethod("InitializeSupertypeEventHandler", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).MakeGenericMethod(typeof(T), iface);
-                return (IEventPropagator<T>)initializeSupertypeEventHandlerMethod.Invoke(null, new object[] { scope, this });
-            })
-            .ToList();
         }
 
         /// <summary>
@@ -114,8 +98,10 @@ namespace RaaLabs.Edge.Modules.EventHandling
         /// <param name="event"></param>
         public void Produce(T @event)
         {
-            var visitedHandlers = new HashSet<object>();
-            PropagateEvent(@event, visitedHandlers);
+            _observers.ForEach(_ => _.Handle(@event));
+            _observerFunctions.ForEach(handlerFunction => handlerFunction(@event));
+            Task.WhenAll(_asyncObservers.Select(async _ => await _.HandleAsync(@event))).Wait();
+            Task.WhenAll(_asyncObserverFunctions.Select(async handlerFunction => await handlerFunction(@event))).Wait();
         }
 
         /// <summary>
@@ -125,99 +111,12 @@ namespace RaaLabs.Edge.Modules.EventHandling
         /// <returns></returns>
         public async Task ProduceAsync(T @event)
         {
-            var visitedHandlers = new HashSet<object>();
-            await PropagateEventAsync(@event, visitedHandlers);
-        }
-
-        public void PropagateEvent(T @event, ISet<object> visitedHandlers)
-        {
-            if (visitedHandlers.Contains(this)) return;
-            else visitedHandlers.Add(this);
-
-            var eventType = @event.GetType();
-
-            foreach (var observer in _observers)
-            {
-                observer.Handle(@event);
-            }
-            foreach (var observerFunction in _observerFunctions)
-            {
-                observerFunction(@event);
-            }
-
-            Task.WhenAll(_asyncObservers.Select(async _ => await _.HandleAsync(@event))).Wait();
-            Task.WhenAll(_asyncObserverFunctions.Select(async handlerFunction => await handlerFunction(@event))).Wait();
-        
-            foreach (var supertypeHandler in _supertypeHandlers)
-            {
-                supertypeHandler.PropagateEvent(@event, visitedHandlers);
-            }
-
-            var subtypeFunc = _subtypeHandlers.ContainsKey(eventType) ? _subtypeHandlers[eventType] : (_, _) => { };
-            subtypeFunc(@event, visitedHandlers);
-        }
-
-        public async Task PropagateEventAsync(T @event, ISet<object> visitedHandlers)
-        {
-            if (visitedHandlers.Contains(this)) return;
-            else visitedHandlers.Add(this);
-
-            var eventType = @event.GetType();
-
-            foreach (var observer in _observers)
-            {
-                observer.Handle(@event);
-            }
-            foreach (var observerFunction in _observerFunctions)
-            {
-                observerFunction(@event);
-            }
+            _observers.ForEach(_ => _.Handle(@event));
+            _observerFunctions.ForEach(handlerFunction => handlerFunction(@event));
             var asyncObservers = Task.WhenAll(_asyncObservers.Select(async _ => await _.HandleAsync(@event)));
             var asyncFunctions = Task.WhenAll(_asyncObserverFunctions.Select(async handlerFunction => await handlerFunction(@event)));
-            var asyncSupertypeHandlers = Task.WhenAll(_supertypeHandlers.Select(async handler => await handler.PropagateEventAsync(@event, visitedHandlers)));
 
-            var asyncSubtypeFunc = _asyncSubtypeHandlers.ContainsKey(eventType) ? _asyncSubtypeHandlers[eventType] : (_, _) => Task.CompletedTask;
-            var asyncSubtypeTask = asyncSubtypeFunc(@event, visitedHandlers);
-
-            await Task.WhenAll(asyncObservers, asyncFunctions, asyncSupertypeHandlers, asyncSubtypeTask);
-        }
-
-        public ISet<Type> GetSubtypes()
-        {
-            return _subtypeHandlers.Keys.ToHashSet();
-        }
-
-        /// <summary>
-        /// Initialize supertype EventHandler for this EventHandler.
-        /// 
-        /// IMPORTANT: Static code analysis will claim that this function is never called, but it will be invoked from the constructor in runtime using reflection.
-        /// </summary>
-        /// <typeparam name="Ty">This type</typeparam>
-        /// <typeparam name="IFace">The supertype to initialize</typeparam>
-        /// <param name="scope">The current scope</param>
-        /// <param name="child">The current EventHandler</param>
-        /// <returns></returns>
-        private static IEventPropagator<IFace> InitializeSupertypeEventHandler<Ty, IFace>(ILifetimeScope scope, IEventPropagator<Ty> child)
-            where Ty : IFace
-            where IFace : IEvent
-        {
-            var parent = scope.Resolve<EventHandler<IFace>>();
-            Action<IFace, ISet<object>> childPropagationFunction = (@event, visitedHandlers) => child.PropagateEventAsync((Ty)@event, visitedHandlers);
-            Func<IFace, ISet<object>, Task> childPropagationFunctionAsync = (@event, visitedHandlers) => child.PropagateEventAsync((Ty)@event, visitedHandlers);
-            parent.RegisterSubtypeHandler(typeof(Ty), childPropagationFunction);
-            parent.RegisterAsyncSubtypeHandler(typeof(Ty), childPropagationFunctionAsync);
-
-            return parent;
-        }
-
-        protected void RegisterSubtypeHandler(Type type, Action<T, ISet<object>> handler)
-        {
-            _subtypeHandlers.Add(type, handler);
-        }
-
-        protected void RegisterAsyncSubtypeHandler(Type type, Func<T, ISet<object>, Task> handler)
-        {
-            _asyncSubtypeHandlers.Add(type, handler);
+            await Task.WhenAll(asyncObservers, asyncFunctions);
         }
     }
 
@@ -227,17 +126,17 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// <typeparam name="T">the event type</typeparam>
     public class Unsubscriber<T> : IDisposable
     {
-        private readonly IList<IConsumeEvent<T>> _observers;
-        private readonly IList<IConsumeEventAsync<T>> _asyncObservers;
+        private readonly List<IConsumeEvent<T>> _observers;
+        private readonly List<IConsumeEventAsync<T>> _asyncObservers;
         private readonly IConsumeEvent _observer;
 
-        internal Unsubscriber(IList<IConsumeEvent<T>> observers, IConsumeEvent<T> observer)
+        internal Unsubscriber(List<IConsumeEvent<T>> observers, IConsumeEvent<T> observer)
         {
             _observers = observers;
             _observer = observer;
         }
 
-        internal Unsubscriber(IList<IConsumeEventAsync<T>> observers, IConsumeEventAsync<T> observer)
+        internal Unsubscriber(List<IConsumeEventAsync<T>> observers, IConsumeEventAsync<T> observer)
         {
             _asyncObservers = observers;
             _observer = observer;
@@ -263,20 +162,20 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// <typeparam name="T">the event type</typeparam>
     public class UnsubscriberFunction<T> : IDisposable
     {
-        private readonly IList<Action<T>> _observerFunctions;
-        private readonly IList<Func<T, Task>> _asyncObserverFunctions;
+        private readonly List<Action<T>> _observerFunctions;
+        private readonly List<Func<T, Task>> _asyncObserverFunctions;
         private readonly Action<T> _observerFunction;
         private readonly Func<T, Task> _asyncObserverFunction;
-        internal UnsubscriberFunction(IList<Action<T>> observerFunctions, Action<T> observerFunction)
+        internal UnsubscriberFunction(List<Action<T>> observerFunctions, Action<T> observerFunction)
         {
             _observerFunctions = observerFunctions;
             _observerFunction = observerFunction;
         }
 
-        internal UnsubscriberFunction(IList<Func<T, Task>> asyncObserverFunctions, Func<T, Task> asyncObserverFunction)
+        internal UnsubscriberFunction(List<Func<T, Task>> observerFunctions, Func<T, Task> observerFunction)
         {
-            _asyncObserverFunctions = asyncObserverFunctions;
-            _asyncObserverFunction = asyncObserverFunction;
+            _asyncObserverFunctions = observerFunctions;
+            _asyncObserverFunction = observerFunction;
         }
 
         public void Dispose()
@@ -294,10 +193,4 @@ namespace RaaLabs.Edge.Modules.EventHandling
 
     public interface IEventHandler { }
 
-    public interface IEventPropagator<in T>
-        where T : IEvent
-    {
-        public void PropagateEvent(T @event, ISet<object> visitedHandlers);
-        public Task PropagateEventAsync(T @event, ISet<object> visitedHandlers);
-    }
 }
