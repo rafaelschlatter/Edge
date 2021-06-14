@@ -49,9 +49,21 @@ namespace RaaLabs.Edge.Modules.Scheduling
             _scheduler.JobFactory = _jobFactory;
             await _scheduler.Start();
 
+            SetupSchedulingForAllTypes();
+
             var scheduled = _scheduledJobs.Select(async job => await _scheduler.ScheduleJob(job.detail, job.trigger));
             var started = await Task.WhenAll(scheduled.ToArray());
             _logger.Information($"Scheduled {started.Length} jobs");
+        }
+
+        private void SetupSchedulingForAllTypes()
+        {
+            var allEventTypes = _scope.Resolve<EventHandler<IScheduledEvent>>().GetSubtypes();
+            foreach (var eventType in allEventTypes)
+            {
+                var setupMethod = GetType().GetMethod("SetupSchedulingForType", BindingFlags.Public | BindingFlags.Instance).MakeGenericMethod(eventType);
+                setupMethod.Invoke(this, null);
+            }
         }
 
         /// <summary>

@@ -2,13 +2,18 @@ using Autofac;
 using Autofac.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
+namespace RaaLabs.Edge.Modules.EventHandling.Specs.Drivers
 {
     public class ApplicationContext
     {
         public ApplicationBuilder ApplicationBuilder { get; private set; }
         public Application Application { get; private set; }
+
+        public Task RunningApplication { get; private set; }
 
         public ILifetimeScope Scope { get; private set; }
 
@@ -30,20 +35,9 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
             ApplicationBuilder.WithType<T>();
         }
 
-        public void WithSingletonType<T>() where T : new()
-        {
-            ApplicationBuilder.WithSingletonType<T, T>();
-        }
-
         public void WithHandler<T>()
         {
             ApplicationBuilder.WithHandler<T>();
-        }
-
-        public void WithInstance<T>(T instance)
-            where T : class
-        {
-            ApplicationBuilder.WithManualRegistration(builder => builder.RegisterInstance(instance).AsSelf().AsImplementedInterfaces());
         }
 
         public void Build()
@@ -53,8 +47,7 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Drivers
 
         public ILifetimeScope StartScope()
         {
-            var container = Application.Container;
-            Scope = container.BeginLifetimeScope();
+            Scope = Application.BuildRuntimeScope();
 
             return Scope;
         }

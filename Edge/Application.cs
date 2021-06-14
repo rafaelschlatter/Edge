@@ -17,6 +17,12 @@ namespace RaaLabs.Edge
         /// </summary>
         public IContainer Container { get; }
         private readonly List<Type> _handlers;
+        private List<Task> _runningTasks;
+
+        /// <summary>
+        /// The runtime scope for the application
+        /// </summary>
+        public ILifetimeScope RuntimeScope { get; private set; }
 
         /// <summary>
         /// 
@@ -35,23 +41,19 @@ namespace RaaLabs.Edge
         /// <returns></returns>
         public async Task Run()
         {
-            using var scope = Container.BeginLifetimeScope();
-            var logger = scope.Resolve<Serilog.ILogger>();
+            Startup();
+            var logger = RuntimeScope.Resolve<Serilog.ILogger>();
 
             logger.Information("Starting up handlers...");
 
             // Instantiate all handlers. Assigned to a variable to ensure they are not removed by the Garbage Collector.
-            var handlers = _handlers.Select(handlerType => scope.Resolve(handlerType)).ToList();
+            var handlers = _handlers.Select(handlerType => RuntimeScope.Resolve(handlerType)).ToList();
             logger.Information("Handlers started.");
-            logger.Information("Starting up tasks...");
-            var tasks = scope.Resolve<IEnumerable<IRunAsync>>();
-            var runningTasks = tasks
-                .Select(async task => await task.Run())
-                .ToList();
 
-            logger.Information("Tasks started.");
-
-            await Task.WhenAll(runningTasks);
+            if (_runningTasks.Count > 0)
+            {
+                await Task.WhenAll(_runningTasks);
+            }
 
             while (true)
             {
@@ -59,5 +61,88 @@ namespace RaaLabs.Edge
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Startup()
+        {
+            RuntimeScope = BuildRuntimeScope();
+
+            var logger = RuntimeScope.Resolve<Serilog.ILogger>();
+
+            logger.Information("Starting up tasks...");
+            var tasks = RuntimeScope.Resolve<IEnumerable<IRunAsync>>();
+            _runningTasks = tasks
+                .Select(async task => await task.Run())
+                .ToList();
+
+            logger.Information("Tasks started.");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ILifetimeScope BuildRuntimeScope()
+        {
+            var bootloaders = Container.Resolve<IEnumerable<IBootloader>>().ToHashSet();
+            
+            return BuildRuntimeScope(Container.BeginLifetimeScope(), bootloaders);
+        }
+
+        /// <summary>
+        /// Recursively build new runtime scopes while running all available bootloaders for each scope.
+        /// Once all bootloaders have completed, tag the current scope as "runtime" and return it.
+        /// </summary>
+        /// <param name="scope"></param>
+        /// <param name="bootloaders"></param>
+        /// <returns>The runtime scope of the application</returns>
+        private static ILifetimeScope BuildRuntimeScope(ILifetimeScope scope, ISet<IBootloader> bootloaders)
+        {
+            var logger = scope.Resolve<Serilog.ILogger>();
+
+            var readyBootloaders = bootloaders.Where(b => b.Status == Status.Ready).ToList();
+            var waitingBootloaders = bootloaders.Where(b => b.Status == Status.Waiting).ToList();
+            var preRegistrationStageBootloaders = readyBootloaders.Where(b => b.GetType().IsAssignableTo<IPreRegistrationStage>()).Select(b => (IPreRegistrationStage) b).ToList();
+            var registrationStageBootloaders = readyBootloaders.Where(b => b.GetType().IsAssignableTo<IRegistrationStage>()).Select(b => (IRegistrationStage)b).ToList();
+            var postRegistrationStageBootloaders = readyBootloaders.Where(b => b.GetType().IsAssignableTo<IPostRegistrationStage>()).Select(b => (IPostRegistrationStage)b).ToList();
+
+            foreach (var preRegistrationBootloader in preRegistrationStageBootloaders)
+            {
+                preRegistrationBootloader.PreRegistration(scope);
+            }
+
+            var newScope = scope.BeginLifetimeScope(builder =>
+            {
+                foreach (var bootloader in registrationStageBootloaders)
+                {
+                    bootloader.RegistrationStage(builder);
+                }
+            });
+
+            foreach (var bootloader in postRegistrationStageBootloaders)
+            {
+                bootloader.PostRegistration(newScope);
+            }
+
+            foreach (var bootloader in readyBootloaders)
+            {
+                bootloaders.Remove(bootloader);
+            }
+
+            if (readyBootloaders.Count == 0 && waitingBootloaders.Count > 0)
+            {
+                throw new Exception("Some bootloaders never ran.");
+            }
+
+            if (bootloaders.Count > 0)
+            {
+                return BuildRuntimeScope(newScope, bootloaders);
+            }
+            else
+            {
+                return newScope.BeginLifetimeScope("runtime");
+            }
+        }
     }
 }
