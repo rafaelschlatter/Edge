@@ -29,7 +29,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub
         public Task SendEventAsync(string outputName, Message message)
         {
             var payload = Encoding.UTF8.GetString(message.GetBytes());
-            _logger.Information("Sending event to EdgeHub: {Payload}", payload);
+            _logger.Information("Sending event to EdgeHub endpoint '{Output}': {Payload}", outputName, payload);
 
             return _client.SendEventAsync(outputName, message);
         }
