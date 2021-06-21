@@ -16,10 +16,9 @@ using Newtonsoft.Json;
 using Serilog;
 using RaaLabs.Edge.Modules.EventHandling;
 
-namespace RaaLabs.Edge.Modules.EventHub.Client
+namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 {
-    class EventHubProcessor<T> : AzureBlobStorageEventProcessor<EventProcessorPartition>
-        where T : IEvent
+    class EventHubProcessor : AzureBlobStorageEventProcessor<EventProcessorPartition>
     {
         private readonly MessageReceived ReceivedMessage;
         public EventHubProcessor(MessageReceived messageReceived, int eventBatchMaximumCount, string consumerGroup, string fullyQualifiedNamespace, string eventHubName, BlobContainerClient storageContainer, EventProcessorOptions options = null) : base(eventBatchMaximumCount, consumerGroup, fullyQualifiedNamespace, eventHubName, storageContainer, options)
@@ -27,7 +26,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client
             ReceivedMessage = messageReceived;
         }
 
-        public static EventHubProcessor<T> FromEventHubName(string eventHubName, MessageReceived messageReceived)
+        public static async Task<EventHubProcessor> FromEventHubName(string eventHubName, MessageReceived messageReceived)
         {
             var environmentVariablePrefix = eventHubName.ToUpper().Replace("-","");
             var eventHubConnectionString = Environment.GetEnvironmentVariable(environmentVariablePrefix + "_CONNECTION_STRING");
@@ -46,12 +45,12 @@ namespace RaaLabs.Edge.Modules.EventHub.Client
             var exists = storageClient.Exists();
             if (exists)
             {
-                storageClient.DeleteIfExists();
-                Thread.Sleep(60000);
+                await storageClient.DeleteIfExistsAsync();
+                await Task.Delay(60000);
             }
-            storageClient.CreateIfNotExists();
+            await storageClient.CreateIfNotExistsAsync();
 
-            var processor = new EventHubProcessor<T>(
+            var processor = new EventHubProcessor(
                 messageReceived,
                 eventBatchMaximumCount, 
                 consumerGroup,
@@ -70,10 +69,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client
                 foreach (var eventArgs in events)
                 {
                     string data = Encoding.UTF8.GetString(eventArgs.EventBody.ToArray());
-                    var payload = JsonConvert.DeserializeObject<T>(data);
-
-                    await ReceivedMessage(payload);
-                    
+                    await ReceivedMessage(data);                    
                 }
                 if (events.Any())
                 {
@@ -112,7 +108,6 @@ namespace RaaLabs.Edge.Modules.EventHub.Client
             await Task.CompletedTask;
         }
 
-        public delegate Task MessageReceived(T message);
-            
+        public delegate Task MessageReceived(string message);
     }
 }

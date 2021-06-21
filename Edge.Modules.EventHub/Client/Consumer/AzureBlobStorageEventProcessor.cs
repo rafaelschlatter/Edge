@@ -18,7 +18,7 @@ using Azure.Messaging.EventHubs.Consumer;
 using Azure.Messaging.EventHubs.Primitives;
 
 
-namespace RaaLabs.Edge.Modules.EventHub.Client
+namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 {
     public abstract class AzureBlobStorageEventProcessor<TPartition> : EventProcessor<TPartition> where TPartition : EventProcessorPartition, new()
     {

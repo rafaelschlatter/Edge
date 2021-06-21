@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Edge.Modules.EventHandling
+namespace RaaLabs.Edge.Modules.EventHandling
 {
     public static class TypeExtensions
     {
