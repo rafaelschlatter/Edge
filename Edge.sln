@@ -36,6 +36,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.EventHub", "Ed
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.Timescaledb", "Edge.Modules.Timescaledb\Edge.Modules.Timescaledb.csproj", "{70DA761D-E19B-458E-B706-616117F8322C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edge.Modules.IotHub", "Edge.Modules.IotHub\Edge.Modules.IotHub.csproj", "{F089C4EB-2EBF-4C99-887D-6A13F3837AB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +100,10 @@ Global
 		{70DA761D-E19B-458E-B706-616117F8322C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70DA761D-E19B-458E-B706-616117F8322C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70DA761D-E19B-458E-B706-616117F8322C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F089C4EB-2EBF-4C99-887D-6A13F3837AB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F089C4EB-2EBF-4C99-887D-6A13F3837AB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F089C4EB-2EBF-4C99-887D-6A13F3837AB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F089C4EB-2EBF-4C99-887D-6A13F3837AB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
