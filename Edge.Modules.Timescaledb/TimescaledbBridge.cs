@@ -10,7 +10,6 @@ using Serilog;
 using Newtonsoft.Json;
 using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json.Serialization;
-using Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.Timescaledb
 {
