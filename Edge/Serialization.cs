@@ -13,7 +13,15 @@ namespace RaaLabs.Edge.Serialization
     /// </summary>
     /// <typeparam name="Type"></typeparam>
     /// <typeparam name="Receiver"></typeparam>
-    public interface ISerializer<in Type, Receiver>
+    public interface ISerializer<in Type, Receiver> : ISerializer<Type>
+    {
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="Type"></typeparam>
+    public interface ISerializer<in Type>
     {
         /// <summary>
         /// 
@@ -21,14 +29,6 @@ namespace RaaLabs.Edge.Serialization
         /// <param name="toSerialize"></param>
         /// <returns></returns>
         public string Serialize(Type toSerialize);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="Type"></typeparam>
-    public interface ISerializer<in Type> : ISerializer<Type, object>
-    {
     }
 
     /// <summary>
@@ -53,7 +53,15 @@ namespace RaaLabs.Edge.Serialization
     /// </summary>
     /// <typeparam name="Type"></typeparam>
     /// <typeparam name="Receiver"></typeparam>
-    public interface IDeserializer<out Type, Receiver>
+    public interface IDeserializer<out Type, Receiver> : IDeserializer<Type>
+    {
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="Type"></typeparam>
+    public interface IDeserializer<out Type>
     {
         /// <summary>
         /// 
@@ -61,14 +69,6 @@ namespace RaaLabs.Edge.Serialization
         /// <param name="toDeserialize"></param>
         /// <returns></returns>
         public Type Deserialize(string toDeserialize);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="Type"></typeparam>
-    public interface IDeserializer<out Type> : IDeserializer<Type, object>
-    {
     }
 
     /// <summary>
