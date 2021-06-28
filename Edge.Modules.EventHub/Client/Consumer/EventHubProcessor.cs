@@ -26,6 +26,37 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
             ReceivedMessage = messageReceived;
         }
 
+        public static async Task<EventHubProcessor> FromEventHubConnection(IEventHubConnection connection, MessageReceived messageReceived)
+        {
+            var options = new EventProcessorOptions
+            {
+                DefaultStartingPosition = EventPosition.FromEnqueuedTime(DateTimeOffset.UtcNow),
+                PrefetchCount = 800,
+                MaximumWaitTime = TimeSpan.FromSeconds(120)
+            };
+            var storageClient = new BlobContainerClient(connection.BlobStorageConnectionString, connection.BlobStorageContainerName);
+
+            var exists = storageClient.Exists();
+            if (exists)
+            {
+                await storageClient.DeleteIfExistsAsync();
+                await Task.Delay(60000);
+            }
+            await storageClient.CreateIfNotExistsAsync();
+
+            var processor = new EventHubProcessor(
+                messageReceived,
+                connection.MaxIncomingBatchCount,
+                connection.ConsumerGroup,
+                connection.ConnectionString,
+                connection.EventHubName,
+                storageClient,
+                options);
+
+            return processor;
+
+        }
+
         public static async Task<EventHubProcessor> FromEventHubName(string eventHubName, MessageReceived messageReceived)
         {
             var environmentVariablePrefix = eventHubName.ToUpper().Replace("-","");
