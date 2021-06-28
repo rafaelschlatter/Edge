@@ -84,6 +84,17 @@ namespace RaaLabs.Edge
         }
 
         /// <summary>
+        /// Register a singleton class for the runtime.
+        /// </summary>
+        /// <typeparam name="T">The class to register</typeparam>
+        /// <returns></returns>
+        public ApplicationBuilder WithSingletonType<T>()
+        {
+            _assemblies.Add(typeof(T).Assembly);
+            _builder.RegisterType<T>().AsSelf().AsImplementedInterfaces().InstancePerMatchingLifetimeScope("runtime");
+            return this;
+        }
+        /// <summary>
         /// Register a task for the application. The application will make sure that the task is executed
         /// when the application's Run() function is called.
         /// </summary>
