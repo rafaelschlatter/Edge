@@ -8,6 +8,9 @@ using System.Threading.Channels;
 using AzureEventHubsClient = Azure.Messaging.EventHubs.Producer.EventHubProducerClient;
 using Azure.Messaging.EventHubs;
 using Newtonsoft.Json;
+using Serilog;
+using RaaLabs.Edge.Serialization;
+using Autofac;
 
 namespace RaaLabs.Edge.Modules.EventHub.Client.Producer
 {
@@ -15,12 +18,21 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Producer
         where T : IEventHubOutgoingEvent
     {
         private readonly Channel<T> _eventsToProduce;
-        private readonly string _eventHubName;
+        private readonly IEventHubConnection _connection;
+        private readonly ILogger _logger;
+        private readonly ISerializer<T> _serializer;
 
-        public EventHubProducerClient()
+        public EventHubProducerClient(ILogger logger, ILifetimeScope scope)
         {
-            _eventHubName = typeof(T).GetAttribute<EventHubNameAttribute>()?.EventHubName;
+            _logger = logger;
+            var connectionType = typeof(T).GetAttribute<EventHubConnectionAttribute>().Connection;
+            _connection = (IEventHubConnection)scope.Resolve(connectionType);
             _eventsToProduce = Channel.CreateUnbounded<T>();
+
+            _serializer =
+                   (ISerializer<T>)scope.ResolveOptional(typeof(ISerializer<,>).MakeGenericType(typeof(T), connectionType))
+                ?? (ISerializer<T>)scope.ResolveOptional(typeof(ISerializer<>).MakeGenericType(typeof(T)))
+                ?? new JsonSerializer<T>();
         }
 
         public async Task HandleAsync(T @event)
@@ -30,9 +42,8 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Producer
 
         public async Task SetupClient()
         {
-            var environmentVariablePrefix = _eventHubName.ToUpper().Replace("-", "");
-            var eventHubConnectionString = Environment.GetEnvironmentVariable(environmentVariablePrefix + "_CONNECTION_STRING");
-            AzureEventHubsClient producer = new AzureEventHubsClient(eventHubConnectionString);
+            _logger.Information("Setting up EventHubProducerClient for event type '{EventType}'", typeof(T).Name);
+            AzureEventHubsClient producer = new AzureEventHubsClient(_connection.ConnectionString);
             var batchedEvents = await producer.CreateBatchAsync();
             var batchSize = 10;
 
@@ -40,7 +51,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Producer
             {
                 var @event = await _eventsToProduce.Reader.ReadAsync();
 
-                var serialized = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(@event));
+                var serialized = Encoding.UTF8.GetBytes(_serializer.Serialize(@event));
                 var data = new EventData(serialized);
                 batchedEvents.TryAdd(data);
 
