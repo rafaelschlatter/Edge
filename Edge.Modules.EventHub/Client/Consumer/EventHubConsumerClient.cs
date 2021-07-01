@@ -39,7 +39,6 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
             var incomingEvents = Channel.CreateUnbounded<T>();
             _eventHubProcessor = await EventHubProcessor.FromEventHubConnection(_connection, async message =>
             {
-                _logger.Information("Incoming message for event type '{EventType}'", typeof(T).Name);
                 var @event = _deserializer.Deserialize(message);
                 await incomingEvents.Writer.WriteAsync(@event);
             });

@@ -37,7 +37,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
             var storageClient = new BlobContainerClient(connection.BlobStorageConnectionString, connection.BlobStorageContainerName);
 
             var exists = storageClient.Exists();
-            if (exists)
+            if (exists && connection.DeleteCheckpointStore)
             {
                 await storageClient.DeleteIfExistsAsync();
                 await Task.Delay(60000);
