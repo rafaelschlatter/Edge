@@ -11,6 +11,6 @@ namespace RaaLabs.Edge.Modules.EventHub
         public string BlobStorageConnectionString { get; set; }
         public string BlobStorageContainerName { get; set; }
         public bool DeleteCheckpointStoreAtStartup { get; set; }
-        public EventProcessorOptions Options { get; set;}
+        public EventProcessorOptions ReaderOptions { get; set;}
     }
 }

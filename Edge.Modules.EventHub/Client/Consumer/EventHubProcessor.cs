@@ -28,7 +28,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 
         public static async Task<EventHubProcessor> FromEventHubConnection(IEventHubConnection connection, MessageReceived messageReceived)
         {
-            var options = connection.Options;
+            var options = connection.ReaderOptions;
             var storageClient = new BlobContainerClient(connection.BlobStorageConnectionString, connection.BlobStorageContainerName);
 
             var exists = storageClient.Exists();
