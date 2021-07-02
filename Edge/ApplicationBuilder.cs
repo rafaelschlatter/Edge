@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using Autofac;
 using System.Collections.Generic;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using Autofac.Features.ResolveAnything;
 using System.Reflection;
+using RaaLabs.Edge.Serialization;
 
 namespace RaaLabs.Edge
 {
@@ -108,6 +110,34 @@ namespace RaaLabs.Edge
         }
 
         /// <summary>
+        /// Registration method for both serializers and deserializers. The function will register the class as itself and
+        /// all its implemented ISerializer and IDeserializer types. If the receiver parameter is set, it will be used as
+        /// the name of the receiver for the serializer/deserializer.
+        /// </summary>
+        /// <typeparam name="T">The type to serialize or deserialize</typeparam>
+        /// <returns></returns>
+        public ApplicationBuilder WithSerializerDeserializer<T>(params Type[] receivers)
+        {
+            _assemblies.Add(typeof(T).Assembly);
+            var allInterfaces = typeof(T).GetInterfaces();
+            var implementedSerializers = allInterfaces.Where(ifce => ifce.IsAssignableTo<ISerializer>()).ToList();
+            var implementedDeserializers = allInterfaces.Where(ifce => ifce.IsAssignableTo<IDeserializer>()).ToList();
+
+            var serializerRegistrationBuilder = _builder.RegisterType<T>().AsSelf();
+            foreach (var serializerOrDeserializer in implementedSerializers.Concat(implementedDeserializers))
+            {
+                foreach (var receiver in receivers)
+                {
+                    serializerRegistrationBuilder = serializerRegistrationBuilder.Named(receiver.Name, serializerOrDeserializer);
+                }
+                serializerRegistrationBuilder = serializerRegistrationBuilder.As(serializerOrDeserializer);
+            }
+            serializerRegistrationBuilder.InstancePerMatchingLifetimeScope("runtime");
+
+            return this;
+        }
+
+        /// <summary>
         /// An escape hatch function to access the Autofac container builder directly through a lambda function.
         /// Shouldn't be required to use too often, but provided here just in case.
         /// </summary>
@@ -170,11 +200,10 @@ namespace RaaLabs.Edge
         private Serilog.Core.Logger CreateLogger()
         {
             var log = new LoggerConfiguration()
-                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
 
             return log;
         }
-
     }
 }

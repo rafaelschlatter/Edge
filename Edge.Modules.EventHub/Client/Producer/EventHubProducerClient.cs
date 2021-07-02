@@ -29,10 +29,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Producer
             _connection = (IEventHubConnection)scope.Resolve(connectionType);
             _eventsToProduce = Channel.CreateUnbounded<T>();
 
-            _serializer =
-                   (ISerializer<T>)scope.ResolveOptional(typeof(ISerializer<,>).MakeGenericType(typeof(T), connectionType))
-                ?? (ISerializer<T>)scope.ResolveOptional(typeof(ISerializer<>).MakeGenericType(typeof(T)))
-                ?? new JsonSerializer<T>();
+            _serializer = scope.ResolveSerializer<T>(connectionType);
         }
 
         public async Task HandleAsync(T @event)

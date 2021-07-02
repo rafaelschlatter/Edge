@@ -27,10 +27,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
             _logger = logger;
             var connection = typeof(T).GetAttribute<EventHubConnectionAttribute>();
             _connection = (IEventHubConnection)scope.Resolve(connection.Connection);
-            _deserializer =
-                   (IDeserializer<T>)scope.ResolveOptional(typeof(IDeserializer<,>).MakeGenericType(typeof(T), connection.Connection))
-                ?? (IDeserializer<T>)scope.ResolveOptional(typeof(IDeserializer<>).MakeGenericType(typeof(T)))
-                ?? new JsonDeserializer<T>();
+            _deserializer = scope.ResolveDeserializer<T>(connection.Connection);
         }
 
         public async Task SetupClient()
