@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Azure.Messaging.EventHubs.Primitives;
 
 namespace RaaLabs.Edge.Modules.EventHub
 {
@@ -14,6 +10,7 @@ namespace RaaLabs.Edge.Modules.EventHub
         public int MaxIncomingBatchCount { get; set; }
         public string BlobStorageConnectionString { get; set; }
         public string BlobStorageContainerName { get; set; }
-        public bool DeleteCheckpointStore { get; set; }
+        public bool DeleteCheckpointStoreAtStartup { get; set; }
+        public EventProcessorOptions ReaderOptions { get; set;}
     }
 }

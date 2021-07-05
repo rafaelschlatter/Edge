@@ -28,16 +28,11 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 
         public static async Task<EventHubProcessor> FromEventHubConnection(IEventHubConnection connection, MessageReceived messageReceived)
         {
-            var options = new EventProcessorOptions
-            {
-                DefaultStartingPosition = EventPosition.FromEnqueuedTime(DateTimeOffset.UtcNow),
-                PrefetchCount = 800,
-                MaximumWaitTime = TimeSpan.FromSeconds(120)
-            };
+            var options = connection.ReaderOptions;
             var storageClient = new BlobContainerClient(connection.BlobStorageConnectionString, connection.BlobStorageContainerName);
 
             var exists = storageClient.Exists();
-            if (exists && connection.DeleteCheckpointStore)
+            if (exists && connection.DeleteCheckpointStoreAtStartup)
             {
                 await storageClient.DeleteIfExistsAsync();
                 await Task.Delay(60000);
