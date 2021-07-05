@@ -1,17 +1,7 @@
-using Newtonsoft.Json;
 using RaaLabs.Edge.Modules.EventHandling;
-using System;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Serilog;
 using Autofac;
-using MQTTnet.Extensions.ManagedClient;
-using MQTTnet.Client.Options;
-using MQTTnet;
-using MQTTnet.Client.Receiving;
-using MQTTnet.Protocol;
-using RaaLabs.Edge.Serialization;
+using System.Text.RegularExpressions;
 
 namespace RaaLabs.Edge.Modules.Mqtt.Client.Consumer
 {
@@ -22,30 +12,25 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client.Consumer
 
         private readonly IMqttBrokerClient _brokerClient;
         private readonly string _topic;
-        private readonly IDeserializer<T> _deserializer;
+        private readonly MqttMessageConverter<T> _messageConverter;
 
-        private readonly ILogger _logger;
+        private readonly Regex _topicTokenPattern = new(@"{(?<token>[\d\w_]+)}");
 
-        public MqttConsumerClient(ILogger logger, ILifetimeScope scope)
+        public MqttConsumerClient(ILifetimeScope scope, MqttMessageConverter<T> messageConverter)
         {
-            _logger = logger;
             var attr = typeof(T).GetAttribute<MqttBrokerConnectionAttribute>();
             var brokerType = attr.BrokerConnection;
-            var connection = (IMqttBrokerConnection)scope.Resolve(brokerType);
             _brokerClient = (IMqttBrokerClient)scope.Resolve(typeof(IMqttBrokerClient<>).MakeGenericType(brokerType));
+            _messageConverter = messageConverter;
 
-            _topic = attr.Topic;
-
-            _deserializer = scope.ResolveDeserializer<T>(brokerType);
+            _topic = _topicTokenPattern.Replace(attr.Topic, "+");
         }
 
         public async Task SetupClient()
         {
-
             await _brokerClient.SubscribeToTopic(_topic, async (client, message) =>
             {
-                var payload = message.Payload;
-                var @event = _deserializer.Deserialize(Encoding.UTF8.GetString(payload));
+                var @event = _messageConverter.ToEvent(message);
                 await EventReceived(@event);
             });
         }

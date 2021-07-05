@@ -28,6 +28,11 @@ namespace RaaLabs.Edge.Modules.Mqtt
                 .As(typeof(IMqttProducerClient<>))
                 .InstancePerRuntime();
 
+            builder.RegisterGeneric(typeof(MqttMessageConverter<>))
+                .AsSelf()
+                .As(typeof(IMqttMessageConverter<>))
+                .InstancePerRuntime();
+
             builder.RegisterBridge<MqttBridge>();
         }
     }
