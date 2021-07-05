@@ -13,14 +13,12 @@ namespace RaaLabs.Edge.Modules.IotHub.Client.Producer
     {
         private readonly IIotHubClient _client;
         private readonly ISerializer<T> _serializer;
-        private readonly IIotHubConnection _connection;
         private readonly Channel<T> _pendingOutgoingEvents;
 
         public IotHubProducerClient(ILifetimeScope scope)
         {
             _pendingOutgoingEvents = Channel.CreateUnbounded<T>();
             var connectionType = typeof(T).GetAttribute<IotHubConnectionAttribute>().Connection;
-            _connection = (IIotHubConnection)scope.Resolve(connectionType);
 
             _serializer = scope.ResolveSerializer<T>(connectionType);
 

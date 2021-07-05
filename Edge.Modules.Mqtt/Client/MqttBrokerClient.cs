@@ -25,10 +25,10 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
         private readonly ILogger _logger;
 
         private IManagedMqttClient _client;
-        private Channel<(string topic, MessageReceivedDelegate handler)> _pendingSubscriptions;
-        private Channel<MqttApplicationMessage> _pendingOutgoingMessages;
+        private readonly Channel<(string topic, MessageReceivedDelegate handler)> _pendingSubscriptions;
+        private readonly Channel<MqttApplicationMessage> _pendingOutgoingMessages;
 
-        private ConcurrentBag<(string topicPattern, MessageReceivedDelegate handler)> _routes;
+        private readonly ConcurrentBag<(string topicPattern, MessageReceivedDelegate handler)> _routes;
 
         public MqttBrokerClient(T broker, ILogger logger)
         {

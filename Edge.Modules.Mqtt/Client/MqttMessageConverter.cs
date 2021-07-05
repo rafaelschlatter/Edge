@@ -2,13 +2,7 @@ using Autofac;
 using MQTTnet;
 using RaaLabs.Edge.Modules.EventHandling;
 using RaaLabs.Edge.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Modules.Mqtt.Client
 {
@@ -16,7 +10,6 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
     {
         private readonly ISerializer<T> _serializer;
         private readonly IDeserializer<T> _deserializer;
-        private readonly string _topic;
 
         private readonly TemplatedString<T> _topicTemplate;
 
@@ -24,8 +17,7 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
         {
             var attribute = typeof(T).GetAttribute<MqttBrokerConnectionAttribute>();
             var brokerType = attribute.BrokerConnection;
-            _topic = attribute.Topic;
-            _topicTemplate = new TemplatedString<T>(_topic.Replace("+", "{_}"));
+            _topicTemplate = new TemplatedString<T>(attribute.Topic.Replace("+", "{_}"));
             _serializer = scope.ResolveSerializer<T>(brokerType);
             _deserializer = scope.ResolveDeserializer<T>(brokerType);
         }

@@ -20,7 +20,6 @@ namespace RaaLabs.Edge.Modules.IotHub.Client.Consumer
         public IotHubConsumerClient(ILogger logger, ILifetimeScope scope)
         {
             var connectionType = typeof(T).GetAttribute<IotHubConnectionAttribute>().Connection;
-            var connection = (IIotHubConnection)scope.Resolve(connectionType);
             _client = (IIotHubClient)scope.Resolve(typeof(IIotHubClient<>).MakeGenericType(connectionType));
 
             _deserializer = scope.ResolveDeserializer<T>(connectionType);

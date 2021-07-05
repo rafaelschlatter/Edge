@@ -16,12 +16,8 @@ namespace RaaLabs.Edge.Modules.Mqtt
         private readonly List<IMqttProducerClient> _producerClients;
         private readonly List<IMqttBrokerClient> _brokerClients;
 
-        private readonly ILogger _logger;
-
         public MqttBridge(ILogger logger, ILifetimeScope scope, EventHandling.EventHandler<IMqttIncomingEvent> incomingHandler, EventHandling.EventHandler<IMqttOutgoingEvent> outgoingHandler)
         {
-            _logger = logger;
-
             var incomingEventTypes = incomingHandler.GetSubtypes();
             var outgoingEventTypes = outgoingHandler.GetSubtypes();
 

@@ -19,9 +19,8 @@ namespace RaaLabs.Edge.Modules.IotHub.Client
         private readonly T _connection;
         private readonly ILogger _logger;
 
-        private DeviceClient _client;
-        private Channel<MessageReceivedDelegate> _pendingSubscriptions;
-        private Channel<Message> _pendingOutgoingMessages;
+        private readonly Channel<MessageReceivedDelegate> _pendingSubscriptions;
+        private readonly Channel<Message> _pendingOutgoingMessages;
 
         public IotHubClient(T connection, ILogger logger)
         {
@@ -33,14 +32,14 @@ namespace RaaLabs.Edge.Modules.IotHub.Client
 
         public async Task SetupClient()
         {
-            _client = DeviceClient.CreateFromConnectionString(_connection.ConnectionString, TransportType.Amqp);
+            var client = DeviceClient.CreateFromConnectionString(_connection.ConnectionString, TransportType.Amqp);
 
-            _client.SetConnectionStatusChangesHandler(ClientConnectionChangedHandler);
+            client.SetConnectionStatusChangesHandler(ClientConnectionChangedHandler);
 
-            var setupSubscribingTask = SetupSubscribing(_client);
-            var setupProducingTask = SetupProducing(_client);
+            var setupSubscribingTask = SetupSubscribing(client);
+            var setupProducingTask = SetupProducing(client);
 
-            await _client.OpenAsync();
+            await client.OpenAsync();
 
             await TaskHelpers.WhenAllWithLoggedExceptions(_logger, new List<Task> { setupSubscribingTask, setupProducingTask });
         }
@@ -87,7 +86,7 @@ namespace RaaLabs.Edge.Modules.IotHub.Client
                 case ConnectionStatus.Disconnected_Retrying:
                     _logger.Error("Disconnected from IotHub '{IotHub}', but trying to reconnect. Reason: '{Reason}'", typeof(T).Name, reason);
                     break;
-            };
+            }
         }
 
         public async Task SendMessageAsync(Message message)
