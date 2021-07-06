@@ -11,8 +11,6 @@ namespace RaaLabs.Edge.Modules.IotHub
 {
     class IotHubBridge : IBridge
     {
-        public event AsyncEventEmitter<IIotHubIncomingEvent> IncomingEvent;
-        
         private readonly List<IIotHubConsumerClient> _consumerClients;
         private readonly List<IIotHubProducerClient> _producerClients;
 

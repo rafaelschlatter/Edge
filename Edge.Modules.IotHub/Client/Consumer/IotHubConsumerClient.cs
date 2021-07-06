@@ -1,10 +1,10 @@
-using Newtonsoft.Json;
+using RaaLabs.Edge.Serialization;
 using RaaLabs.Edge.Modules.EventHandling;
-using System;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Client;
 using Serilog;
+using Autofac;
+using System.Threading.Channels;
 
 namespace RaaLabs.Edge.Modules.IotHub.Client.Consumer
 {
@@ -13,38 +13,38 @@ namespace RaaLabs.Edge.Modules.IotHub.Client.Consumer
     {
         public event AsyncEventEmitter<T> EventReceived;
 
-        private readonly string _iotHubName;
         private readonly ILogger _logger;
+        private readonly IIotHubClient _client;
+        private readonly IDeserializer<T> _deserializer;
 
-        public IotHubConsumerClient(ILogger logger)
+        public IotHubConsumerClient(ILogger logger, ILifetimeScope scope)
         {
-            _iotHubName = typeof(T).GetAttribute<IotHubNameAttribute>()?.IotHubName;
+            var connectionType = typeof(T).GetAttribute<IotHubConnectionAttribute>().Connection;
+            _client = (IIotHubClient)scope.Resolve(typeof(IIotHubClient<>).MakeGenericType(connectionType));
+
+            _deserializer = scope.ResolveDeserializer<T>(connectionType);
+
             _logger = logger;
         }
 
         public async Task SetupClient()
         {
-            var environmentVariablePrefix = _iotHubName.ToUpper().Replace("-", "");
-            var iotHubConnectionString = Environment.GetEnvironmentVariable(environmentVariablePrefix + "_CONNECTION_STRING");
+            _logger.Information("Setting up consumer client for event type '{EventType}'", typeof(T).Name);
+            var incomingEvents = Channel.CreateUnbounded<T>();
 
-            var consumer = DeviceClient.CreateFromConnectionString(iotHubConnectionString, TransportType.Amqp);
-            await consumer.OpenAsync();
-
-            while(true)
+            await _client.Subscribe(async message =>
             {
-                try
-                {
-                    var message = await consumer.ReceiveAsync();
-                    var messageBytes = message.GetBytes();
-                    var messageString = Encoding.UTF8.GetString(messageBytes);
+                var messageBytes = message.GetBytes();
+                var messageString = Encoding.UTF8.GetString(messageBytes);
 
-                    var @event = JsonConvert.DeserializeObject<T>(messageString);
-                    await EventReceived(@event);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Warning("Exception while reading from IotHub {IotHubName}: '{Message}'", _iotHubName, ex.Message);
-                }
+                var @event = _deserializer.Deserialize(messageString);
+                await incomingEvents.Writer.WriteAsync(@event);
+            });
+
+            while (true)
+            {
+                var @event = await incomingEvents.Reader.ReadAsync();
+                await EventReceived(@event);
             }
         }
     }

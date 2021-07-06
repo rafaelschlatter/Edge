@@ -1,54 +1,44 @@
 using RaaLabs.Edge.Modules.EventHandling;
-using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Channels;
 using Microsoft.Azure.Devices.Client;
-using Newtonsoft.Json;
+using Autofac;
+using RaaLabs.Edge.Serialization;
 
 namespace RaaLabs.Edge.Modules.IotHub.Client.Producer
 {
     class IotHubProducerClient<T> : IIotHubProducerClient<T>, IConsumeEventAsync<T>
         where T : IIotHubOutgoingEvent
     {
-        private readonly Channel<T> _eventsToProduce;
-        private readonly string _iotHubName;
+        private readonly IIotHubClient _client;
+        private readonly ISerializer<T> _serializer;
+        private readonly Channel<T> _pendingOutgoingEvents;
 
-        public IotHubProducerClient()
+        public IotHubProducerClient(ILifetimeScope scope)
         {
-            _iotHubName = typeof(T).GetAttribute<IotHubNameAttribute>()?.IotHubName;
-            _eventsToProduce = Channel.CreateUnbounded<T>();
+            _pendingOutgoingEvents = Channel.CreateUnbounded<T>();
+            var connectionType = typeof(T).GetAttribute<IotHubConnectionAttribute>().Connection;
+
+            _serializer = scope.ResolveSerializer<T>(connectionType);
+
+            _client = (IIotHubClient)scope.Resolve(typeof(IIotHubClient<>).MakeGenericType(connectionType));
         }
 
         public async Task HandleAsync(T @event)
         {
-            await _eventsToProduce.Writer.WriteAsync(@event);
+            await _pendingOutgoingEvents.Writer.WriteAsync(@event);
+            var serializedEvent = _serializer.Serialize(@event);
+            await _client.SendMessageAsync(new Message(Encoding.UTF8.GetBytes(serializedEvent)));
         }
 
         public async Task SetupClient()
         {
-            var environmentVariablePrefix = _iotHubName.ToUpper().Replace("-", "");
-            var iotHubConnectionString = Environment.GetEnvironmentVariable(environmentVariablePrefix + "_CONNECTION_STRING");
-
-            var producer = DeviceClient.CreateFromConnectionString(iotHubConnectionString, TransportType.Amqp);
-
-            var batchedEvents = new List<Message>();
-            var batchSize = 64;
-
             while (true)
             {
-                var @event = await _eventsToProduce.Reader.ReadAsync();
-
-                var serialized = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(@event));
-                var data = new Message(serialized);
-                batchedEvents.Add(data);
-
-                if (batchedEvents.Count >= batchSize)
-                {
-                    await producer.SendEventBatchAsync(batchedEvents);
-                    batchedEvents = new List<Message>();
-                }
+                var @event = await _pendingOutgoingEvents.Reader.ReadAsync();
+                var serializedEvent = _serializer.Serialize(@event);
+                await _client.SendMessageAsync(new Message(Encoding.UTF8.GetBytes(serializedEvent)));
             }
         }
     }
