@@ -289,3 +289,6 @@ Artifacts/
 Coverage
 
 *.feature.cs
+
+#Docfx
+Doc/_site
