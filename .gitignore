@@ -292,3 +292,4 @@ Coverage
 
 #Docfx
 Doc/_site
+Doc/api/**.yml
