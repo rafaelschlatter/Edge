@@ -4,12 +4,12 @@
       "src": [
         {
           "files": [
-            "Edge.Modules.Configuration.csproj"
+            "**.csproj"
           ],
-          "src": "../Edge.Modules.Configuration"
+          "cwd": ".."
         }
       ],
-      "dest": "api/Edge.Modules.Configuration",
+      "dest": "api",
       "disableGitFeatures": false,
       "disableDefaultFilter": false
     }
