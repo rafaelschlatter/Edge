@@ -15,7 +15,7 @@ jobs:
     - uses: nikeee/docfx-action@v1.0.0
       name: Build Documentation
       with:
-        args: Docs/docfx.json
+        args: Doc/docfx.json
     - name: Publish
       uses: peaceiris/actions-gh-pages@v3
       with:
