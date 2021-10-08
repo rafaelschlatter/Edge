@@ -1,5 +1,6 @@
 - name: Modules
   href: articles/
+  homepage: articles/README.md
 - name: Api Documentation
   href: api/
   homepage: api/index.md

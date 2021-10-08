@@ -14,7 +14,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Prepare conceptual files
       run: |
-        mv README.md Doc/articles/Edge.README.md
+        mv README.md Doc/articles/README.md
+        mv Edge/README.md Doc/articles/Edge.README.md
         mv Edge.Modules.Configuration/README.md Doc/articles/Edge.Modules.Configuration.README.md
         mv Edge.Modules.EdgeHub/README.md Doc/articles/Edge.Modules.EdgeHub.README.md
         mv Edge.Modules.EventHandling/README.md Doc/articles/Edge.Modules.EventHandling.README.md
