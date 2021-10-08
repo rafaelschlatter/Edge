@@ -12,6 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Prepare conceptual files
+      run: |
+        mv README.md Doc/articles/Edge.README.md
+        mv Edge.Modules.Configuration/README.md Doc/articles/Edge.Modules.Configuration.README.md
+        mv Edge.Modules.EdgeHub/README.md Doc/articles/Edge.Modules.EdgeHub.README.md
+        mv Edge.Modules.EventHandling/README.md Doc/articles/Edge.Modules.EventHandling.README.md
+        mv Edge.Modules.Scheduling/README.md Doc/articles/Edge.Modules.Scheduling.README.md
+        mv Edge.Testing/README.md Doc/articles/Edge.Testing.README.md
     - uses: nikeee/docfx-action@v1.0.0
       name: Build Documentation
       with:
