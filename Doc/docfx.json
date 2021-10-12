@@ -35,7 +35,8 @@
     "resource": [
       {
         "files": [
-          "images/**"
+          "images/**",
+          "logo.svg"
         ]
       }
     ],
@@ -57,7 +58,18 @@
       "default",
       "templates/material"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "ExtractSearchIndex"
+    ],
+    "globalMetadata": {
+      "_appFooter": "<span>Copyright © 2021 Raa Labs<br>Generated with <strong>DocFX</strong></span>",
+      "_appTitle": "DocFX Material",
+      "_enableSearch": "true",
+      "_gitContribute": {
+        "repo": "https://github.com/RaaLabs/Edge"
+      },
+      "_gitUrlPattern": "github"
+    },
     "markdownEngineName": "markdig",
     "noLangKeyword": false,
     "keepFileLink": false,
