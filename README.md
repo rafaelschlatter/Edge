@@ -1,5 +1,6 @@
 # RaaLabs Edge Framework
-
+[![.NET 5.0](https://github.com/RaaLabs/Edge/actions/workflows/dotnet-library.yml/badge.svg)](https://github.com/RaaLabs/Edge/actions/workflows/dotnet-library.yml)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Edge&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=RaaLabs_Edge)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=RaaLabs_Edge&metric=coverage)](https://sonarcloud.io/dashboard?id=RaaLabs_Edge)
 
 # About

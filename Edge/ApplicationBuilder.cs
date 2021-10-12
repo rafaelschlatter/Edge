@@ -122,11 +122,10 @@ namespace RaaLabs.Edge
         private Serilog.Core.Logger CreateLogger()
         {
             var log = new LoggerConfiguration()
-                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
 
             return log;
         }
-
     }
 }
