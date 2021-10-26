@@ -18,7 +18,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// For normal development, this class can be ignored by the developer.
     /// </summary>
     /// <typeparam name="T">the event type</typeparam>
-    public class EventHandler<T> : IEventHandler, IEventPropagator<T>
+    public class EventHandler<T> : IEventHandler<T>, IEventPropagator<T>
         where T: IEvent
     {
         private readonly IList<IConsumeEvent<T>> _observers;
@@ -40,7 +40,13 @@ namespace RaaLabs.Edge.Modules.EventHandling
             _subtypeHandlers = new Dictionary<Type, Action<T, ISet<object>>>();
             _asyncSubtypeHandlers = new Dictionary<Type, Func<T, ISet<object>, Task>>();
 
-            _supertypeHandlers = typeof(T).GetInterfaces().Select(iface =>
+            // If T is an event implementing ISomeEvent, and ISomeEvent implements IEvent,
+            // we don't want IEvent to be a supertype of T, but rather of ISomeEvent, because this would
+            // cause IEvent to be triggered twice for this event.
+            // GetImmediateInterfaces would in this case return only ISomeEvent, and not IEvent.
+            var superTypes = typeof(T).GetImmediateInterfaces();
+
+            _supertypeHandlers = superTypes.Select(iface =>
             {
                 var initializeSupertypeEventHandlerMethod = GetType().GetMethod("InitializeSupertypeEventHandler", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).MakeGenericMethod(typeof(T), iface);
                 return (IEventPropagator<T>)initializeSupertypeEventHandlerMethod.Invoke(null, new object[] { scope, this });
@@ -292,7 +298,23 @@ namespace RaaLabs.Edge.Modules.EventHandling
         }
     }
 
-    public interface IEventHandler { }
+    public interface IEventHandler
+    {
+        public ISet<Type> GetSubtypes();
+    }
+
+    public interface IEventHandler<T> : IEventHandler
+        where T : IEvent
+    {
+        public IDisposable Subscribe(IConsumeEvent<T> observer);
+        public IDisposable Subscribe(IConsumeEventAsync<T> observer);
+        public IDisposable Subscribe(Action<T> observerFunction);
+        public IDisposable Subscribe(Func<T, Task> observerFunction);
+
+        public void Produce(T @event);
+        public Task ProduceAsync(T @event);
+
+    }
 
     public interface IEventPropagator<in T>
         where T : IEvent
