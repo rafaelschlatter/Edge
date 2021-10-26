@@ -20,14 +20,18 @@ namespace RaaLabs.Edge.Modules.EventHandling
 
         public void PreRegistration(ILifetimeScope oldScope)
         {
+            var registeredEventTypes = oldScope.ResolveNamed<IEnumerable<Type>>("EventType");
             var assemblies = oldScope.Resolve<IEnumerable<Assembly>>();
             var allTypes = assemblies
                 .SelectMany(assembly => assembly.GetTypes())
+                .Concat(registeredEventTypes)
                 .Distinct()
                 .ToList();
 
             _allEventTypes = allTypes
                 .Where(type => type.IsAssignableTo<IEvent>())
+                .SelectMany(type => type.GetInterfaces().Where(ifce => ifce.IsAssignableTo<IEvent>()).Append(type))      // Ensure that all inherited interfaces are also registered, even if they are not directly registered.
+                .Distinct()
                 .ToList();
         }
 
@@ -35,7 +39,11 @@ namespace RaaLabs.Edge.Modules.EventHandling
         {
             foreach (var type in _allEventTypes)
             {
-                builder.RegisterType(typeof(EventHandler<>).MakeGenericType(type)).AsSelf().As<IEventHandler>().SingleInstance();
+                builder.RegisterType(typeof(EventHandler<>).MakeGenericType(type))
+                    .AsSelf()
+                    .As<IEventHandler>()
+                    .As(typeof(IEventHandler<>).MakeGenericType(type))
+                    .SingleInstance();
             }
 
             Status = Status.Complete;
