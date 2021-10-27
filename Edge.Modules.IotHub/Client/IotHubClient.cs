@@ -1,16 +1,7 @@
-using RaaLabs.Edge.Modules.EventHandling;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Serilog;
-using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Channels;
 using Microsoft.Azure.Devices.Client;
-using RaaLabs.Edge;
+using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.IotHub.Client
 {
@@ -19,55 +10,31 @@ namespace RaaLabs.Edge.Modules.IotHub.Client
         private readonly T _connection;
         private readonly ILogger _logger;
 
-        private readonly Channel<MessageReceivedDelegate> _pendingSubscriptions;
-        private readonly Channel<Message> _pendingOutgoingMessages;
+        private DeviceClient _client;
+
+        private MessageReceivedDelegate MessageReceived;
+
+        public event DataReceivedDelegate<Message> OnDataReceived;
 
         public IotHubClient(T connection, ILogger logger)
         {
             _connection = connection;
             _logger = logger;
-            _pendingSubscriptions = Channel.CreateUnbounded<MessageReceivedDelegate>();
-            _pendingOutgoingMessages = Channel.CreateUnbounded<Message>();
         }
 
-        public async Task SetupClient()
+        public async Task SetupClient(MessageReceivedDelegate eventHandler)
         {
-            var client = DeviceClient.CreateFromConnectionString(_connection.ConnectionString, TransportType.Amqp);
+            MessageReceived = eventHandler;
 
-            client.SetConnectionStatusChangesHandler(ClientConnectionChangedHandler);
+            _client = DeviceClient.CreateFromConnectionString(_connection.ConnectionString, TransportType.Amqp);
 
-            var setupSubscribingTask = SetupSubscribing(client);
-            var setupProducingTask = SetupProducing(client);
+            _client.SetConnectionStatusChangesHandler(ClientConnectionChangedHandler);
 
-            await client.OpenAsync();
-
-            await TaskHelpers.WhenAllWithLoggedExceptions(_logger, new List<Task> { setupSubscribingTask, setupProducingTask });
-        }
-
-        private async Task SetupSubscribing(DeviceClient client)
-        {
-            var subscribers = new ConcurrentBag<MessageReceivedDelegate>();
-
-            await client.SetReceiveMessageHandlerAsync(async (message, ctx) =>
+            await _client.OpenAsync();
+            await _client.SetReceiveMessageHandlerAsync(async (message, ctx) =>
             {
-                var allInvocations = subscribers.Select(async subscriber => await subscriber(message)).ToList();
-                await TaskHelpers.WhenAllWithLoggedExceptions(_logger, allInvocations);
+                await MessageReceived(typeof(T), message);
             }, null);
-
-            while (true)
-            {
-                var subscription = await _pendingSubscriptions.Reader.ReadAsync();
-                subscribers.Add(subscription);
-            }
-        }
-
-        private async Task SetupProducing(DeviceClient client)
-        {
-            while (true)
-            {
-                var message = await _pendingOutgoingMessages.Reader.ReadAsync();
-                await client.SendEventAsync(message);
-            }
         }
 
         private void ClientConnectionChangedHandler(ConnectionStatus status, ConnectionStatusChangeReason reason)
@@ -91,12 +58,17 @@ namespace RaaLabs.Edge.Modules.IotHub.Client
 
         public async Task SendMessageAsync(Message message)
         {
-            await _pendingOutgoingMessages.Writer.WriteAsync(message);
+            await _client.SendEventAsync(message);
         }
 
-        public async Task Subscribe(MessageReceivedDelegate eventHandler)
+        public Task SendAsync(Message data)
         {
-            await _pendingSubscriptions.Writer.WriteAsync(eventHandler);
+            throw new System.NotImplementedException();
+        }
+
+        public Task Connect()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
