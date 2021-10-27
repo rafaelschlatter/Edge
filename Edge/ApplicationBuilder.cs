@@ -15,9 +15,20 @@ namespace RaaLabs.Edge
     /// </summary>
     public class ApplicationBuilder
     {
-        private readonly ContainerBuilder _builder;
-        private readonly List<Type> _handlers;
-        private readonly ISet<Assembly> _assemblies;
+        /// <summary>
+        /// 
+        /// </summary>
+        protected readonly ContainerBuilder _builder;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected readonly List<Type> _handlers;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected readonly ISet<Assembly> _assemblies;
 
         /// <summary>
         /// 
@@ -182,7 +193,7 @@ namespace RaaLabs.Edge
         /// Build the application.
         /// </summary>
         /// <returns>The application containing all tasks and handlers to start up</returns>
-        public Application Build()
+        public virtual Application Build()
         {
             foreach (var assembly in _assemblies)
             {
