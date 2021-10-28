@@ -5,36 +5,19 @@ using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.IotHub.Client
 {
-    class IotHubClient<T> : IIotHubClient<T> where T : IIotHubConnection
+    class IotHubClient<ConnectionType> : IIotHubClient<ConnectionType> where ConnectionType : IIotHubConnection
     {
-        private readonly T _connection;
+        private readonly ConnectionType _connection;
         private readonly ILogger _logger;
 
         private DeviceClient _client;
 
-        private MessageReceivedDelegate MessageReceived;
-
         public event DataReceivedDelegate<Message> OnDataReceived;
 
-        public IotHubClient(T connection, ILogger logger)
+        public IotHubClient(ConnectionType connection, ILogger logger)
         {
             _connection = connection;
             _logger = logger;
-        }
-
-        public async Task SetupClient(MessageReceivedDelegate eventHandler)
-        {
-            MessageReceived = eventHandler;
-
-            _client = DeviceClient.CreateFromConnectionString(_connection.ConnectionString, TransportType.Amqp);
-
-            _client.SetConnectionStatusChangesHandler(ClientConnectionChangedHandler);
-
-            await _client.OpenAsync();
-            await _client.SetReceiveMessageHandlerAsync(async (message, ctx) =>
-            {
-                await MessageReceived(typeof(T), message);
-            }, null);
         }
 
         private void ClientConnectionChangedHandler(ConnectionStatus status, ConnectionStatusChangeReason reason)
@@ -42,33 +25,36 @@ namespace RaaLabs.Edge.Modules.IotHub.Client
             switch (status)
             {
                 case ConnectionStatus.Disconnected:
-                    _logger.Error("Disconnected from IotHub '{IotHub}'. Reason: '{Reason}'", typeof(T).Name, reason);
+                    _logger.Error("Disconnected from IotHub '{IotHub}'. Reason: '{Reason}'", typeof(ConnectionType).Name, reason);
                     break;
                 case ConnectionStatus.Connected:
-                    _logger.Information("Connected to IotHub '{IotHub}'", typeof(T).Name, reason);
+                    _logger.Information("Connected to IotHub '{IotHub}'", typeof(ConnectionType).Name, reason);
                     break;
                 case ConnectionStatus.Disabled:
-                    _logger.Error("IotHub '{IotHub}' is disabled. Reason: '{Reason}'", typeof(T).Name, reason);
+                    _logger.Error("IotHub '{IotHub}' is disabled. Reason: '{Reason}'", typeof(ConnectionType).Name, reason);
                     break;
                 case ConnectionStatus.Disconnected_Retrying:
-                    _logger.Error("Disconnected from IotHub '{IotHub}', but trying to reconnect. Reason: '{Reason}'", typeof(T).Name, reason);
+                    _logger.Error("Disconnected from IotHub '{IotHub}', but trying to reconnect. Reason: '{Reason}'", typeof(ConnectionType).Name, reason);
                     break;
             }
         }
 
-        public async Task SendMessageAsync(Message message)
+        public async Task SendAsync(Message data)
         {
-            await _client.SendEventAsync(message);
+            await _client.SendEventAsync(data);
         }
 
-        public Task SendAsync(Message data)
+        public async Task Connect()
         {
-            throw new System.NotImplementedException();
-        }
+            _client = DeviceClient.CreateFromConnectionString(_connection.ConnectionString, TransportType.Amqp);
 
-        public Task Connect()
-        {
-            throw new System.NotImplementedException();
+            _client.SetConnectionStatusChangesHandler(ClientConnectionChangedHandler);
+
+            await _client.OpenAsync();
+            await _client.SetReceiveMessageHandlerAsync(async (message, ctx) =>
+            {
+                await OnDataReceived(typeof(ConnectionType), message);
+            }, null);
         }
     }
 }
