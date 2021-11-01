@@ -1,114 +1,61 @@
 using RaaLabs.Edge.Modules.EventHandling;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Threading.Channels;
 using Serilog;
-using Newtonsoft.Json;
+using Autofac;
+using System;
 using Microsoft.Azure.Devices.Client;
-using Newtonsoft.Json.Serialization;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {
-    class EdgeHubBridge : IBridge, IConsumeEventAsync<IEdgeHubOutgoingEvent>, IProduceEvent<IEdgeHubIncomingEvent>
+    /// <summary>
+    /// Class responsible for bridging events to and from EdgeHub clients
+    /// </summary>
+    public class EdgeHubBridge : IBridgeIncomingEvent<IEdgeHubIncomingEvent>, IBridgeOutgoingEvent<IEdgeHubOutgoingEvent>
     {
-        public event AsyncEventEmitter<IEdgeHubIncomingEvent> IncomingEvent;
-        
-        private ChannelReader<IEdgeHubOutgoingEvent> _outgoingEventsReader;
-        private ChannelWriter<IEdgeHubOutgoingEvent> _outgoingEventsWriter;
-
-        private readonly EventHandling.EventHandler<IEdgeHubIncomingEvent> _incomingHandler;
-        private readonly EventHandling.EventHandler<IEdgeHubOutgoingEvent> _outgoingHandler;
         private readonly IIotModuleClient _client;
-        private readonly ILogger _logger;
+        private readonly IEdgeHubMessageConverter _messageConverter;
+        private readonly IEventHandler<IEdgeHubIncomingEvent> _incomingHandler;
 
-        public EdgeHubBridge(ILogger logger, IIotModuleClient client, EventHandling.EventHandler<IEdgeHubIncomingEvent> incomingHandler, EventHandling.EventHandler<IEdgeHubOutgoingEvent> outgoingHandler)
+        public event EventEmitter<IEdgeHubIncomingEvent> EdgeHubEventReceived;
+
+        public EdgeHubBridge(IEdgeHubMessageConverter messageConverter, IIotModuleClient client, IEventHandler<IEdgeHubIncomingEvent> incomingHandler)
         {
-            _logger = logger;
+            _messageConverter = messageConverter;
             _incomingHandler = incomingHandler;
-            _outgoingHandler = outgoingHandler;
-            var outgoingChannel = Channel.CreateUnbounded<IEdgeHubOutgoingEvent>();
-            _outgoingEventsReader = outgoingChannel.Reader;
-            _outgoingEventsWriter = outgoingChannel.Writer;
-            _client = client;
-        }
 
-        public async Task HandleAsync(IEdgeHubOutgoingEvent @event)
-        {
-            await _outgoingEventsWriter.WriteAsync(@event);
+            _client = client;
+
+            client.OnDataReceived += MessageReceived;
         }
 
         public async Task SetupBridge()
         {
-            var incomingEventsTask = SetupIncomingEvents();
-            var outgoingEventsTask = SetupOutgoingEvents();
+            await _client.Connect();
+            var subscriptionsTask = _incomingHandler.GetSubtypes()
+                .Select(type => type.GetAttribute<InputNameAttribute>().InputName)
+                .Select(inputName => _client.Subscribe(inputName))
+                .ToList();
 
-            await Task.WhenAll(incomingEventsTask, outgoingEventsTask);
+            await Task.WhenAll(subscriptionsTask);
         }
 
-        private async Task SetupIncomingEvents()
+        public async Task MessageReceived(Type connection, (string inputName, Message message) data)
         {
-            var allIncomingEventTasks = _incomingHandler.GetSubtypes()
-                .Select(async type => await SetupIncomingEvent(type));
+            var @event = _messageConverter.ToEvent(data.inputName, data.message);
+            if (!@event.GetType().IsAssignableTo<IEdgeHubIncomingEvent>()) return;
+            EdgeHubEventReceived((IEdgeHubIncomingEvent)@event);
 
-            await Task.WhenAll(allIncomingEventTasks);
+            await Task.CompletedTask;
         }
 
-        private async Task SetupIncomingEvent(Type type)
+        public void Handle(IEdgeHubOutgoingEvent @event)
         {
-            var inputName = type.GetAttribute<InputNameAttribute>()?.InputName;
-            if (inputName == null) throw new Exception($"Type '{type.Name}' is missing 'InputName' attribute.");
+            var (outputName, message) = _messageConverter.ToMessage(@event) ?? (null, null);
+            if (outputName == null || message == null) return;
 
-            await _client.SetInputMessageHandlerAsync(inputName, async (message, context) =>
-            {
-                try
-                {
-                    _logger.Information("Handling incoming event for input {InputName}", inputName);
-                    var messageBytes = message.GetBytes();
-                    var messageString = Encoding.UTF8.GetString(messageBytes);
-
-                    var deserialized = (IEdgeHubIncomingEvent)JsonConvert.DeserializeObject(messageString, type);
-
-                    _logger.Information("New incoming message: {IncomingMessage}", messageString);
-
-                    await IncomingEvent(deserialized);
-
-                    return MessageResponse.Completed;
-                }
-                catch (Exception ex)
-                {
-                    _logger.Warning(ex.Message);
-                    return MessageResponse.Abandoned;
-                }
-            }, null);
-        }
-
-        private async Task SetupOutgoingEvents()
-        {
-            var allOutgoingTypes = _outgoingHandler.GetSubtypes();
-
-            var outputNameForType = allOutgoingTypes
-                .ToDictionary(type => type, type => type.GetAttribute<OutputNameAttribute>()?.OutputName);
-
-            if (outputNameForType.Where(type => type.Value == null).Any())
-            {
-                throw new Exception($"The following types are missing 'OutputName' attribute: {string.Join(",", outputNameForType.Where(type => type.Value == null).Select(type => type.Key.Name))}");
-            }
-
-            while (true)
-            {
-                var outgoingEvent = await _outgoingEventsReader.ReadAsync();
-                if (outputNameForType.TryGetValue(outgoingEvent.GetType(), out var outputName))
-                {
-                    var outputString = JsonConvert.SerializeObject(outgoingEvent, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-                    var outputBytes = Encoding.UTF8.GetBytes(outputString);
-                    var outputMessage = new Message(outputBytes);
-
-                    await _client.SendEventAsync(outputName, outputMessage);
-                }
-            }
+            _client.SendAsync((outputName, message));
         }
     }
 }

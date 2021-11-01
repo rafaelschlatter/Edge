@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Channels;
+using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {
@@ -16,6 +17,9 @@ namespace RaaLabs.Edge.Modules.EdgeHub
         private readonly ILogger _logger;
 
         private readonly ConcurrentDictionary<string, Channel<Message>> _messagesToSend;
+
+        public event DataReceivedDelegate<(string inputName, Message message)> OnDataReceived;
+
         public List<(string, string)> MessagesSent { get; }
 
         public NullIotModuleClient(ILogger logger)
@@ -25,21 +29,21 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             _messagesToSend = new ConcurrentDictionary<string, Channel<Message>>();
         }
 
-        public Task SendEventAsync(string outputName, Message message)
+        public Task SendAsync((string outputName, Message message) data)
         {
-            var payload = Encoding.UTF8.GetString(message.GetBytes());
+            var payload = Encoding.UTF8.GetString(data.message.GetBytes());
             _logger.Information("Payload to send: {Payload}", payload);
 
             // Set an upper limit to the number of messages to be stored
             if (MessagesSent.Count < 1000)
             {
-                MessagesSent.Add((outputName, payload));
+                MessagesSent.Add((data.outputName, payload));
             }
 
             return Task.CompletedTask;
         }
 
-        public async Task SetInputMessageHandlerAsync(string inputName, MessageHandler messageHandler, object userContext)
+        public async Task Subscribe(string inputName)
         {
             var channel = Channel.CreateUnbounded<Message>();
             _messagesToSend[inputName] = channel;
@@ -48,28 +52,13 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             while (true)
             {
                 var message = await channelReader.ReadAsync();
-                await messageHandler(message, null);
+                _ = OnDataReceived(null, (inputName, message));
             }
         }
 
-        public void SimulateIncomingEvent(string inputName, string value)
+        public Task Connect()
         {
-            var message = new Message(Encoding.UTF8.GetBytes(value));
-            var messageChannel = _messagesToSend[inputName];
-            if (messageChannel != null)
-            {
-                messageChannel.Writer.WriteAsync(message).AsTask().Wait();
-            }
-        }
-
-        public async Task SimulateIncomingEventAsync(string inputName, string value)
-        {
-            var message = new Message(Encoding.UTF8.GetBytes(value));
-            var messageChannel = _messagesToSend[inputName];
-            if (messageChannel != null)
-            {
-                await messageChannel.Writer.WriteAsync(message).AsTask();
-            }
+            return Task.CompletedTask;
         }
     }
 }

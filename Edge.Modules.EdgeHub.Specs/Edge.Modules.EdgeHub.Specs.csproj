@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -18,12 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Hooks\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Edge.Modules.EdgeHub\Edge.Modules.EdgeHub.csproj" />
     <ProjectReference Include="..\Edge.Modules.EventHandling\Edge.Modules.EventHandling.csproj" />
+    <ProjectReference Include="..\Edge.Testing\Edge.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,13 +15,17 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             // use a mock client.
             if (IotEdgeHelpers.IsRunningInIotEdge())
             {
-                builder.RegisterType<IotModuleClient>().As<IIotModuleClient>().InstancePerMatchingLifetimeScope("runtime"); //.InstancePerLifetimeScope();
+                builder.RegisterType<IotModuleClient>().As<IIotModuleClient>().InstancePerRuntime();
             }
             else
             {
-                builder.RegisterType<NullIotModuleClient>().As<IIotModuleClient>().InstancePerMatchingLifetimeScope("runtime"); //.InstancePerLifetimeScope();
+                builder.RegisterType<NullIotModuleClient>().As<IIotModuleClient>().InstancePerRuntime();
             }
-            builder.RegisterType<EdgeHubBridge>().AsSelf().As<IBridge>().InstancePerMatchingLifetimeScope("runtime");
+            builder.RegisterType<EdgeHubMessageConverter>()
+                .AsSelf()
+                .As<IEdgeHubMessageConverter>()
+                .InstancePerRuntime();
+            builder.RegisterType<EdgeHubBridge>().AsSelf().As<IBridge>().InstancePerRuntime();
         }
     }
 }
