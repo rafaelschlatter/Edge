@@ -1,4 +1,4 @@
-using RaaLabs.Edge.Modules.EventHandling;
+﻿using RaaLabs.Edge.Modules.EventHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +9,6 @@ using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Client.Options;
 using MQTTnet;
 using MQTTnet.Client.Receiving;
-using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Channels;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Disconnecting;
@@ -19,27 +16,27 @@ using RaaLabs.Edge.Modules.Mqtt.Client.Authentication;
 
 namespace RaaLabs.Edge.Modules.Mqtt.Client
 {
-    class MqttBrokerClient<T> : IMqttBrokerClient<T> where T : IMqttBrokerConnection
+    class MqttBrokerClient<ConnectionType> : IMqttBrokerClient<ConnectionType> where ConnectionType : IMqttBrokerConnection
     {
-        private readonly T _connection;
+        private readonly ConnectionType _connection;
         private readonly ILogger _logger;
 
         private IManagedMqttClient _client;
-        private readonly Channel<(string topic, MessageReceivedDelegate handler)> _pendingSubscriptions;
+        private readonly Channel<string> _pendingSubscriptions = Channel.CreateUnbounded<string>();
+
         private readonly Channel<MqttApplicationMessage> _pendingOutgoingMessages;
 
-        private readonly ConcurrentBag<(string topicPattern, MessageReceivedDelegate handler)> _routes;
 
-        public MqttBrokerClient(T broker, ILogger logger)
+        public event DataReceivedDelegate<MqttApplicationMessage> OnDataReceived;
+
+        public MqttBrokerClient(ConnectionType broker, ILogger logger)
         {
             _connection = broker;
             _logger = logger;
-            _routes = new ConcurrentBag<(string topicPattern, MessageReceivedDelegate handler)>();
-            _pendingSubscriptions = Channel.CreateUnbounded<(string, MessageReceivedDelegate)>();
             _pendingOutgoingMessages = Channel.CreateUnbounded<MqttApplicationMessage>();
         }
 
-        public async Task SetupClient()
+        public async Task Connect()
         {
             _logger.Information("Connecting to MQTT Broker '{Client}' on {Ip}:{Port} as '{ClientId}'...", _connection.GetType().Name, _connection.Ip, _connection.Port, _connection.ClientId);
 
@@ -58,6 +55,7 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
             _client.ConnectedHandler = new MqttClientConnectedHandlerDelegate(ClientConnectedHandler);
             _client.DisconnectedHandler = new MqttClientDisconnectedHandlerDelegate(ClientDisconnectedHandler);
             _client.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(MessageReceived);
+            _client.ConnectingFailedHandler = new ConnectingFailedHandlerDelegate(ConnectingFailedHandler);
 
             await _client.StartAsync(options);
 
@@ -71,8 +69,7 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
         {
             while (true)
             {
-                var (topic, handler) = await _pendingSubscriptions.Reader.ReadAsync();
-                _routes.Add((topic, handler));
+                var topic = await _pendingSubscriptions.Reader.ReadAsync();
                 await _client.SubscribeAsync(topic, MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
             }
         }
@@ -90,16 +87,8 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
         {
             string clientId = args.ClientId;
             var message = args.ApplicationMessage;
-            string topic = message.Topic;
-            var matchedHandlers = _routes
-                .Where(route => TopicMatches(topic, route.topicPattern))
-                .Select(route => route.handler);
 
-            var handlerCalledTasks = matchedHandlers.Select(async handler => await handler(clientId, message)).ToList();
-            if (handlerCalledTasks.Count > 0)
-            {
-                await Task.WhenAll(handlerCalledTasks);
-            }
+            await OnDataReceived(typeof(ConnectionType), message);
         }
 
         private async Task ClientConnectedHandler(MqttClientConnectedEventArgs args)
@@ -114,30 +103,20 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
             await Task.CompletedTask;
         }
 
-        public async Task SubscribeToTopic(string topicPattern, MessageReceivedDelegate eventHandler)
+        private async Task ConnectingFailedHandler(ManagedProcessFailedEventArgs args)
         {
-            await _pendingSubscriptions.Writer.WriteAsync((topicPattern, eventHandler));
+            _logger.Information("Unable to connect to MQTT broker '{Client}'. Reason: {Reason}", _connection.GetType().Name, args.Exception.Message);
+            await Task.CompletedTask;
         }
 
-        public async Task SendMessageAsync(MqttApplicationMessage message)
+        public async Task Subscribe(string topicPattern)
+        {
+            await _pendingSubscriptions.Writer.WriteAsync(topicPattern);
+        }
+
+        public async Task SendAsync(MqttApplicationMessage message)
         {
             await _pendingOutgoingMessages.Writer.WriteAsync(message);
-        }
-
-        private static bool TopicMatches(string topic, string pattern)
-        {
-            if (topic == pattern) return true;
-            var topicLevels = topic.Split("/");
-            var patternLevels = topic.Split("/");
-
-            foreach (var (t, p) in topicLevels.Zip(patternLevels))
-            {
-                if (p == "#") return true;
-                if (p == "+" || t == p) continue;
-                return false;
-            }
-
-            return true;
         }
 
         private MqttClientOptionsBuilder AppendAuthentication(MqttClientOptionsBuilder optionsBuilder)
@@ -155,5 +134,6 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
             }
             return optionsBuilder;
         }
+
     }
 }
