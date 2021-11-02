@@ -1,4 +1,4 @@
-using RaaLabs.Edge.Modules.EventHandling;
+﻿using RaaLabs.Edge.Modules.EventHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,53 +11,61 @@ using Newtonsoft.Json;
 using Serilog;
 using RaaLabs.Edge.Serialization;
 using Autofac;
+using Azure.Messaging.EventHubs.Producer;
 
 namespace RaaLabs.Edge.Modules.EventHub.Client.Producer
 {
-    class EventHubProducerClient<T> : IEventHubProducerClient<T>, IConsumeEventAsync<T>
-        where T : IEventHubOutgoingEvent
+    class EventHubProducerClient<ConnectionType> : IEventHubProducerClient<ConnectionType>
+        where ConnectionType : IEventHubConnection
     {
-        private readonly Channel<T> _eventsToProduce;
-        private readonly IEventHubConnection _connection;
-        private readonly ILogger _logger;
-        private readonly ISerializer<T> _serializer;
+        private readonly ConnectionType _connection;
+        private AzureEventHubsClient _client;
 
-        public EventHubProducerClient(ILogger logger, ILifetimeScope scope)
+        // Automatically batch event data
+        private readonly DataBatcher<EventData> _dataBatcher = new(TimeSpan.FromMilliseconds(100), 100);
+
+        public EventHubProducerClient(ConnectionType connection)
         {
-            _logger = logger;
-            var connectionType = typeof(T).GetAttribute<EventHubConnectionAttribute>().Connection;
-            _connection = (IEventHubConnection)scope.Resolve(connectionType);
-            _eventsToProduce = Channel.CreateUnbounded<T>();
-
-            _serializer = scope.ResolveSerializer<T>(connectionType);
+            _connection = connection;
+            _dataBatcher.OnDataBatched += SendBatchAsync;
         }
 
-        public async Task HandleAsync(T @event)
+        public async Task SendAsync(EventData data)
         {
-            await _eventsToProduce.Writer.WriteAsync(@event);
+            await _dataBatcher.Enqueue(data);
         }
 
-        public async Task SetupClient()
+        public async Task SendBatchAsync(IEnumerable<EventData> data)
         {
-            _logger.Information("Setting up EventHubProducerClient for event type '{EventType}'", typeof(T).Name);
-            AzureEventHubsClient producer = new AzureEventHubsClient(_connection.ConnectionString);
-            var batchedEvents = await producer.CreateBatchAsync();
-            var batchSize = 10;
+            if (_client == null) await Connect();
 
-            while (true)
+            await foreach (var batch in BatchEventData(data))
             {
-                var @event = await _eventsToProduce.Reader.ReadAsync();
-
-                var serialized = Encoding.UTF8.GetBytes(_serializer.Serialize(@event));
-                var data = new EventData(serialized);
-                batchedEvents.TryAdd(data);
-
-                if (batchedEvents.Count >= batchSize)
-                {
-                    await producer.SendAsync(batchedEvents);
-                    batchedEvents = await producer.CreateBatchAsync();
-                }
+                await _client.SendAsync(batch);
             }
         }
+
+        public async Task Connect()
+        {
+            _client = new AzureEventHubsClient(_connection.ConnectionString);
+            await Task.CompletedTask;
+        }
+
+        private async IAsyncEnumerable<EventDataBatch> BatchEventData(IEnumerable<EventData> data)
+        {
+            var batch = await _client.CreateBatchAsync();
+            foreach (var d in data)
+            {
+                if (!batch.TryAdd(d))
+                {
+                    yield return batch;
+                    batch = await _client.CreateBatchAsync();
+                    batch.TryAdd(d);
+                }
+            }
+
+            if (batch.Count > 0) yield return batch;
+        }
+
     }
 }
