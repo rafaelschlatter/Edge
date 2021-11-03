@@ -31,7 +31,7 @@ Scenario: Receiving IotHub messages from an IotHub
 		| IIotHubClient | IotHubConnection | { "value": 31415 } |
 		| IIotHubClient | IotHubConnection | { "value": 32415 } |
 		| IIotHubClient | IotHubConnection | { "value": 33415 } |
-	Then the following events are produced
+	Then the following events are produced in any order
 		| EventType               | Value |
 		| SomeIotHubIncomingEvent | 31415 |
 		| SomeIotHubIncomingEvent | 32415 |
