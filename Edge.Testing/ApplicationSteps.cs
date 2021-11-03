@@ -118,7 +118,7 @@ namespace RaaLabs.Edge.Testing
             foreach (var expectedEventsForEventType in expectedEventsByEventType)
             {
                 var eventType = expectedEventsForEventType.Key;
-                var verifyFunction = (Func<IEvent, TableRow, bool>)GetType().GetMethod("MakeEventVerifierFunction", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(this, Array.Empty<object>());
+                var verifyFunction = (Func<IEvent, TableRow, bool>)GetType().GetMethod("MakeEventVerifierFunction", BindingFlags.NonPublic | BindingFlags.Instance)?.MakeGenericMethod(eventType).Invoke(this, Array.Empty<object>());
                 
                 foreach (var expectedEvent in expectedEventsForEventType)
                 {
