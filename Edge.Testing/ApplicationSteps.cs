@@ -109,6 +109,25 @@ namespace RaaLabs.Edge.Testing
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        [Then(@"the following events are produced in any order")]
+        public void ThenTheFollowingEventsAreProducedInAnyOrder(Table table)
+        {
+            var expectedEventsByEventType = table.Rows.GroupBy(row => _typeMapping[row["EventType"]], row => row);
+            foreach (var expectedEventsForEventType in expectedEventsByEventType)
+            {
+                var eventType = expectedEventsForEventType.Key;
+                var verifyFunction = (Func<IEvent, TableRow, bool>)GetType().GetMethod("MakeEventVerifierFunction", BindingFlags.NonPublic | BindingFlags.Instance)?.MakeGenericMethod(eventType).Invoke(this, Array.Empty<object>());
+                
+                foreach (var expectedEvent in expectedEventsForEventType)
+                {
+                    _producedEventsByType[eventType].Any(@event => verifyFunction!(@event, expectedEvent)).Should().BeTrue();
+                }
+            }
+        }
+
+        /// <summary>
         /// Function called to simulate incoming events. This function can be ignored by the developer.
         /// </summary>
         /// <param name="table"></param>
@@ -135,6 +154,24 @@ namespace RaaLabs.Edge.Testing
                 var eventProducerMethod = typeof(Modules.EventHandling.EventHandler<>).MakeGenericType(eventType).GetMethod("Produce");
                 eventProducerMethod.Invoke(eventHandler, new object[] { @event });
             }
+        }
+
+        private Func<IEvent, TableRow, bool> MakeEventVerifierFunction<EventType>() where EventType : IEvent
+        {
+            var verifier = _container.Resolve<IProducedEventVerifier<EventType>>();
+
+            return (@event, row) =>
+            {
+                try
+                {
+                    verifier.VerifyFromTableRow((EventType) @event, row);
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            };
         }
     }
 }
