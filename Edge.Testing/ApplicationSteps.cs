@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using FluentAssertions;
 using Autofac;
@@ -86,6 +87,7 @@ namespace RaaLabs.Edge.Testing
         [Then(@"the following events are produced")]
         public void ThenTheFollowingEventsAreProduced(Table table)
         {
+            Task.Delay(20).Wait();
             int eventIndex = 0;
             for (var i = 0; i < table.RowCount; i++)
             {
@@ -114,6 +116,7 @@ namespace RaaLabs.Edge.Testing
         [Then(@"the following events are produced in any order")]
         public void ThenTheFollowingEventsAreProducedInAnyOrder(Table table)
         {
+            Task.Delay(20).Wait();
             var expectedEventsByEventType = table.Rows.GroupBy(row => _typeMapping[row["EventType"]], row => row);
             foreach (var expectedEventsForEventType in expectedEventsByEventType)
             {
