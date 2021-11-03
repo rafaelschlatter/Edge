@@ -34,11 +34,11 @@ namespace RaaLabs.Edge.Modules.IotHub
             await Task.WhenAll(clientsTask);
         }
 
-        public async Task MessageReceived(Type connection, Message message)
+        private async Task MessageReceived(Type connection, Message message)
         {
             var @event = _messageConverter.ToEvent(connection, message);
             if (!@event.GetType().IsAssignableTo<IIotHubIncomingEvent>()) return;
-            IotHubEventReceived((IIotHubIncomingEvent)@event);
+            _ = Task.Run(() => IotHubEventReceived!((IIotHubIncomingEvent)@event));
 
             await Task.CompletedTask;
         }
