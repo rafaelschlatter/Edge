@@ -4,31 +4,6 @@ using TechTalk.SpecFlow;
 
 namespace RaaLabs.Edge.Modules.EdgeHub.Specs.Drivers
 {
-    /*
-    class SomeEdgeHubIncomingEventInstanceFactory : IEventInstanceFactory<SomeEdgeHubIncomingEvent>
-    {
-        public SomeEdgeHubIncomingEvent FromTableRow(TableRow row)
-        {
-            int value = int.Parse(row["Value"]);
-            return new SomeEdgeHubIncomingEvent
-            {
-                Value = value
-            };
-        }
-    }
-
-    class AnotherEdgeHubIncomingEventInstanceFactory : IEventInstanceFactory<AnotherEdgeHubIncomingEvent>
-    {
-        public AnotherEdgeHubIncomingEvent FromTableRow(TableRow row)
-        {
-            return new AnotherEdgeHubIncomingEvent
-            {
-                Value = row["Value"]
-            };
-        }
-    }
-    */
-
     class SomeEdgeHubOutgoingEventInstanceFactory : IEventInstanceFactory<SomeEdgeHubOutgoingEvent>
     {
         public SomeEdgeHubOutgoingEvent FromTableRow(TableRow row)
