@@ -1,8 +1,6 @@
 using RaaLabs.Edge.Modules.EventHandling;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Serilog;
 using Autofac;
 using System;
 using Microsoft.Azure.Devices.Client;
@@ -45,7 +43,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub
         {
             var @event = _messageConverter.ToEvent(data.inputName, data.message);
             if (!@event.GetType().IsAssignableTo<IEdgeHubIncomingEvent>()) return;
-            EdgeHubEventReceived((IEdgeHubIncomingEvent)@event);
+            _ = Task.Run(() => EdgeHubEventReceived!((IEdgeHubIncomingEvent)@event));
 
             await Task.CompletedTask;
         }
