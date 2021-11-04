@@ -250,14 +250,9 @@ namespace RaaLabs.Edge.Testing
         }
 
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
-        private void VerifySentDataForClient<ClientType, DataType>(List<TableRow> rows)
+        private void VerifySentDataForClient<ClientType, DataType>(IEnumerable<TableRow> rows)
             where ClientType : class, ISenderClient<DataType>
         {
-            var connectionType = typeof(ClientType).GetInterfaces()
-                .Where(ifce => ifce.IsGenericType && ifce.GetGenericTypeDefinition() == typeof(ISenderClient<,>))
-                .Select(ifce => ifce.GetGenericArguments()[0])
-                .FirstOrDefault();
-
             var verifier = _container.Resolve<IProducedEventVerifier<DataType>>();
 
             var sentData = _sentDataByType[typeof(ClientType)].Select(data => (DataType) data).ToList();
