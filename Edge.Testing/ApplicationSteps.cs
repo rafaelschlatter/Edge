@@ -2,8 +2,10 @@ using BoDi;
 using RaaLabs.Edge.Modules.EventHandling;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using FluentAssertions;
 using Autofac;
@@ -86,6 +88,7 @@ namespace RaaLabs.Edge.Testing
         [Then(@"the following events are produced")]
         public void ThenTheFollowingEventsAreProduced(Table table)
         {
+            Task.Delay(20).Wait();
             int eventIndex = 0;
             for (var i = 0; i < table.RowCount; i++)
             {
@@ -105,6 +108,26 @@ namespace RaaLabs.Edge.Testing
                 verifyFunction.Invoke(verifier, new object[] { producedEvent, table.Rows[i] });
 
                 eventIndex++;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Then(@"the following events are produced in any order")]
+        public void ThenTheFollowingEventsAreProducedInAnyOrder(Table table)
+        {
+            Task.Delay(20).Wait();
+            var expectedEventsByEventType = table.Rows.GroupBy(row => _typeMapping[row["EventType"]], row => row);
+            foreach (var expectedEventsForEventType in expectedEventsByEventType)
+            {
+                var eventType = expectedEventsForEventType.Key;
+                var verifyFunction = (Func<IEvent, TableRow, bool>)GetType().GetMethod("MakeEventVerifierFunction", BindingFlags.NonPublic | BindingFlags.Instance)?.MakeGenericMethod(eventType).Invoke(this, Array.Empty<object>());
+                
+                foreach (var expectedEvent in expectedEventsForEventType)
+                {
+                    _producedEventsByType[eventType].Any(@event => verifyFunction!(@event, expectedEvent)).Should().BeTrue();
+                }
             }
         }
 
@@ -135,6 +158,25 @@ namespace RaaLabs.Edge.Testing
                 var eventProducerMethod = typeof(Modules.EventHandling.EventHandler<>).MakeGenericType(eventType).GetMethod("Produce");
                 eventProducerMethod.Invoke(eventHandler, new object[] { @event });
             }
+        }
+
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
+        private Func<IEvent, TableRow, bool> MakeEventVerifierFunction<EventType>() where EventType : IEvent
+        {
+            var verifier = _container.Resolve<IProducedEventVerifier<EventType>>();
+
+            return (@event, row) =>
+            {
+                try
+                {
+                    verifier.VerifyFromTableRow((EventType) @event, row);
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            };
         }
     }
 }

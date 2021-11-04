@@ -1,8 +1,9 @@
-using Azure.Messaging.EventHubs.Primitives;
+﻿using Azure.Messaging.EventHubs.Primitives;
+using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.EventHub
 {
-    public interface IEventHubConnection
+    public interface IEventHubConnection : IClientConnection
     {
         public string EventHubName { get; set; }
         public string ConnectionString { get; set; }

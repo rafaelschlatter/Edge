@@ -2,9 +2,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Serilog;
 using Autofac;
-using static RaaLabs.Edge.Application;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RaaLabs.Edge.Modules.EventHandling
 {
@@ -28,11 +27,9 @@ namespace RaaLabs.Edge.Modules.EventHandling
         private readonly IList<IEventPropagator<T>> _supertypeHandlers;
         private readonly IDictionary<Type, Action<T, ISet<object>>> _subtypeHandlers;
         private readonly IDictionary<Type, Func<T, ISet<object>, Task>> _asyncSubtypeHandlers;
-        private readonly ILogger _logger;
 
-        public EventHandler(ILifetimeScope scope, ILogger logger)
+        public EventHandler(ILifetimeScope scope)
         {
-            _logger = logger;
             _observers = new List<IConsumeEvent<T>>();
             _asyncObservers = new List<IConsumeEventAsync<T>>();
             _observerFunctions = new List<Action<T>>();
@@ -203,13 +200,14 @@ namespace RaaLabs.Edge.Modules.EventHandling
         /// <param name="scope">The current scope</param>
         /// <param name="child">The current EventHandler</param>
         /// <returns></returns>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
         private static IEventPropagator<IFace> InitializeSupertypeEventHandler<Ty, IFace>(ILifetimeScope scope, IEventPropagator<Ty> child)
             where Ty : IFace
             where IFace : IEvent
         {
             var parent = scope.Resolve<EventHandler<IFace>>();
-            Action<IFace, ISet<object>> childPropagationFunction = (@event, visitedHandlers) => child.PropagateEventAsync((Ty)@event, visitedHandlers);
-            Func<IFace, ISet<object>, Task> childPropagationFunctionAsync = (@event, visitedHandlers) => child.PropagateEventAsync((Ty)@event, visitedHandlers);
+            void childPropagationFunction(IFace @event, ISet<object> visitedHandlers) => child.PropagateEventAsync((Ty)@event, visitedHandlers);
+            Task childPropagationFunctionAsync(IFace @event, ISet<object> visitedHandlers) => child.PropagateEventAsync((Ty)@event, visitedHandlers);
             parent.RegisterSubtypeHandler(typeof(Ty), childPropagationFunction);
             parent.RegisterAsyncSubtypeHandler(typeof(Ty), childPropagationFunctionAsync);
 
@@ -251,14 +249,14 @@ namespace RaaLabs.Edge.Modules.EventHandling
 
         public void Dispose()
         {
-            if (_observer is IConsumeEvent<T> && (_observers?.Contains((IConsumeEvent<T>)_observer) ?? false))
+            if (_observer is IConsumeEvent<T> consumer && (_observers?.Contains(consumer) ?? false))
             {
-                _observers.Remove((IConsumeEvent<T>)_observer);
+                _observers.Remove(consumer);
             }
 
-            if (_observer is IConsumeEventAsync<T> && (_asyncObservers?.Contains((IConsumeEventAsync<T>)_observer) ?? false))
+            if (_observer is IConsumeEventAsync<T> asyncConsumer && (_asyncObservers?.Contains(asyncConsumer) ?? false))
             {
-                _asyncObservers.Remove((IConsumeEventAsync<T>)_observer);
+                _asyncObservers.Remove(asyncConsumer);
             }
         }
     }

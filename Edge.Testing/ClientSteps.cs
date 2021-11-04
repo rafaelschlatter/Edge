@@ -41,15 +41,10 @@ namespace RaaLabs.Edge.Testing
         [Given("the following client mocks")]
         public void GivenTheFollowingClientMocks(Table table)
         {
-            var appContext = _container.Resolve<ApplicationContext>();
-            var clientTypes = table.Rows
-                .Select(row => (clientType: _typeMapping[row["ClientType"]], connectionType: _typeMapping[row["ConnectionType"]]))
-                .ToList();
-
-            foreach (var clientType in clientTypes)
+            foreach (var row in table.Rows)
             {
-                var type = clientType.clientType.MakeGenericType(clientType.connectionType);
-                var setupClientMockMethod = GetType().GetMethod("SetupClientMock", BindingFlags.NonPublic | BindingFlags.Instance).MakeGenericMethod(type, clientType.connectionType);
+                var clientType = GetClientForRow(row);
+                var setupClientMockMethod = GetType().GetMethod("SetupClientMock", BindingFlags.NonPublic | BindingFlags.Instance).MakeGenericMethod(clientType);
                 setupClientMockMethod.Invoke(this, Array.Empty<object>());
             }
         }
@@ -62,7 +57,7 @@ namespace RaaLabs.Edge.Testing
         {
             var appContext = _container.Resolve<ApplicationContext>();
 
-            var clientTypes = table.Rows.Select(row => _typeMapping[row["ClientType"]].MakeGenericType(_typeMapping[row["ConnectionType"]])).Distinct().ToList();
+            var clientTypes = table.Rows.Select(row => GetClientForRow(row)).Distinct().ToList();
             var dataTypeForClientType = clientTypes
                 .ToDictionary(clientType => clientType, clientType => GetDataTypeForReceiverClientType(clientType));
 
@@ -72,7 +67,7 @@ namespace RaaLabs.Edge.Testing
         
             foreach (var row in table.Rows)
             {
-                var clientType = _typeMapping[row["ClientType"]].MakeGenericType(_typeMapping[row["ConnectionType"]]);
+                var clientType = GetClientForRow(row);
                 if (!dataReceiverMethodForClientType.TryGetValue(clientType, out Action<TableRow> dataReceived)) continue;
                 dataReceived(row);
             }
@@ -85,7 +80,7 @@ namespace RaaLabs.Edge.Testing
         public void ThenClientsSendTheFollowingData(Table table)
         {
             var rowsWithClientTypes = table.Rows
-                .Select(row => (row, clientType: _typeMapping[row["ClientType"]].MakeGenericType(_typeMapping[row["ConnectionType"]])))
+                .Select(row => (row, clientType: GetClientForRow(row)))
                 .ToList();
 
             var rowsForClientTypes = rowsWithClientTypes
@@ -97,13 +92,6 @@ namespace RaaLabs.Edge.Testing
                 var dataType = GetDataTypeForSenderClientType(clientType);
                 var verifierMethod = GetType().GetMethod("VerifySentDataForClient", BindingFlags.NonPublic | BindingFlags.Instance).MakeGenericMethod(clientType, dataType);
                 verifierMethod.Invoke(this, new object[] { rows });
-            }
-
-            foreach (var row in table.Rows)
-            {
-                var genericClientType = _typeMapping[row["ClientType"]];
-                var connectionType = _typeMapping[row["ConnectionType"]];
-                var clientType = genericClientType.MakeGenericType(connectionType);
             }
         }
 
@@ -118,7 +106,7 @@ namespace RaaLabs.Edge.Testing
 
             foreach (var row in table.Rows)
             {
-                var clientType = _typeMapping[row["ClientType"]].MakeGenericType(_typeMapping[row["ConnectionType"]]);
+                var clientType = GetClientForRow(row);
                 var client = appContext.Scope.Resolve(clientType);
                 var verifyClientHasBeenConnectedMethod = GetType().GetMethod("VerifyClientHasBeenConnected", BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(clientType);
                 
@@ -137,7 +125,7 @@ namespace RaaLabs.Edge.Testing
 
             foreach (var row in table.Rows)
             {
-                var clientType = _typeMapping[row["ClientType"]].MakeGenericType(_typeMapping[row["ConnectionType"]]);
+                var clientType = GetClientForRow(row);
                 var client = appContext.Scope.Resolve(clientType);
                 var dataType = GetDataTypeForReceiverClientType(clientType);
                 var topicType = GetTopicTypeForSubscribingReceiverClientType(clientType);
@@ -165,6 +153,13 @@ namespace RaaLabs.Edge.Testing
             mock.Verify(c => c.Subscribe(topic), Times.Once);
         }
 
+        private Type GetClientForRow(TableRow row)
+        {
+            var clientType = _typeMapping[row["ClientType"]];
+            
+            return clientType.IsGenericType ? clientType.MakeGenericType(_typeMapping[row["ConnectionType"]]) : clientType;
+        }
+
         private static Type GetDataTypeForReceiverClientType(Type clientType)
         {
             return clientType.GetInterfaces()
@@ -181,7 +176,8 @@ namespace RaaLabs.Edge.Testing
                 .FirstOrDefault();
         }
 
-        private object GetTopicForTableRow<TopicType>(TableRow row)
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
+        private TopicType GetTopicForTableRow<TopicType>(TableRow row)
         {
             var factory = _container.Resolve<IEventInstanceFactory<TopicType>>();
             return factory.FromTableRow(row);
@@ -197,9 +193,8 @@ namespace RaaLabs.Edge.Testing
 
 
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
-        private void SetupClientMock<ClientType, ConnectionType>()
-            where ClientType : class, IClient<ConnectionType>
-            where ConnectionType : IClientConnection
+        private void SetupClientMock<ClientType>()
+            where ClientType : class, IClient
         {
 
             var mock = new Mock<ClientType>();
@@ -212,15 +207,6 @@ namespace RaaLabs.Edge.Testing
 
             var appContext = _container.Resolve<ApplicationContext>();
             appContext.GetType().GetMethod("WithMock").MakeGenericMethod(typeof(ClientType)).Invoke(appContext, new object[] { mock });
-        }
-
-        private static bool IsReceiverClient<ClientType>() where ClientType : IClient
-        {
-            var senderClientInterfaces = typeof(ClientType).GetInterfaces()
-                .Where(iface => iface.IsGenericType)
-                .Where(iface => iface.GetGenericTypeDefinition() == typeof(IReceiverClient<>));
-
-            return senderClientInterfaces.Any();
         }
 
         private static bool IsSenderClient<ClientType>(out Type dataType) where ClientType : IClient
@@ -264,14 +250,9 @@ namespace RaaLabs.Edge.Testing
         }
 
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
-        private void VerifySentDataForClient<ClientType, DataType>(List<TableRow> rows)
+        private void VerifySentDataForClient<ClientType, DataType>(IEnumerable<TableRow> rows)
             where ClientType : class, ISenderClient<DataType>
         {
-            var connectionType = typeof(ClientType).GetInterfaces()
-                .Where(ifce => ifce.IsGenericType && ifce.GetGenericTypeDefinition() == typeof(ISenderClient<,>))
-                .Select(ifce => ifce.GetGenericArguments()[0])
-                .FirstOrDefault();
-
             var verifier = _container.Resolve<IProducedEventVerifier<DataType>>();
 
             var sentData = _sentDataByType[typeof(ClientType)].Select(data => (DataType) data).ToList();

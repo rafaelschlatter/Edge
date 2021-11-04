@@ -1,26 +1,24 @@
 using Autofac;
 using RaaLabs.Edge.Modules.EventHandling;
 using RaaLabs.Edge.Modules.IotHub.Client;
-using RaaLabs.Edge.Modules.IotHub.Client.Consumer;
-using RaaLabs.Edge.Modules.IotHub.Client.Producer;
 
 namespace RaaLabs.Edge.Modules.IotHub
 {
     /// <summary>
-    /// The module for registering the EventHub bridge for the application.
+    /// The module for registering the IotHub bridge for the application.
     /// </summary>
     public class IotHub : Autofac.Module
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterGeneric(typeof(IotHubConsumerClient<>))
+            builder.RegisterGeneric(typeof(IotHubClient<>))
                 .AsSelf()
-                .As(typeof(IIotHubConsumerClient<>))
+                .As(typeof(IIotHubClient<>))
                 .InstancePerRuntime();
 
-            builder.RegisterGeneric(typeof(IotHubProducerClient<>))
+            builder.RegisterType<IotHubMessageConverter>()
                 .AsSelf()
-                .As(typeof(IIotHubProducerClient<>))
+                .As<IIotHubMessageConverter>()
                 .InstancePerRuntime();
 
             builder.RegisterBridge<IotHubBridge>();
