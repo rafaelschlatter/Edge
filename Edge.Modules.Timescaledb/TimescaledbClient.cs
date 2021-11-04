@@ -1,14 +1,10 @@
-using Microsoft.Azure.Devices.Client;
-using Serilog;
 using System;
 using System.Data;
-using System.Text;
 using System.Threading.Tasks;
 using Npgsql;
-using Dapper;
 using Dapper.Contrib.Extensions;
-using RaaLabs.Edge.Modules.EventHandling;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RaaLabs.Edge.Modules.Timescaledb
 {
@@ -29,27 +25,20 @@ namespace RaaLabs.Edge.Modules.Timescaledb
             _client = new NpgsqlConnection(_connection.ConnectionString);
             await _client.OpenAsync();
         }
-
-        public async Task IngestEventAsync<T>(T @event)
-            where T: class
-        {
-            IDbConnection clientConnection = _client;
-            clientConnection.Insert(@event);
-            await Task.CompletedTask;
-        }
-
+        
         public async Task SendAsync(object data)
         {
             var dataType = data.GetType();
-            if (!_ingestMethods.TryGetValue(dataType, out Func<object, Task> ingestMethod))
+            if (!_ingestMethods.TryGetValue(dataType, out var ingestMethod))
             {
-                ingestMethod = (Func<object, Task>)GetType().GetMethod("BuildIngestMethodForType", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).MakeGenericMethod(dataType).Invoke(this, Array.Empty<object>());
+                ingestMethod = (Func<object, Task>)GetType().GetMethod("BuildIngestMethodForType", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.MakeGenericMethod(dataType).Invoke(this, Array.Empty<object>());
                 _ingestMethods.Add(dataType, ingestMethod);
             }
 
-            await ingestMethod(data);
+            await ingestMethod!(data);
         }
 
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
         private Func<object, Task> BuildIngestMethodForType<T>()
             where T : class
         {
