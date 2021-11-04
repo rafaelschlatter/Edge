@@ -10,30 +10,29 @@ using Serilog;
 using Newtonsoft.Json;
 using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json.Serialization;
+using Autofac;
 
 namespace RaaLabs.Edge.Modules.Timescaledb
 {
-    class TimescaledbBridge : IBridge, IConsumeEventAsync<ITimescaledbOutgoingEvent>
+    class TimescaledbBridge : IBridgeOutgoingEvent<ITimescaledbOutgoingEvent>
     {        
-        private ChannelReader<ITimescaledbOutgoingEvent> _outgoingEventsReader;
-        private ChannelWriter<ITimescaledbOutgoingEvent> _outgoingEventsWriter;
-        private readonly EventHandling.EventHandler<ITimescaledbOutgoingEvent> _outgoingHandler;
         private readonly ILogger _logger;
-        private readonly ITimescaledbClient _client;
+        private readonly Dictionary<Type, ITimescaledbClient> _clients;
 
-        public TimescaledbBridge(ILogger logger, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler, ITimescaledbClient client)
+        public TimescaledbBridge(ILifetimeScope scope, ILogger logger, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
         {
             _logger = logger;
-            _outgoingHandler = outgoingHandler;
-            var outgoingChannel = Channel.CreateUnbounded<ITimescaledbOutgoingEvent>();
-            _outgoingEventsReader = outgoingChannel.Reader;
-            _outgoingEventsWriter = outgoingChannel.Writer;
-            _client = client;
+
+            _clients = GetOutgoingDbClients(scope, outgoingHandler);
         }
 
-        public async Task HandleAsync(ITimescaledbOutgoingEvent @event)
+        public void Handle(ITimescaledbOutgoingEvent @event)
         {
-            await _outgoingEventsWriter.WriteAsync(@event);
+            var connectionType = @event.GetType().GetAttribute<TimescaledbConnectionAttribute>()?.Connection;
+            if (connectionType == null) return;
+            if (!_clients.TryGetValue(connectionType, out ITimescaledbClient client)) return;
+
+            client.SendAsync(@event);
         }
 
         public async Task SetupBridge()
@@ -42,19 +41,18 @@ namespace RaaLabs.Edge.Modules.Timescaledb
         }
         private async Task SetupOutgoingEvents()
         {
-            await _client.SetupClient();
-            while (true)
-            {
-                var outgoingEvent = await _outgoingEventsReader.ReadAsync();
-                var insertEventMethod = GetType().GetMethod("InsertEvent", BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(outgoingEvent.GetType());
-                await (Task) insertEventMethod.Invoke(this, new object[]{outgoingEvent});
-            }
+            // Connect to all databases
+            await Task.WhenAll(_clients.Select(async client => await client.Value.Connect()).ToList());
         }
-        
-        private async Task InsertEvent<T>(T @event)
-            where T: class
+
+        private Dictionary<Type, ITimescaledbClient> GetOutgoingDbClients(ILifetimeScope scope, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
         {
-            await _client.IngestEventAsync(@event);
+            var outgoingEventTypes = outgoingHandler.GetSubtypes();
+            var timescaledbConnectionTypes = outgoingEventTypes.Select(type => type.GetAttribute<TimescaledbConnectionAttribute>()).Select(attr => attr.Connection).Distinct();
+            
+            var clients = timescaledbConnectionTypes.ToDictionary(type => type, type => (ITimescaledbClient)scope.Resolve(typeof(ITimescaledbClient<>).MakeGenericType(type)));
+
+            return clients;
         }
     }
 }
