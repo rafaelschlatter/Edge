@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Azure.Messaging.EventHubs;
+using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.EventHub.Client.Producer
 {
-    interface IEventHubProducerClient<T> : IEventHubProducerClient
-        where T : IEventHubOutgoingEvent
+    public interface IEventHubProducerClient<ConnectionType> : IEventHubProducerClient, ISenderClient<ConnectionType, EventData>, IBatchedSenderClient<ConnectionType, EventData>
+        where ConnectionType : IEventHubConnection
     {
     }
 
-    interface IEventHubProducerClient
+    public interface IEventHubProducerClient : ISenderClient<EventData>, IBatchedSenderClient<EventData>
     {
-        public Task SetupClient();
     }
+
 }
