@@ -32,14 +32,15 @@ namespace RaaLabs.Edge.Modules.EdgeHub
         {
             await _client.Connect();
             var subscriptionsTask = _incomingHandler.GetSubtypes()
-                .Select(type => type.GetAttribute<InputNameAttribute>().InputName)
+                .Select(type => type.GetAttribute<InputNameAttribute>()?.InputName)
+                .Where(inputName => inputName != null)
                 .Select(inputName => _client.Subscribe(inputName))
                 .ToList();
 
             await Task.WhenAll(subscriptionsTask);
         }
 
-        public async Task MessageReceived(Type connection, (string inputName, Message message) data)
+        private async Task MessageReceived(Type connection, (string inputName, Message message) data)
         {
             var @event = _messageConverter.ToEvent(data.inputName, data.message);
             if (!@event.GetType().IsAssignableTo<IEdgeHubIncomingEvent>()) return;
