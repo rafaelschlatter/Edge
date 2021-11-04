@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RaaLabs.Edge.Modules.Mqtt.Client
 {
@@ -43,14 +44,7 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
         public IEvent ToEvent(Type connection, MqttApplicationMessage message)
         {
             var type = _topicMapper.Resolve(connection, message.Topic);
-            if (_messageToEventConverters.TryGetValue(type, out Func<MqttApplicationMessage, IEvent> converter))
-            {
-                return converter(message);
-            }
-            else
-            {
-                return null;
-            }
+            return _messageToEventConverters.TryGetValue(type, out Func<MqttApplicationMessage, IEvent> converter) ? converter(message) : null;
         }
 
         /// <summary>
@@ -60,20 +54,14 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
         /// <returns>a tuple consisting of the connection to send to, and the event converted to a message</returns>
         public (Type connection, MqttApplicationMessage message)? ToMessage(IEvent @event)
         {
-            if (_eventToMessageConverters.TryGetValue(@event.GetType(), out Func<IEvent, (Type, MqttApplicationMessage)> converter))
-            {
-                return converter(@event);
-            }
-            else
-            {
-                return null;
-            }
+            return _eventToMessageConverters.TryGetValue(@event.GetType(), out Func<IEvent, (Type, MqttApplicationMessage)> converter) ? converter(@event) : null;
         }
 
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
         private void SetupConvertersForType<T>() where T : class, IEvent
         {
             var attribute = typeof(T).GetAttribute<MqttBrokerConnectionAttribute>();
-            var connection = attribute.BrokerConnection;
+            var connection = attribute!.BrokerConnection;
             var serializer = _scope.ResolveSerializer<T>(connection);
             var deserializer = _scope.ResolveDeserializer<T>(connection);
             var topicTemplate = new TemplatedString<T>(attribute.Topic.Replace("+", "{_}"));

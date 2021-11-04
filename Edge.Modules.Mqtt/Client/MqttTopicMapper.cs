@@ -77,7 +77,7 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
     /// <typeparam name="T"></typeparam>
     public class MqttRouter<T> where T : class
     {
-        private readonly List<(string pattern, T target)> _routes = new();
+        private readonly List<(string pattern, T target)> _routes;
 
         /// <summary>
         /// 
