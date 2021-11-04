@@ -53,7 +53,7 @@ namespace RaaLabs.Edge.Modules.IotHub.Client
             await _client.OpenAsync();
             await _client.SetReceiveMessageHandlerAsync(async (message, ctx) =>
             {
-                await OnDataReceived(typeof(ConnectionType), message);
+                await OnDataReceived!(typeof(ConnectionType), message);
             }, null);
         }
     }
