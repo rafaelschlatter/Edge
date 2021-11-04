@@ -2,6 +2,7 @@ using BoDi;
 using RaaLabs.Edge.Modules.EventHandling;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -159,6 +160,7 @@ namespace RaaLabs.Edge.Testing
             }
         }
 
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
         private Func<IEvent, TableRow, bool> MakeEventVerifierFunction<EventType>() where EventType : IEvent
         {
             var verifier = _container.Resolve<IProducedEventVerifier<EventType>>();
