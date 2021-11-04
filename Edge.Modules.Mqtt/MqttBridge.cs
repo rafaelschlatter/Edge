@@ -7,7 +7,6 @@ using Autofac;
 using RaaLabs.Edge.Modules.Mqtt.Client;
 using System;
 using MQTTnet;
-using System.Text.RegularExpressions;
 
 namespace RaaLabs.Edge.Modules.Mqtt
 {
@@ -17,10 +16,9 @@ namespace RaaLabs.Edge.Modules.Mqtt
 
         private readonly IMqttMessageConverter _messageConverter;
 
-        private EventHandling.EventHandler<IMqttIncomingEvent> _incomingHandler;
-        private EventHandling.EventHandler<IMqttOutgoingEvent> _outgoingHandler;
+        private readonly EventHandling.EventHandler<IMqttIncomingEvent> _incomingHandler;
 
-        private ILifetimeScope _scope;
+        private readonly ILifetimeScope _scope;
 
         public event EventEmitter<IMqttIncomingEvent> MqttEventReceived;
 
@@ -29,7 +27,6 @@ namespace RaaLabs.Edge.Modules.Mqtt
             _scope = scope;
             _messageConverter = messageConverter;
             _incomingHandler = incomingHandler;
-            _outgoingHandler = outgoingHandler;
 
             _brokerClients = GetBrokerClients(scope, incomingHandler, outgoingHandler);
         }
@@ -45,12 +42,11 @@ namespace RaaLabs.Edge.Modules.Mqtt
             await Task.WhenAll(brokersTask);
         }
 
-        public async Task MessageReceived(Type connection, MqttApplicationMessage message)
+        private async Task MessageReceived(Type connection, MqttApplicationMessage message)
         {
-            var conv = _messageConverter.ToEvent(connection, message);
             if (_messageConverter.ToEvent(connection, message) is IMqttIncomingEvent @event)
             {
-                MqttEventReceived(@event);
+                MqttEventReceived!(@event);
             }
 
             await Task.CompletedTask;
@@ -70,7 +66,7 @@ namespace RaaLabs.Edge.Modules.Mqtt
         private void SetupSubscriptionForEventType(Type eventType)
         {
             var attr = eventType.GetAttribute<MqttBrokerConnectionAttribute>();
-            var topic = MqttTopicMapper.ToRegularTopic(attr.Topic);
+            var topic = MqttTopicMapper.ToRegularTopic(attr!.Topic);
             var client = (IMqttBrokerClient)_scope.Resolve(typeof(IMqttBrokerClient<>).MakeGenericType(attr.BrokerConnection));
             client.Subscribe(topic);
         }
@@ -80,8 +76,8 @@ namespace RaaLabs.Edge.Modules.Mqtt
             var incomingEventTypes = incomingHandler.GetSubtypes();
             var outgoingEventTypes = outgoingHandler.GetSubtypes();
 
-            var incomingEventBrokers = incomingEventTypes.Select(type => type.GetAttribute<MqttBrokerConnectionAttribute>()).Select(attr => attr.BrokerConnection);
-            var outgoingEventBrokers = outgoingEventTypes.Select(type => type.GetAttribute<MqttBrokerConnectionAttribute>()).Select(attr => attr.BrokerConnection);
+            var incomingEventBrokers = incomingEventTypes.Select(type => type.GetAttribute<MqttBrokerConnectionAttribute>()).Select(attr => attr?.BrokerConnection);
+            var outgoingEventBrokers = outgoingEventTypes.Select(type => type.GetAttribute<MqttBrokerConnectionAttribute>()).Select(attr => attr?.BrokerConnection);
 
             var brokerTypes = incomingEventBrokers.Union(outgoingEventBrokers).ToList();
 

@@ -1,8 +1,5 @@
 ﻿using RaaLabs.Edge.Modules.EventHandling;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Serilog;
 using MQTTnet.Extensions.ManagedClient;
@@ -85,7 +82,6 @@ namespace RaaLabs.Edge.Modules.Mqtt.Client
 
         private async Task MessageReceived(MqttApplicationMessageReceivedEventArgs args)
         {
-            string clientId = args.ClientId;
             var message = args.ApplicationMessage;
 
             await OnDataReceived(typeof(ConnectionType), message);
