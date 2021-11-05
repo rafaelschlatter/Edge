@@ -1,4 +1,4 @@
-using RaaLabs.Edge.Modules.EventHandling;
+﻿using RaaLabs.Edge.Modules.EventHandling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,16 +15,12 @@ using System.Text.RegularExpressions;
 
 namespace RaaLabs.Edge.Modules.Mqtt.Client
 {
-    public interface IMqttBrokerClient<T> : IMqttBrokerClient where T : IMqttBrokerConnection
+    public interface IMqttBrokerClient<ConnectionType> : IMqttBrokerClient, ISubscribingReceiverClient<ConnectionType, MqttApplicationMessage, string>, ISenderClient<ConnectionType, MqttApplicationMessage>
+        where ConnectionType : IMqttBrokerConnection
     {
     }
 
-    public interface IMqttBrokerClient
+    public interface IMqttBrokerClient : ISubscribingReceiverClient<MqttApplicationMessage, string>, ISenderClient<MqttApplicationMessage>
     {
-        public Task SetupClient();
-        public Task SubscribeToTopic(string topicPattern, MessageReceivedDelegate eventHandler);
-        public Task SendMessageAsync(MqttApplicationMessage message);
     }
-
-    public delegate Task MessageReceivedDelegate(string clientId, MqttApplicationMessage message);
 }
