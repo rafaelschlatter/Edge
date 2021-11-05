@@ -52,13 +52,27 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             while (true)
             {
                 var message = await channelReader.ReadAsync();
-                _ = OnDataReceived(null, (inputName, message));
+                _ = OnDataReceived!(null, (inputName, message));
             }
         }
 
         public Task Connect()
         {
             return Task.CompletedTask;
+        }
+        
+        public void SimulateIncomingEvent(string inputName, string value)
+        {
+            var message = new Message(Encoding.UTF8.GetBytes(value));
+            var messageChannel = _messagesToSend[inputName];
+            messageChannel?.Writer.WriteAsync(message).AsTask().Wait();
+        }
+
+        public async Task SimulateIncomingEventAsync(string inputName, string value)
+        {
+            var message = new Message(Encoding.UTF8.GetBytes(value));
+            var messageChannel = _messagesToSend[inputName];
+            await (messageChannel?.Writer.WriteAsync(message).AsTask() ?? Task.CompletedTask);
         }
     }
 }
