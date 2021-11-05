@@ -11,4 +11,18 @@ namespace RaaLabs.Edge.Modules.Timescaledb
     {
     }
 
+    /// <summary>
+    /// Attribute for the Timescaledb connection class. All classes implementing ITimescaleDbOutgoingEvent should use this annotation.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public class TimescaledbConnectionAttribute : Attribute
+    {
+        public Type Connection { get; }
+
+        public TimescaledbConnectionAttribute(Type connection)
+        {
+            Connection = connection;
+        }
+    }
+
 }

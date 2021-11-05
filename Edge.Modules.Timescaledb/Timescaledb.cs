@@ -11,8 +11,12 @@ namespace RaaLabs.Edge.Modules.Timescaledb
 
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterGeneric(typeof(TimescaledbClient<>))
+                .AsSelf()
+                .As(typeof(ITimescaledbClient<>))
+                .InstancePerRuntime();
+
             builder.RegisterType<TimescaledbBridge>().AsSelf().As<IBridge>().InstancePerMatchingLifetimeScope("runtime");
-            builder.RegisterType<TimescaledbClient>().AsSelf().As<ITimescaledbClient>().InstancePerMatchingLifetimeScope("runtime");
         }
     }
 }
