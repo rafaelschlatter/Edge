@@ -4,9 +4,12 @@ using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.Timescaledb
 {
-    public interface ITimescaledbClient 
+    public interface ITimescaledbClient<ConnectionType> : ITimescaledbClient, ISenderClient<ConnectionType, object>
+        where ConnectionType : ITimescaledbConnection
     {
-        public Task SetupClient();
-        public Task IngestEventAsync<T>(T @event) where T: class;
+    }
+
+    public interface ITimescaledbClient : ISenderClient<object>
+    {
     }
 }

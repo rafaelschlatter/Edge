@@ -1,32 +1,51 @@
-using Microsoft.Azure.Devices.Client;
-using Serilog;
 using System;
 using System.Data;
-using System.Text;
 using System.Threading.Tasks;
 using Npgsql;
-using Dapper;
 using Dapper.Contrib.Extensions;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RaaLabs.Edge.Modules.Timescaledb
 {
-    public class TimescaledbClient : ITimescaledbClient
+    public class TimescaledbClient<ConnectionType> : ITimescaledbClient<ConnectionType>
+        where ConnectionType : ITimescaledbConnection
     {
-        private static string timescaledbConnectionString = Environment.GetEnvironmentVariable("TIMESCALEDB_CONNECTION_STRING");
-        private NpgsqlConnection _client; 
+        private NpgsqlConnection _client;
+        private readonly ConnectionType _connection;
+        private readonly Dictionary<Type, Func<object, Task>> _ingestMethods = new();
 
-        public async Task SetupClient()
+        public TimescaledbClient(ConnectionType connection)
         {
-            _client = new NpgsqlConnection(timescaledbConnectionString);
-            await _client.OpenAsync();
+            _connection = connection;
         }
 
-        public async Task IngestEventAsync<T>(T @event)
-            where T: class
+        public async Task Connect()
         {
-            IDbConnection clientConnection = _client; 
-            clientConnection.Insert(@event);
-            await Task.CompletedTask;
+            _client = new NpgsqlConnection(_connection.ConnectionString);
+            await _client.OpenAsync();
+        }
+        
+        public async Task SendAsync(object data)
+        {
+            var dataType = data.GetType();
+            if (!_ingestMethods.TryGetValue(dataType, out var ingestMethod))
+            {
+                ingestMethod = (Func<object, Task>)GetType().GetMethod("BuildIngestMethodForType", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.MakeGenericMethod(dataType).Invoke(this, Array.Empty<object>());
+                _ingestMethods.Add(dataType, ingestMethod);
+            }
+
+            await ingestMethod!(data);
+        }
+
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
+        private Func<object, Task> BuildIngestMethodForType<T>()
+            where T : class
+        {
+            return async data =>
+            {
+                await _client.InsertAsync((T) data);
+            };
         }
     }
 }
