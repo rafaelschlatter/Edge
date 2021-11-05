@@ -1,73 +1,23 @@
-using RaaLabs.Edge.Modules.EventHandling;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Serilog;
-using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Channels;
 using Microsoft.Azure.Devices.Client;
-using RaaLabs.Edge;
+using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.IotHub.Client
 {
-    class IotHubClient<T> : IIotHubClient<T> where T : IIotHubConnection
+    class IotHubClient<ConnectionType> : IIotHubClient<ConnectionType> where ConnectionType : IIotHubConnection
     {
-        private readonly T _connection;
+        private readonly ConnectionType _connection;
         private readonly ILogger _logger;
 
-        private readonly Channel<MessageReceivedDelegate> _pendingSubscriptions;
-        private readonly Channel<Message> _pendingOutgoingMessages;
+        private DeviceClient _client;
 
-        public IotHubClient(T connection, ILogger logger)
+        public event DataReceivedDelegate<Message> OnDataReceived;
+
+        public IotHubClient(ConnectionType connection, ILogger logger)
         {
             _connection = connection;
             _logger = logger;
-            _pendingSubscriptions = Channel.CreateUnbounded<MessageReceivedDelegate>();
-            _pendingOutgoingMessages = Channel.CreateUnbounded<Message>();
-        }
-
-        public async Task SetupClient()
-        {
-            var client = DeviceClient.CreateFromConnectionString(_connection.ConnectionString, TransportType.Amqp);
-
-            client.SetConnectionStatusChangesHandler(ClientConnectionChangedHandler);
-
-            var setupSubscribingTask = SetupSubscribing(client);
-            var setupProducingTask = SetupProducing(client);
-
-            await client.OpenAsync();
-
-            await TaskHelpers.WhenAllWithLoggedExceptions(_logger, new List<Task> { setupSubscribingTask, setupProducingTask });
-        }
-
-        private async Task SetupSubscribing(DeviceClient client)
-        {
-            var subscribers = new ConcurrentBag<MessageReceivedDelegate>();
-
-            await client.SetReceiveMessageHandlerAsync(async (message, ctx) =>
-            {
-                var allInvocations = subscribers.Select(async subscriber => await subscriber(message)).ToList();
-                await TaskHelpers.WhenAllWithLoggedExceptions(_logger, allInvocations);
-            }, null);
-
-            while (true)
-            {
-                var subscription = await _pendingSubscriptions.Reader.ReadAsync();
-                subscribers.Add(subscription);
-            }
-        }
-
-        private async Task SetupProducing(DeviceClient client)
-        {
-            while (true)
-            {
-                var message = await _pendingOutgoingMessages.Reader.ReadAsync();
-                await client.SendEventAsync(message);
-            }
         }
 
         private void ClientConnectionChangedHandler(ConnectionStatus status, ConnectionStatusChangeReason reason)
@@ -75,28 +25,36 @@ namespace RaaLabs.Edge.Modules.IotHub.Client
             switch (status)
             {
                 case ConnectionStatus.Disconnected:
-                    _logger.Error("Disconnected from IotHub '{IotHub}'. Reason: '{Reason}'", typeof(T).Name, reason);
+                    _logger.Error("Disconnected from IotHub '{IotHub}'. Reason: '{Reason}'", typeof(ConnectionType).Name, reason);
                     break;
                 case ConnectionStatus.Connected:
-                    _logger.Information("Connected to IotHub '{IotHub}'", typeof(T).Name, reason);
+                    _logger.Information("Connected to IotHub '{IotHub}'", typeof(ConnectionType).Name, reason);
                     break;
                 case ConnectionStatus.Disabled:
-                    _logger.Error("IotHub '{IotHub}' is disabled. Reason: '{Reason}'", typeof(T).Name, reason);
+                    _logger.Error("IotHub '{IotHub}' is disabled. Reason: '{Reason}'", typeof(ConnectionType).Name, reason);
                     break;
                 case ConnectionStatus.Disconnected_Retrying:
-                    _logger.Error("Disconnected from IotHub '{IotHub}', but trying to reconnect. Reason: '{Reason}'", typeof(T).Name, reason);
+                    _logger.Error("Disconnected from IotHub '{IotHub}', but trying to reconnect. Reason: '{Reason}'", typeof(ConnectionType).Name, reason);
                     break;
             }
         }
 
-        public async Task SendMessageAsync(Message message)
+        public async Task SendAsync(Message data)
         {
-            await _pendingOutgoingMessages.Writer.WriteAsync(message);
+            await _client.SendEventAsync(data);
         }
 
-        public async Task Subscribe(MessageReceivedDelegate eventHandler)
+        public async Task Connect()
         {
-            await _pendingSubscriptions.Writer.WriteAsync(eventHandler);
+            _client = DeviceClient.CreateFromConnectionString(_connection.ConnectionString, TransportType.Amqp);
+
+            _client.SetConnectionStatusChangesHandler(ClientConnectionChangedHandler);
+
+            await _client.OpenAsync();
+            await _client.SetReceiveMessageHandlerAsync(async (message, ctx) =>
+            {
+                await OnDataReceived!(typeof(ConnectionType), message);
+            }, null);
         }
     }
 }
