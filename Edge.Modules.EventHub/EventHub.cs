@@ -1,4 +1,4 @@
-using Autofac;
+﻿using Autofac;
 using RaaLabs.Edge.Modules.EventHandling;
 using RaaLabs.Edge.Modules.EventHub.Client;
 using RaaLabs.Edge.Modules.EventHub.Client.Consumer;
@@ -21,6 +21,11 @@ namespace RaaLabs.Edge.Modules.EventHub
             builder.RegisterGeneric(typeof(EventHubProducerClient<>))
                 .AsSelf()
                 .As(typeof(IEventHubProducerClient<>))
+                .InstancePerRuntime();
+
+            builder.RegisterType<EventHubEventDataConverter>()
+                .AsSelf()
+                .As<IEventHubEventDataConverter>()
                 .InstancePerRuntime();
 
             builder.RegisterBridge<EventHubBridge>();
