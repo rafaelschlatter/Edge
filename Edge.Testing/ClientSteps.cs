@@ -73,6 +73,8 @@ namespace RaaLabs.Edge.Testing
                 if (!dataReceiverMethodForClientType.TryGetValue(clientType, out Action<TableRow> dataReceived)) continue;
                 dataReceived(row);
             }
+
+            Task.Delay(20).Wait();
         }
 
         /// <summary>
