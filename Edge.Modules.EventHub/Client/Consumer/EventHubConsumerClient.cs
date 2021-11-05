@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RaaLabs.Edge.Modules.EventHandling;
 using System;
 using System.Collections.Generic;
@@ -9,45 +9,27 @@ using System.Threading.Tasks;
 using Serilog;
 using RaaLabs.Edge.Serialization;
 using Autofac;
+using Azure.Messaging.EventHubs;
 
 namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 {
-    class EventHubConsumerClient<T> : IEventHubConsumerClient<T>, IProduceEvent<T>
-        where T : IEventHubIncomingEvent
+    class EventHubConsumerClient<ConnectionType> : IEventHubConsumerClient<ConnectionType>
+        where ConnectionType : IEventHubConnection
     {
-        public event AsyncEventEmitter<T> EventReceived;
-
         private EventHubProcessor _eventHubProcessor;
-        private ILogger _logger;
-        private readonly IDeserializer<T> _deserializer;
-        private readonly IEventHubConnection _connection;
+        private readonly ConnectionType _connection;
 
-        public EventHubConsumerClient(ILogger logger, ILifetimeScope scope)
+        public event DataReceivedDelegate<EventData> OnDataReceived;
+
+        public EventHubConsumerClient(ConnectionType connection)
         {
-            _logger = logger;
-            var connection = typeof(T).GetAttribute<EventHubConnectionAttribute>();
-            _connection = (IEventHubConnection)scope.Resolve(connection.Connection);
-            _deserializer = scope.ResolveDeserializer<T>(connection.Connection);
+            _connection = connection;
         }
 
-        public async Task SetupClient()
+        public async Task Connect()
         {
-            _logger.Information("Setting up consumer client for event type '{EventType}'", typeof(T).Name);
-            var incomingEvents = Channel.CreateUnbounded<T>();
-            _eventHubProcessor = await EventHubProcessor.FromEventHubConnection(_connection, async message =>
-            {
-                var @event = _deserializer.Deserialize(message);
-                await incomingEvents.Writer.WriteAsync(@event);
-            });
-
-            var startedProcessorTask = _eventHubProcessor.StartProcessingAsync();
-
-            while (true)
-            {
-                var @event = await incomingEvents.Reader.ReadAsync();
-                _logger.Information("Received message for event type '{EventType}'", typeof(T).Name);
-                await EventReceived(@event);
-            }
+            _eventHubProcessor = await EventHubProcessor.FromEventHubConnection(_connection, async data => await OnDataReceived(typeof(ConnectionType), data));
+            await _eventHubProcessor.StartProcessingAsync();
         }
     }
 }
