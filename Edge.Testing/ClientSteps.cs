@@ -8,7 +8,9 @@ using TechTalk.SpecFlow;
 using FluentAssertions;
 using Autofac;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Moq;
+using MoreLinq.Extensions;
 
 namespace RaaLabs.Edge.Testing
 {
@@ -71,6 +73,8 @@ namespace RaaLabs.Edge.Testing
                 if (!dataReceiverMethodForClientType.TryGetValue(clientType, out Action<TableRow> dataReceived)) continue;
                 dataReceived(row);
             }
+
+            Task.Delay(20).Wait();
         }
 
         /// <summary>
@@ -79,6 +83,7 @@ namespace RaaLabs.Edge.Testing
         [Then(@"clients send the following data")]
         public void ThenClientsSendTheFollowingData(Table table)
         {
+            Task.Delay(20).Wait();
             var rowsWithClientTypes = table.Rows
                 .Select(row => (row, clientType: GetClientForRow(row)))
                 .ToList();
@@ -256,7 +261,7 @@ namespace RaaLabs.Edge.Testing
             var verifier = _container.Resolve<IProducedEventVerifier<DataType>>();
 
             var sentData = _sentDataByType[typeof(ClientType)].Select(data => (DataType) data).ToList();
-            foreach (var (actual, expected) in sentData.Zip(rows))
+            foreach (var (actual, expected) in sentData.ZipLongest(rows, (actual, expected) => (actual, expected)))
             {
                 verifier.VerifyFromTableRow(actual, expected);
             }

@@ -1,4 +1,4 @@
-/*---------------------------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------------------------
  *  Copyright (c) RaaLabs. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
@@ -20,13 +20,13 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 {
     class EventHubProcessor : AzureBlobStorageEventProcessor<EventProcessorPartition>
     {
-        private readonly MessageReceived ReceivedMessage;
-        public EventHubProcessor(MessageReceived messageReceived, int eventBatchMaximumCount, string consumerGroup, string fullyQualifiedNamespace, string eventHubName, BlobContainerClient storageContainer, EventProcessorOptions options = null) : base(eventBatchMaximumCount, consumerGroup, fullyQualifiedNamespace, eventHubName, storageContainer, options)
+        private readonly EventDataReceived ReceivedEventData;
+        public EventHubProcessor(EventDataReceived receivedEventData, int eventBatchMaximumCount, string consumerGroup, string fullyQualifiedNamespace, string eventHubName, BlobContainerClient storageContainer, EventProcessorOptions options = null) : base(eventBatchMaximumCount, consumerGroup, fullyQualifiedNamespace, eventHubName, storageContainer, options)
         {
-            ReceivedMessage = messageReceived;
+            ReceivedEventData = receivedEventData;
         }
 
-        public static async Task<EventHubProcessor> FromEventHubConnection(IEventHubConnection connection, MessageReceived messageReceived)
+        public static async Task<EventHubProcessor> FromEventHubConnection(IEventHubConnection connection, EventDataReceived eventDataReceived)
         {
             var options = connection.ReaderOptions;
             var storageClient = new BlobContainerClient(connection.BlobStorageConnectionString, connection.BlobStorageContainerName);
@@ -40,7 +40,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
             await storageClient.CreateIfNotExistsAsync();
 
             var processor = new EventHubProcessor(
-                messageReceived,
+                eventDataReceived,
                 connection.MaxIncomingBatchCount,
                 connection.ConsumerGroup,
                 connection.ConnectionString,
@@ -52,7 +52,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 
         }
 
-        public static async Task<EventHubProcessor> FromEventHubName(string eventHubName, MessageReceived messageReceived)
+        public static async Task<EventHubProcessor> FromEventHubName(string eventHubName, EventDataReceived eventDataReceived)
         {
             var environmentVariablePrefix = eventHubName.ToUpper().Replace("-","");
             var eventHubConnectionString = Environment.GetEnvironmentVariable(environmentVariablePrefix + "_CONNECTION_STRING");
@@ -77,7 +77,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
             await storageClient.CreateIfNotExistsAsync();
 
             var processor = new EventHubProcessor(
-                messageReceived,
+                eventDataReceived,
                 eventBatchMaximumCount, 
                 consumerGroup,
                 eventHubConnectionString,
@@ -88,14 +88,13 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
             return processor;
         }
 
-        protected async override Task OnProcessingEventBatchAsync(IEnumerable<EventData> events, EventProcessorPartition partition, CancellationToken cancellationToken)
+        protected override async Task OnProcessingEventBatchAsync(IEnumerable<EventData> events, EventProcessorPartition partition, CancellationToken cancellationToken)
         {
             try 
             {
-                foreach (var eventArgs in events)
+                foreach (var @event in events)
                 {
-                    string data = Encoding.UTF8.GetString(eventArgs.EventBody.ToArray());
-                    await ReceivedMessage(data);                    
+                    await ReceivedEventData(@event);                    
                 }
                 if (events.Any())
                 {
@@ -108,13 +107,13 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
                 // Catch and ignore, we should not allow exceptions to bubble out of this method.
                 foreach (var eventArgs in events)
                 {
-                    var data = Encoding.UTF8.GetString(eventArgs.EventBody.ToArray());
+                    _ = Encoding.UTF8.GetString(eventArgs.EventBody.ToArray());
                 }
                 await OnProcessingErrorAsync(exception, partition, "testEvent", cancellationToken);
             }
         }
 
-        protected async override Task OnProcessingErrorAsync(Exception exception, EventProcessorPartition partition, string operationDescription, CancellationToken cancellationToken)
+        protected override async Task OnProcessingErrorAsync(Exception exception, EventProcessorPartition partition, string operationDescription, CancellationToken cancellationToken)
         {
             try 
             {
@@ -134,6 +133,6 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
             await Task.CompletedTask;
         }
 
-        public delegate Task MessageReceived(string message);
+        public delegate Task EventDataReceived(EventData data);
     }
 }

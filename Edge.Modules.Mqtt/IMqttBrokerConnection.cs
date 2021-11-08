@@ -1,3 +1,4 @@
+﻿using RaaLabs.Edge.Modules.EventHandling;
 using RaaLabs.Edge.Modules.Mqtt.Client.Authentication;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Modules.Mqtt
 {
-    public interface IMqttBrokerConnection
+    public interface IMqttBrokerConnection : IClientConnection
     {
         public string Ip { get; set; }
 
