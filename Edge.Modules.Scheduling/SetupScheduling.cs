@@ -10,7 +10,7 @@ namespace RaaLabs.Edge.Modules.Scheduling
     /// <summary>
     /// This class will add support for Scheduling to the application.
     /// </summary>
-    class SetupScheduling : IBootloader, IRegistrationStage
+    class SetupScheduling : IRegistrationStage
     {
         private readonly SetupEventHandlers _setupEventHandlers;
 

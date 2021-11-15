@@ -9,7 +9,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// <summary>
     /// This class will add support for <see cref="IBridge"/> components to the application.
     /// </summary>
-    public class SetupBridges : IBootloader, IRegistrationStage
+    public class SetupBridges : IRegistrationStage
     {
         private readonly SetupEventHandlers _setupEventHandlers;
 

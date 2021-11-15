@@ -56,7 +56,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
                     OwnerIdentifier = blob.Metadata[OwnerIdentifierMetadataKey],
                     PartitionId = blob.Name.Substring(ownershipBlobsPefix.Length),
                     Version = blob.Properties.ETag.ToString()
-                }); ;
+                });
             }
 
             return partitonOwnerships;

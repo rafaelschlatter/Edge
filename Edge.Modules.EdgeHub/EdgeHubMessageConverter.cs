@@ -79,8 +79,6 @@ namespace RaaLabs.Edge.Modules.EdgeHub
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called via reflection")]
         private void SetupConvertersForInputType<T>() where T : class, IEvent
         {
-            var attribute = typeof(T).GetAttribute<InputNameAttribute>();
-            var inputName = attribute.InputName;
             var deserializer = _scope.ResolveDeserializer<T>();
 
             _messageToEventConverters.Add(typeof(T), (message) =>
