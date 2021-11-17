@@ -19,7 +19,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
         public event DataReceivedDelegate<DataType> OnDataReceived;
     }
 
-    public delegate Task DataReceivedDelegate<DataType>(Type connectionType, DataType data);
+    public delegate Task DataReceivedDelegate<in DataType>(Type connectionType, DataType data);
 
     public interface IReceiverClient<ConnectionType, DataType> : IReceiverClient<DataType>, IClient<ConnectionType>
         where ConnectionType : IClientConnection
@@ -37,7 +37,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
     }
 
 
-    public interface ISenderClient<DataType> : IClient
+    public interface ISenderClient<in DataType> : IClient
     {
         public Task SendAsync(DataType data);
     }
@@ -47,7 +47,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
     {
     }
 
-    public interface IBatchedSenderClient<DataType> : IClient
+    public interface IBatchedSenderClient<in DataType> : IClient
     {
         public Task SendBatchAsync(IEnumerable<DataType> data);
     }
