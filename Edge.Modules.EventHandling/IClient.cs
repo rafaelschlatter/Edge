@@ -14,7 +14,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
     {
     }
 
-    public interface IReceiverClient<DataType> : IClient
+    public interface IReceiverClient<out DataType> : IClient
     {
         public event DataReceivedDelegate<DataType> OnDataReceived;
     }
