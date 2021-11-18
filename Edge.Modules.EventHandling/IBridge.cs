@@ -17,7 +17,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
 
     }
 
-    public interface IBridgeOutgoingEvent<in T> : IBridge, IConsumeEvent<T>
+    public interface IBridgeOutgoingEvent<T> : IBridge, IConsumeEvent<T>
     where T : IEvent
     {
 
