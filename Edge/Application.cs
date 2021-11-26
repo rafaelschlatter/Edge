@@ -47,7 +47,7 @@ namespace RaaLabs.Edge
             logger.Information("Starting up handlers...");
 
             // Instantiate all handlers. Assigned to a variable to ensure they are not removed by the Garbage Collector.
-            var handlers = _handlers.Select(handlerType => RuntimeScope.Resolve(handlerType)).ToList();
+            _ = _handlers.Select(handlerType => RuntimeScope.Resolve(handlerType)).ToList();
             logger.Information("Handlers started.");
 
             if (_runningTasks.Count > 0)

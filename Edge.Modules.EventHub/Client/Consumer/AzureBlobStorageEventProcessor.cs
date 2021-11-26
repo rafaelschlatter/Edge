@@ -40,7 +40,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
         private const string OwnershipPrefixFormat = "{0}/{1}/{2}/ownership/";
         private const string OwnerIdentifierMetadataKey = "ownerid";
 
-        protected override async Task<IEnumerable<EventProcessorPartitionOwnership>> ListOwnershipAsync(CancellationToken cancellationToken = default)
+        protected override async Task<IEnumerable<EventProcessorPartitionOwnership>> ListOwnershipAsync(CancellationToken cancellationToken)
         {
             List<EventProcessorPartitionOwnership> partitonOwnerships = new List<EventProcessorPartitionOwnership>();
             string ownershipBlobsPefix = string.Format(OwnershipPrefixFormat, FullyQualifiedNamespace.ToLowerInvariant(), EventHubName.ToLowerInvariant(), ConsumerGroup.ToLowerInvariant());
@@ -61,7 +61,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 
             return partitonOwnerships;
         }
-        protected override async Task<IEnumerable<EventProcessorPartitionOwnership>> ClaimOwnershipAsync(IEnumerable<EventProcessorPartitionOwnership> desiredOwnership, CancellationToken cancellationToken = default)
+        protected override async Task<IEnumerable<EventProcessorPartitionOwnership>> ClaimOwnershipAsync(IEnumerable<EventProcessorPartitionOwnership> desiredOwnership, CancellationToken cancellationToken)
         {
             List<EventProcessorPartitionOwnership> claimedOwnerships = new List<EventProcessorPartitionOwnership>();
 
@@ -129,7 +129,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
         private const string CheckpointPrefixFormat = "{0}/{1}/{2}/checkpoint/";
         private const string OffsetMetadataKey = "offset";
 
-        protected override async Task<IEnumerable<EventProcessorCheckpoint>> ListCheckpointsAsync(CancellationToken cancellationToken = default)
+        protected override async Task<IEnumerable<EventProcessorCheckpoint>> ListCheckpointsAsync(CancellationToken cancellationToken)
         {
             List<EventProcessorCheckpoint> checkpoints = new List<EventProcessorCheckpoint>();
             string checkpointBlobsPrefix = string.Format(CheckpointPrefixFormat, FullyQualifiedNamespace.ToLowerInvariant(), EventHubName.ToLowerInvariant(), ConsumerGroup.ToLowerInvariant());
@@ -160,7 +160,9 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 
             try
             {
-                BlobProperties properties = await StorageContainer.GetBlobClient(checkpointName).GetPropertiesAsync().ConfigureAwait(false);
+                BlobProperties properties = await StorageContainer.GetBlobClient(checkpointName).GetPropertiesAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+
+                cancellationToken.ThrowIfCancellationRequested();
 
                 if (long.TryParse(properties.Metadata[OffsetMetadataKey], NumberStyles.Integer, CultureInfo.InvariantCulture, out long offset))
                 {
@@ -182,7 +184,7 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
             return null;
         }
 
-        protected async Task CheckpointAsync(TPartition partition, EventData data, CancellationToken cancellationToken = default)
+        protected async Task CheckpointAsync(TPartition partition, EventData data, CancellationToken cancellationToken)
         {
             string checkpointBlob = string.Format(CheckpointPrefixFormat + partition.PartitionId, FullyQualifiedNamespace.ToLowerInvariant(), EventHubName.ToLowerInvariant(), ConsumerGroup.ToLowerInvariant());
             Dictionary<string, string> checkpointMetadata = new Dictionary<string, string>()

@@ -45,7 +45,7 @@ namespace RaaLabs.Edge.Modules.Timescaledb
             await Task.WhenAll(_clients.Select(async client => await client.Value.Connect()).ToList());
         }
 
-        private Dictionary<Type, ITimescaledbClient> GetOutgoingDbClients(ILifetimeScope scope, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
+        private static Dictionary<Type, ITimescaledbClient> GetOutgoingDbClients(ILifetimeScope scope, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
         {
             var outgoingEventTypes = outgoingHandler.GetSubtypes();
             var timescaledbConnectionTypes = outgoingEventTypes.Select(type => type.GetAttribute<TimescaledbConnectionAttribute>()).Select(attr => attr.Connection).Distinct();

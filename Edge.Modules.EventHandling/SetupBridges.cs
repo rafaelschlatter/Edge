@@ -38,12 +38,10 @@ namespace RaaLabs.Edge.Modules.EventHandling
 
     class BridgesTask : IRunAsync
     {
-        private readonly ILogger _logger;
         private readonly IEnumerable<IBridge> _bridges;
 
-        public BridgesTask(ILogger logger, IEnumerable<IBridge> bridges)
+        public BridgesTask(IEnumerable<IBridge> bridges)
         {
-            _logger = logger;
             _bridges = bridges;
         }
 
