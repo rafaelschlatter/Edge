@@ -16,13 +16,10 @@ namespace RaaLabs.Edge.Modules.Timescaledb
 {
     class TimescaledbBridge : IBridgeOutgoingEvent<ITimescaledbOutgoingEvent>
     {        
-        private readonly ILogger _logger;
         private readonly Dictionary<Type, ITimescaledbClient> _clients;
 
-        public TimescaledbBridge(ILifetimeScope scope, ILogger logger, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
+        public TimescaledbBridge(ILifetimeScope scope, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
         {
-            _logger = logger;
-
             _clients = GetOutgoingDbClients(scope, outgoingHandler);
         }
 
