@@ -9,7 +9,7 @@ namespace RaaLabs.Edge.Modules.EventHandling
     /// <summary>
     /// This class will add support for <see cref="IBridge"/> components to the application.
     /// </summary>
-    public class SetupBridges : IBootloader, IRegistrationStage
+    public class SetupBridges : IRegistrationStage
     {
         private readonly SetupEventHandlers _setupEventHandlers;
 
@@ -38,12 +38,10 @@ namespace RaaLabs.Edge.Modules.EventHandling
 
     class BridgesTask : IRunAsync
     {
-        private readonly ILogger _logger;
         private readonly IEnumerable<IBridge> _bridges;
 
-        public BridgesTask(ILogger logger, IEnumerable<IBridge> bridges)
+        public BridgesTask(IEnumerable<IBridge> bridges)
         {
-            _logger = logger;
             _bridges = bridges;
         }
 

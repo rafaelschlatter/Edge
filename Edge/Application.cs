@@ -47,7 +47,7 @@ namespace RaaLabs.Edge
             logger.Information("Starting up handlers...");
 
             // Instantiate all handlers. Assigned to a variable to ensure they are not removed by the Garbage Collector.
-            var handlers = _handlers.Select(handlerType => RuntimeScope.Resolve(handlerType)).ToList();
+            _ = _handlers.Select(handlerType => RuntimeScope.Resolve(handlerType)).ToList();
             logger.Information("Handlers started.");
 
             if (_runningTasks.Count > 0)
@@ -99,8 +99,6 @@ namespace RaaLabs.Edge
         /// <returns>The runtime scope of the application</returns>
         private static ILifetimeScope BuildRuntimeScope(ILifetimeScope scope, ISet<IBootloader> bootloaders)
         {
-            var logger = scope.Resolve<Serilog.ILogger>();
-
             var readyBootloaders = bootloaders.Where(b => b.Status == Status.Ready).ToList();
             var waitingBootloaders = bootloaders.Where(b => b.Status == Status.Waiting).ToList();
             var preRegistrationStageBootloaders = readyBootloaders.Where(b => b.GetType().IsAssignableTo<IPreRegistrationStage>()).Select(b => (IPreRegistrationStage) b).ToList();

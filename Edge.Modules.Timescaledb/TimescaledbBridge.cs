@@ -16,13 +16,10 @@ namespace RaaLabs.Edge.Modules.Timescaledb
 {
     class TimescaledbBridge : IBridgeOutgoingEvent<ITimescaledbOutgoingEvent>
     {        
-        private readonly ILogger _logger;
         private readonly Dictionary<Type, ITimescaledbClient> _clients;
 
-        public TimescaledbBridge(ILifetimeScope scope, ILogger logger, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
+        public TimescaledbBridge(ILifetimeScope scope, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
         {
-            _logger = logger;
-
             _clients = GetOutgoingDbClients(scope, outgoingHandler);
         }
 
@@ -45,7 +42,7 @@ namespace RaaLabs.Edge.Modules.Timescaledb
             await Task.WhenAll(_clients.Select(async client => await client.Value.Connect()).ToList());
         }
 
-        private Dictionary<Type, ITimescaledbClient> GetOutgoingDbClients(ILifetimeScope scope, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
+        private static Dictionary<Type, ITimescaledbClient> GetOutgoingDbClients(ILifetimeScope scope, EventHandling.EventHandler<ITimescaledbOutgoingEvent> outgoingHandler)
         {
             var outgoingEventTypes = outgoingHandler.GetSubtypes();
             var timescaledbConnectionTypes = outgoingEventTypes.Select(type => type.GetAttribute<TimescaledbConnectionAttribute>()).Select(attr => attr.Connection).Distinct();

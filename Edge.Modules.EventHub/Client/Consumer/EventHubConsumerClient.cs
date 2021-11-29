@@ -16,7 +16,6 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
     class EventHubConsumerClient<ConnectionType> : IEventHubConsumerClient<ConnectionType>
         where ConnectionType : IEventHubConnection
     {
-        private EventHubProcessor _eventHubProcessor;
         private readonly ConnectionType _connection;
 
         public event DataReceivedDelegate<EventData> OnDataReceived;
@@ -28,8 +27,8 @@ namespace RaaLabs.Edge.Modules.EventHub.Client.Consumer
 
         public async Task Connect()
         {
-            _eventHubProcessor = await EventHubProcessor.FromEventHubConnection(_connection, async data => await OnDataReceived(typeof(ConnectionType), data));
-            await _eventHubProcessor.StartProcessingAsync();
+            var eventHubProcessor = await EventHubProcessor.FromEventHubConnection(_connection, async data => await OnDataReceived(typeof(ConnectionType), data));
+            await eventHubProcessor.StartProcessingAsync();
         }
     }
 }
