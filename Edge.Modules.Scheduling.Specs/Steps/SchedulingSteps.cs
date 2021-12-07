@@ -4,6 +4,7 @@ using FluentAssertions;
 using RaaLabs.Edge.Modules.Scheduling.Specs.Drivers;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Threading;
 
 namespace RaaLabs.Edge.Modules.Scheduling.Specs.Steps
 {
@@ -14,24 +15,31 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Steps
         private readonly TypeMapping _typeMapping;
         private Task _applicationTask;
 
+        private SemaphoreSlim _applicationHasRunForTwoSeconds;
+
         public SchedulingSteps(ApplicationContext appContext, TypeMapping typeMapping)
         {
             _appContext = appContext;
             _typeMapping = typeMapping;
+            _applicationHasRunForTwoSeconds = new SemaphoreSlim(0, 1);
         }
 
         [When(@"the application has been running for (.*) milliseconds")]
-        public void WhenTheApplicationHasBeenRunningForNMilliseconds(int milliseconds)
+        public async Task WhenTheApplicationHasBeenRunningForNMilliseconds(int milliseconds)
         {
             var application = _appContext.Application;
             _applicationTask = application.Run();
-            Task.WhenAny(_applicationTask, Task.Delay(milliseconds)).Wait();
+            await Task.WhenAny(_applicationTask, Task.Delay(milliseconds));
+            _applicationHasRunForTwoSeconds.Release();
         }
 
         [Then(@"there should be at least this many events produced")]
-        public void ThenThereShouldBeAtLeastThisManyEventsProduced(Table table)
+        public async Task ThenThereShouldBeAtLeastThisManyEventsProduced(Table table)
         {
-            var eventCounter = _appContext.Application.Container.Resolve<EventCounter>();
+            await _applicationHasRunForTwoSeconds.WaitAsync();
+            _applicationHasRunForTwoSeconds.Release();
+
+            var eventCounter = _appContext.Application.RuntimeScope.Resolve<EventCounter>();
             foreach (var row in table.Rows)
             {
                 var eventType = _typeMapping[row["EventType"]];
@@ -42,9 +50,12 @@ namespace RaaLabs.Edge.Modules.Scheduling.Specs.Steps
         }
 
         [Then(@"events with payload should contain the correct payload")]
-        public void ThenEventsWithPayloadShouldContainTheCorrectPayload()
+        public async Task ThenEventsWithPayloadShouldContainTheCorrectPayload()
         {
-            var eventCounter = _appContext.Application.Container.Resolve<EventCounter>();
+            await _applicationHasRunForTwoSeconds.WaitAsync();
+            _applicationHasRunForTwoSeconds.Release();
+
+            var eventCounter = _appContext.Application.RuntimeScope.Resolve<EventCounter>();
             var eventsProduced = eventCounter.GetEventsProducedForType(typeof(TypeScheduledEvent))
                 .Select(_ => _ as TypeScheduledEvent)
                 .ToList();

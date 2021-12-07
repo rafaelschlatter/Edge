@@ -1,4 +1,5 @@
 using Autofac;
+using RaaLabs.Edge.Modules.EventHandling;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
 {
@@ -14,15 +15,17 @@ namespace RaaLabs.Edge.Modules.EdgeHub
             // use a mock client.
             if (IotEdgeHelpers.IsRunningInIotEdge())
             {
-                builder.RegisterType<IotModuleClient>().As<IIotModuleClient>().AsImplementedInterfaces().InstancePerLifetimeScope();
+                builder.RegisterType<IotModuleClient>().As<IIotModuleClient>().InstancePerRuntime();
             }
             else
             {
-                builder.RegisterType<NullIotModuleClient>().As<IIotModuleClient>().InstancePerLifetimeScope();
+                builder.RegisterType<NullIotModuleClient>().As<IIotModuleClient>().InstancePerRuntime();
             }
-            builder.RegisterType<IncomingEventsSubscriberTask>().AsSelf().AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterModule<IncomingEvents>();
-            builder.RegisterModule<OutgoingEvents>();
+            builder.RegisterType<EdgeHubMessageConverter>()
+                .AsSelf()
+                .As<IEdgeHubMessageConverter>()
+                .InstancePerRuntime();
+            builder.RegisterType<EdgeHubBridge>().AsSelf().As<IBridge>().InstancePerRuntime();
         }
     }
 }

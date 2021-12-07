@@ -48,7 +48,7 @@ namespace RaaLabs.Edge.Modules.Configuration
                 .Select(cc => (cc.clazz, cc.attribute.Name))
                 .ToArray();
 
-            var filesToWatch = filenames.Select(_ => (_.clazz, path: FindConfigurationFilePath(_fs, _.Name))).ToArray();
+            var filesToWatch = filenames.Select(_ => (_.clazz, path: FindConfigurationFilePath(_fs, _.Name, _logger))).ToArray();
 
             // Neither FileSystemWatcher nor PhysicalFileProvider have worked platform-independently at watching files asynchronously,
             // not even with DOTNET_USE_POLLING_FILE_WATCHER=1. Because of this, we will watch all configuration files manually instead.

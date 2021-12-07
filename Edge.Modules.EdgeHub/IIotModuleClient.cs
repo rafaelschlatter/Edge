@@ -1,4 +1,5 @@
 using Microsoft.Azure.Devices.Client;
+using RaaLabs.Edge.Modules.EventHandling;
 using System.Threading.Tasks;
 
 namespace RaaLabs.Edge.Modules.EdgeHub
@@ -6,10 +7,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub
     /// <summary>
     /// 
     /// </summary>
-    public interface IIotModuleClient
+    public interface IIotModuleClient : ISubscribingReceiverClient<(string inputName, Message message), string>, ISenderClient<(string outputName, Message message)>
     {
-        public Task SetInputMessageHandlerAsync(string inputName, MessageHandler messageHandler, object userContext);
-        public Task SendEventAsync(string outputName, Message message);
-
     }
 }
