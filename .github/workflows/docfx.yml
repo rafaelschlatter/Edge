@@ -19,7 +19,11 @@ jobs:
         mv Edge.Modules.Configuration/README.md Doc/articles/Edge.Modules.Configuration.README.md
         mv Edge.Modules.EdgeHub/README.md Doc/articles/Edge.Modules.EdgeHub.README.md
         mv Edge.Modules.EventHandling/README.md Doc/articles/Edge.Modules.EventHandling.README.md
+        mv Edge.Modules.EventHub/README.md Doc/articles/Edge.Modules.EventHub.README.md
+        mv Edge.Modules.IotHub/README.md Doc/articles/Edge.Modules.IotHub.README.md
+        mv Edge.Modules.Mqtt/README.md Doc/articles/Edge.Modules.Mqtt.README.md
         mv Edge.Modules.Scheduling/README.md Doc/articles/Edge.Modules.Scheduling.README.md
+        mv Edge.Modules.Timescaledb/README.md Doc/articles/Edge.Modules.Timescaledb.README.md
         mv Edge.Testing/README.md Doc/articles/Edge.Testing.README.md
     - uses: nikeee/docfx-action@v1.0.0
       name: Build Documentation
