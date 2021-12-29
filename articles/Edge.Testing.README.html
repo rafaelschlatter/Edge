@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>EdgeHub Testing | DocFX Material </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="EdgeHub Testing | DocFX Material ">
+    <meta name="generator" content="docfx 2.56.7.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="edgehub-testing">EdgeHub Testing</h1>
+
+<p>This document describes the Testing module for the RaaLabs Edge framework.</p>
+<h2 id="what-does-it-do">What does it do?</h2>
+<p>This module provides the developer with common functionality useful across
+projects. This includes Specflow bindings for testing handlers.</p>
+<h2 id="handler-bindings">Handler bindings</h2>
+<p>The HandlerSteps class provides bindings to SpecFlow for testing the mapping
+from input events to output events for a given handler class. The setup is
+a bit extensive, so we'll go through all the requirements here:</p>
+<h3 id="specflow-configuration-file-specflowjson">SpecFlow configuration file (specflow.json)</h3>
+<p>Your must append RaaLabs.Edge.Testing to the list of external assemblies in specflow.json.</p>
+<p>Example:</p>
+<pre><code class="lang-json">{
+    &quot;allowDebugGeneratedFiles&quot;: true,
+    &quot;stepAssemblies&quot;: [
+        {
+            &quot;assembly&quot;: &quot;RaaLabs.Edge.Testing&quot;
+        }
+    ]
+}
+
+</code></pre>
+<h3 id="assembly-registration">Assembly registration</h3>
+<p>For component scanning to work, you need to specify the assembly .dll file where the
+classes for the test is located. This can easily be done by adding the following SpecFlow &quot;hook&quot; class
+to your test project:</p>
+<pre><code class="lang-csharp">[Binding]
+class AssemblyRegistration
+{
+    private readonly ComponentAssemblies _assemblies;
+
+    public AssemblyRegistration(ComponentAssemblies assemblies)
+    {
+        _assemblies = assemblies;
+    }
+
+    [BeforeScenario]
+    private void RegisterAssembly()
+    {
+        _assemblies.Add(GetType().Assembly);
+    }
+}
+</code></pre>
+<h3 id="typemapping">TypeMapping</h3>
+<p>You need to provide string representations of your handler and event classes,
+in the <code>TypeMapping</code> dictionary.
+This should be done in a SpecFlow &quot;Hook&quot;, like this:</p>
+<pre><code class="lang-csharp">[Binding]
+public sealed class TypeMapperProvider
+{
+    private readonly TypeMapping _typeMapping;
+
+    public TypeMapperProvider(TypeMapping typeMapping)
+    {
+        _typeMapping = typeMapping;
+    }
+
+    [BeforeScenario]
+    public void SetupTypes()
+    {
+        _typeMapping.Add(&quot;MyIncomingEventHandler&quot;, typeof(MyIncomingEventHandler));
+        _typeMapping.Add(&quot;IncomingEvent&quot;, typeof(Events.IncomingEvent));
+        _typeMapping.Add(&quot;OutgoingEvent&quot;, typeof(Events.OutgoingEvent));
+    }
+}
+</code></pre>
+<h3 id="eventinstancefactory">EventInstanceFactory</h3>
+<p>All events that will be produced needs to have an <code>IEventInstanceFactory</code> associated with it.
+This class will provide functionality to create instances of the given event type from
+table rows in the SpecFlow feature file.
+You need to create a class implementing <code>IEventInstanceFactory&lt;T&gt;</code>, with <code>T</code> being the type
+of your incoming event.</p>
+<p>The Edge.Testing project will automatically register all classes implementing <code>IEventInstanceFactory&lt;&gt;</code>.</p>
+<p>Example:</p>
+<pre><code class="lang-csharp">class IncomingEventInstanceFactory : IEventInstanceFactory&lt;IncomingEvent&gt;
+{
+    public IncomingEvent FromTableRow(TableRow row)
+    {
+        var value = float.Parse(row[&quot;Value&quot;]);
+        return new IncomingEvent
+        {
+            Value = value
+        };
+    }
+}
+</code></pre>
+<h3 id="eventverifier">EventVerifier</h3>
+<p>To verify that the events produced by a handler class are correctly produced, the outgoing
+events needs to have an <code>IProducedEventVerifier</code> associated with it. This class wil provide
+functionality to verify each produced event with rows from a table in the SpecFlow feature file.
+You need to create a class implementing <code>IProducedEventVerifier&lt;T&gt;</code>, with <code>T</code> being the type
+of your outgoing event.</p>
+<p>The Edge.Testing project will automatically register all classes implementing <code>IProducedEventVerifier&lt;&gt;</code>.</p>
+<p>Example:</p>
+<pre><code class="lang-csharp">class OutgoingEventVerifier : IProducedEventVerifier&lt;OutgoingEvent&gt;
+{
+    public void VerifyFromTableRow(OutgoingEvent @event, TableRow row)
+    {
+        @event.value.Should().BeApproximately(float.Parse(row[&quot;Value&quot;]), 0.0001f);
+    }
+}
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/RaaLabs/Edge/blob/46f19d63b78de8946a42addf167cb4cc07aa613c/Doc/articles/Edge.Testing.README.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2021 Raa Labs<br>Generated with <strong>DocFX</strong></span>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

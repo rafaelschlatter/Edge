@@ -1,0 +1,2222 @@
+{
+  "homepages": [],
+  "source_base_path": "/github/workspace/Doc",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      },
+      "is_incremental": false
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Application.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Application.html",
+          "hash": "9Oo9jDfHiKG0k/UXEEwpXA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.ApplicationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.ApplicationBuilder.html",
+          "hash": "isy+/Lg27TjkqT36jqZNqA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.AutofacExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.AutofacExtensions.html",
+          "hash": "cSu+FsJZytyV43kF1JRCFA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.IAllProducedEventsVerifier-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.IAllProducedEventsVerifier-1.html",
+          "hash": "80fmofUai6dg9+JgVcXKuA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.IBootloader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.IBootloader.html",
+          "hash": "DCmKZzPGB9lwFfsf+I7F3Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.IEventInstanceFactory-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.IEventInstanceFactory-1.html",
+          "hash": "KgxFQRSciBmMCTyLXCrgcQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.IPostRegistrationStage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.IPostRegistrationStage.html",
+          "hash": "xSlYtCW6zKOjmX6H3ajfvw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.IPreRegistrationStage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.IPreRegistrationStage.html",
+          "hash": "PHqnKB9I6DS0idlAbbqvHA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.IProducedEventVerifier-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.IProducedEventVerifier-1.html",
+          "hash": "c6TALfCvaedXsYx3euhn0g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.IRegistrationStage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.IRegistrationStage.html",
+          "hash": "rrusl1ngk8qXFv88Yp1rXg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.IRunAsync.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.IRunAsync.html",
+          "hash": "o4ipGVmdVyXIcL10t86+Mw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Configuration.ApplicationShutdownTrigger.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Configuration.ApplicationShutdownTrigger.html",
+          "hash": "8g4C+euyFFgP/9v6ZRCBag=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Configuration.Configuration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Configuration.Configuration.html",
+          "hash": "uIqxpWeSmGueFYkMcqj91A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Configuration.ConfigurationFileFinder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Configuration.ConfigurationFileFinder.html",
+          "hash": "D1JdAZyEMhcAQW7rs0enWQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Configuration.IApplicationShutdownTrigger.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Configuration.IApplicationShutdownTrigger.html",
+          "hash": "cujE6QPMyV72iLXhh9IFaQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Configuration.IConfiguration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Configuration.IConfiguration.html",
+          "hash": "1QTsrW8rmjala6EUoen67g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Configuration.NameAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Configuration.NameAttribute.html",
+          "hash": "F/tIfhSbtz2VkkOFf2ULsQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Configuration.RestartOnChangeAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Configuration.RestartOnChangeAttribute.html",
+          "hash": "zml8BYXJw03Ax+wpcP5rBA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Configuration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Configuration.html",
+          "hash": "ArYYx7VhZoL6QMpiXmDQlg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.EdgeHub.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.EdgeHub.html",
+          "hash": "r1wur+N7nZJ1RgL8TLmn/w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.EdgeHubBridge.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.EdgeHubBridge.html",
+          "hash": "gKnicKfpmyyo6XjdTbP6nw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.EdgeHubMessageConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.EdgeHubMessageConverter.html",
+          "hash": "UHv1EDDUh5wUyfua+2VGhQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IEdgeHubIncomingEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IEdgeHubIncomingEvent.html",
+          "hash": "oFxprjGJYD+XUmDf+NiJWg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IEdgeHubMessageConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IEdgeHubMessageConverter.html",
+          "hash": "Ifrkt2WnJPbtQ+QVI3Xl2w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IEdgeHubOutgoingEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IEdgeHubOutgoingEvent.html",
+          "hash": "WxUCuNh5HGgERDEWP+kPeQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IIotModuleClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IIotModuleClient.html",
+          "hash": "iNONCM8vZefvS/pApuv37Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.InputNameAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.InputNameAttribute.html",
+          "hash": "+ZrNViYEn2zdbOhWr2z2BQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IotEdgeHelpers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IotEdgeHelpers.html",
+          "hash": "ELfprFpCHTCvUGlAjCnV0g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IotModuleClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.IotModuleClient.html",
+          "hash": "wZ3LWYaW9U3N5bsFwyyfJg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.NullIotModuleClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.NullIotModuleClient.html",
+          "hash": "C9zNMAX1+eBGkdcCi/UrUw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.OutputNameAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.OutputNameAttribute.html",
+          "hash": "0wyYymWxAmizMKNrZgQJEw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EdgeHub.html",
+          "hash": "CVcKq7rKlpLOsBWfCiaLYg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.AsyncEventEmitter-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.AsyncEventEmitter-1.html",
+          "hash": "KkAcXcHUa0oi6VKpnQi+gw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.AutofacExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.AutofacExtensions.html",
+          "hash": "AhuhI8Q70TD9Sg5X8B/NSQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.DataReceivedDelegate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.DataReceivedDelegate-1.html",
+          "hash": "rL7GT+WPUwpkzsqWCc18Tg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.EventEmitter-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.EventEmitter-1.html",
+          "hash": "3nvRyY8obxfFjh8UbU9MQA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.EventHandler-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.EventHandler-1.html",
+          "hash": "DRHk6+KjFcfLVGaAr1F3Bw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.EventHandling.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.EventHandling.html",
+          "hash": "7qAn8XMk14bcdti6vAsseQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBatchedSenderClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBatchedSenderClient-1.html",
+          "hash": "DDQlmKetG9K+Ulv45beToQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBatchedSenderClient-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBatchedSenderClient-2.html",
+          "hash": "ATqBhxPEFEecD8CKvAxgnw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBridge.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBridge.html",
+          "hash": "kAAyfFY/N2YAUOR0IugXMg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBridgeIncomingEvent-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBridgeIncomingEvent-1.html",
+          "hash": "aFPGYbPRBPOrnprPT2plSw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBridgeOutgoingEvent-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IBridgeOutgoingEvent-1.html",
+          "hash": "v60m3qDohVefHk2zDS632w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IClient-1.html",
+          "hash": "Qq3mqXIJHq/VTQGOKRT+hw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IClient.html",
+          "hash": "aLLqQvOfstS0Wg2BvLsYGg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IClientConnection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IClientConnection.html",
+          "hash": "zQJlL7THUfu7AA51OJGFdA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IConsumeEvent-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IConsumeEvent-1.html",
+          "hash": "ZTWy21l+4GLd5xQ7AOFOsA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IConsumeEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IConsumeEvent.html",
+          "hash": "jRMKVIsslrhaVz2GmtuTDw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IConsumeEventAsync-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IConsumeEventAsync-1.html",
+          "hash": "HpLuoTGrRgF6VfQo+/Rthw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IEvent.html",
+          "hash": "2wffCN8QaKmWOByS8dvBYg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IEventHandler-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IEventHandler-1.html",
+          "hash": "6Nuq7jW4/4wnAQENBYD+eQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IEventHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IEventHandler.html",
+          "hash": "FHTDCPJOUN7SkUDeqO50gw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IEventPropagator-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IEventPropagator-1.html",
+          "hash": "E/XE7SB9NoNWiIx3Ppq3mw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IProduceEvent-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IProduceEvent-1.html",
+          "hash": "jxc12yBGhr7aaDHAJMRrLQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IProduceEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IProduceEvent.html",
+          "hash": "md3ZsUsMpxIlzZFpeXYyog=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IReceiverClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IReceiverClient-1.html",
+          "hash": "tHfDEYJza8Y+f8Gp9dqsqg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IReceiverClient-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.IReceiverClient-2.html",
+          "hash": "O8EmLKsVYaqmZgVp9JypIQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.ISenderClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.ISenderClient-1.html",
+          "hash": "3GzinmIjOMkDj5SyOtL1LA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.ISenderClient-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.ISenderClient-2.html",
+          "hash": "nbrw+J5EGTMv2cIYlgCBJA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.ISubscribingReceiverClient-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.ISubscribingReceiverClient-2.html",
+          "hash": "rkacfrxRFNVO8moiSmCqLA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.ISubscribingReceiverClient-3.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.ISubscribingReceiverClient-3.html",
+          "hash": "WpCwzN7pMXpCBcdIlJ4Q1Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.SetupBridges.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.SetupBridges.html",
+          "hash": "e5i8mG40+aUGn9fpSYJdDw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.SetupEventHandlers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.SetupEventHandlers.html",
+          "hash": "nSS0LOAcwnpcZ0YX4ADPXg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.TypeExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.TypeExtensions.html",
+          "hash": "cl+/0JfHMdIJ8Y5a0YFlRA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.Unsubscriber-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.Unsubscriber-1.html",
+          "hash": "4/J+SdE44DjRh9wNxPVWnA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.UnsubscriberFunction-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.UnsubscriberFunction-1.html",
+          "hash": "Jqzb6LYVorAv1TUCXlFbMw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHandling.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHandling.html",
+          "hash": "YcNg4hyr00FMIVNVWYzfwg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.AzureBlobStorageEventProcessor-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.AzureBlobStorageEventProcessor-1.html",
+          "hash": "+9nTFrkuYyfwvNiWVePDKQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.EventDataReceivedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.EventDataReceivedDelegate.html",
+          "hash": "pQOE/6cLp60oNyLSec7FAQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.IEventHubConsumerClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.IEventHubConsumerClient-1.html",
+          "hash": "5ct/4GR94WPhFAW/5DM1Eg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.IEventHubConsumerClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.IEventHubConsumerClient.html",
+          "hash": "7zJ/qS4aLan8iIzUhiPi9Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Consumer.html",
+          "hash": "PWKT14aBZYvCSPZBYSLqKg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Producer.IEventHubProducerClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Producer.IEventHubProducerClient-1.html",
+          "hash": "9QxFPQTjvXsYbHNCBKNDBg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Producer.IEventHubProducerClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Producer.IEventHubProducerClient.html",
+          "hash": "+spoMeq/oBFpA7a2+OQQRA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Producer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.Client.Producer.html",
+          "hash": "W8MnVCFsoSbv3NRbA8wLdw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.DataBatcher-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.DataBatcher-1.html",
+          "hash": "iwU4qoFpF+q9zxzhJ8Iy7g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.EventHub.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.EventHub.html",
+          "hash": "1vfsXYxe67jmQYE7eE6rjA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.EventHubConnectionAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.EventHubConnectionAttribute.html",
+          "hash": "Fp9HJjJ28/2axXnqIjEL9A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.EventHubEventDataConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.EventHubEventDataConverter.html",
+          "hash": "/Y/iZPpFbPnktptLKhJ67w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.IEventHubConnection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.IEventHubConnection.html",
+          "hash": "zU2nl9yKZnhHBPwG85wC0g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.IEventHubEventDataConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.IEventHubEventDataConverter.html",
+          "hash": "c3dJ2QPDdf1R+MDC27Co0Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.IEventHubIncomingEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.IEventHubIncomingEvent.html",
+          "hash": "4GGDsK52HDiNnqBgmXWrLg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.IEventHubOutgoingEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.IEventHubOutgoingEvent.html",
+          "hash": "8Gye96DDFdoC/SLkNLOmOQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.OnDataBatched-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.OnDataBatched-1.html",
+          "hash": "zr9M3OyGIgQhU5K/5HMpSQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.EventHub.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.EventHub.html",
+          "hash": "uNarHqQRFch/iTYljqUvQg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.Client.IIotHubClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.Client.IIotHubClient-1.html",
+          "hash": "aAEfVArF3ygzS0NjkX5g1A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.Client.IIotHubClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.Client.IIotHubClient.html",
+          "hash": "u5dCy0SILS8u3otFBsjcOg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.Client.MessageReceivedDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.Client.MessageReceivedDelegate.html",
+          "hash": "MgY7/pT0kY/0b9DSTUZQWg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.Client.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.Client.html",
+          "hash": "JRunyS5gmQSds4VnTmKlrQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.IIotHubConnection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.IIotHubConnection.html",
+          "hash": "Yx8NGvhPEwCveUpJp7+IXA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.IIotHubIncomingEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.IIotHubIncomingEvent.html",
+          "hash": "PXHIq9Gk3o8aBQOgOuBLLw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.IIotHubMessageConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.IIotHubMessageConverter.html",
+          "hash": "UQctv8zXUKQeWY3eoZUK9Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.IIotHubOutgoingEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.IIotHubOutgoingEvent.html",
+          "hash": "YffDGykGYOt6Tj5aNKQ/4A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.IotHub.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.IotHub.html",
+          "hash": "LZV8PvtlXPcM/xUo1YpWeA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.IotHubBridge.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.IotHubBridge.html",
+          "hash": "nCyDkjL48nXxn0+A4iE7Cg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.IotHubConnectionAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.IotHubConnectionAttribute.html",
+          "hash": "5pw12c0BYKgOoIBXdw0X8Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.IotHubMessageConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.IotHubMessageConverter.html",
+          "hash": "TARa0JU/I8C4gvC9QafzXw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.IotHub.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.IotHub.html",
+          "hash": "hauw/uBzpjjCgcg0gdYZiQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.ApplicationBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.ApplicationBuilderExtensions.html",
+          "hash": "3rVUrKHHfctf+RY0l3RPdg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.Authentication.Authentication.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.Authentication.Authentication.html",
+          "hash": "/ld585tOAL8elbREn+szpA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.Authentication.IAuthentication.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.Authentication.IAuthentication.html",
+          "hash": "s/yV39SH6kAOcEfRif3AGQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.Authentication.UsernameAndPasswordAuthentication.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.Authentication.UsernameAndPasswordAuthentication.html",
+          "hash": "vVU2Tm1MM0DxEYk7iSKg3A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.Authentication.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.Authentication.html",
+          "hash": "vdBKsSJnLgPAl74Lx44OqA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.IMqttBrokerClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.IMqttBrokerClient-1.html",
+          "hash": "P9fHam0BOzUG2oB0UR6DLA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.IMqttBrokerClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.IMqttBrokerClient.html",
+          "hash": "2XjjLtoO1zRbA5BGBV9yVw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.IMqttMessageConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.IMqttMessageConverter.html",
+          "hash": "81iM/BtTqdVHX6gAb+D8+g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.IMqttTopicMapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.IMqttTopicMapper.html",
+          "hash": "zMx/HkEg5tN4koLg1XVlOA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.MqttMessageConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.MqttMessageConverter.html",
+          "hash": "NtHIU/OD1t0pkKd9i/l4Ng=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.MqttRouter-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.MqttRouter-1.html",
+          "hash": "wjerDW2NgEdI0/bAtm6XCw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.MqttTopicMapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.MqttTopicMapper.html",
+          "hash": "M+GZSgFaKSXdaDJnNlelOQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Client.html",
+          "hash": "4LcpLO9uIRaF8SG6ZQxNOA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.IMqttBrokerConnection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.IMqttBrokerConnection.html",
+          "hash": "yOp8qyXQwBLOnRJMxH513A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.IMqttIncomingEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.IMqttIncomingEvent.html",
+          "hash": "VUla70r2CgvL8LYjNchMMA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.IMqttOutgoingEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.IMqttOutgoingEvent.html",
+          "hash": "e4qXc2A2GOO5UaTQrhsZIQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Mqtt.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.Mqtt.html",
+          "hash": "9jFY/CDlThKN8cGWnPSw8Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.MqttBridge.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.MqttBridge.html",
+          "hash": "9xxKd4VOuBINXz7/YxwrIg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.MqttBrokerConnectionAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.MqttBrokerConnectionAttribute.html",
+          "hash": "mK+Cx/hH5Ndmqdab4t1CjQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.TemplatedString-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.TemplatedString-1.html",
+          "hash": "+Nj26aeZqaw72CuJefohJw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Mqtt.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Mqtt.html",
+          "hash": "Srm1Ooll1sjlWBMUfSTv6Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.ISchedule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.ISchedule.html",
+          "hash": "4abQJYNh2NxEq2SBez9QzA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.IScheduleForType-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.IScheduleForType-1.html",
+          "hash": "SW4inPCXIOICfodvH/ZMpA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.IScheduledEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.IScheduledEvent.html",
+          "hash": "7Az2SWZRnClIIUrOafP/og=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.Interval-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.Interval-1.html",
+          "hash": "Vq4JEQdUCmEdwNTutlnBHg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.NoScheduleConfiguredException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.NoScheduleConfiguredException.html",
+          "hash": "AhvOI+9zQaqmrO0Gx/C1xw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.Pattern-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.Pattern-1.html",
+          "hash": "sTuIr7bt5vjTybwnud6owQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.ScheduleAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.ScheduleAttribute.html",
+          "hash": "EDp7S4J+d7F8CI6oi7arAg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.ScheduledJob-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.ScheduledJob-1.html",
+          "hash": "1bW2hmfFljTR+VCMw8KI4w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.Scheduling.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.Scheduling.html",
+          "hash": "Api9dSrR1K6EIr3wsLQG5Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.SchedulingTask.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.SchedulingTask.html",
+          "hash": "2h5fKt9Fdeln/u/u9tozRg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Scheduling.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Scheduling.html",
+          "hash": "t12qLtYDjyXP9ozl72dJdg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.ITimescaledbClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.ITimescaledbClient-1.html",
+          "hash": "CGdT1ymcvRoMEvcosTP5SA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.ITimescaledbClient.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.ITimescaledbClient.html",
+          "hash": "RB7CcPqsR3ZKk8sVqWG0ng=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.ITimescaledbConnection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.ITimescaledbConnection.html",
+          "hash": "bMCzhvaDnfeZpnEdbpn2og=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.ITimescaledbOutgoingEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.ITimescaledbOutgoingEvent.html",
+          "hash": "FX4C9UN1Af1V+jQTlpaT8w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.Timescaledb.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.Timescaledb.html",
+          "hash": "xkOn0pl3taoCd4qR4XBjNA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.TimescaledbClient-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.TimescaledbClient-1.html",
+          "hash": "r8L79VyxsfdKQERbFN5g6A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.TimescaledbConnectionAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.TimescaledbConnectionAttribute.html",
+          "hash": "w5s2Gi8ONnj8tYDkHGHDjg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Modules.Timescaledb.html",
+          "hash": "PdNVeIPr/56P+JHfHZf/MQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Serialization.IDeserializer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Serialization.IDeserializer-1.html",
+          "hash": "q33cxV4JUqM/yV1p9zKrpg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Serialization.IDeserializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Serialization.IDeserializer.html",
+          "hash": "DwWAHQ5z/Esl/S/8SSHJMQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Serialization.ISerializer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Serialization.ISerializer-1.html",
+          "hash": "0EwZ3zi5PEZqVMH+jMQhkg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Serialization.ISerializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Serialization.ISerializer.html",
+          "hash": "EzTG0f+rirQ1381RxCLuIQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Serialization.JsonDeserializer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Serialization.JsonDeserializer-1.html",
+          "hash": "hDsTjr0oFJacm8ey7yV7kg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Serialization.JsonSerializer-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Serialization.JsonSerializer-1.html",
+          "hash": "I7s69bBALnh7VejWeJcGXQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Serialization.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Serialization.html",
+          "hash": "n/XuZ5VCPp362BHdxXf2fg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Status.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Status.html",
+          "hash": "lakUo3Z6U15yp3IdVT28Lg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.TaskHelpers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.TaskHelpers.html",
+          "hash": "gwuiHCuUSWRCO10gUpNGZw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.ApplicationContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.ApplicationContext.html",
+          "hash": "pzEfRsyaSsS3kwHLyQUVFQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.ApplicationSteps.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.ApplicationSteps.html",
+          "hash": "ApXgx0TZscRh+hbjFsiheg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.ClientSteps.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.ClientSteps.html",
+          "hash": "k8opDYrL0WtQSu+cvbtIUw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.ComponentAssemblies.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.ComponentAssemblies.html",
+          "hash": "RO8icvpxlxQI5B+VHFgd1g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.ContextProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.ContextProvider.html",
+          "hash": "Zn2rvCIp6xI0gkfe+1vrmA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.Exceptions.EventInstanceFactoryNotRegisteredException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.Exceptions.EventInstanceFactoryNotRegisteredException.html",
+          "hash": "tyVCC29ohP4a2os7PyJwDQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.Exceptions.ProducedEventVerifierNotRegisteredException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.Exceptions.ProducedEventVerifierNotRegisteredException.html",
+          "hash": "2QCnkHwgdp4qCKWAGbhbmQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.Exceptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.Exceptions.html",
+          "hash": "jFdg3RABZhUC+0eMfj5zyw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.HandlerSteps.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.HandlerSteps.html",
+          "hash": "M/Lj/TyTucvsvh8qWXkt2Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.LoggerProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.LoggerProvider.html",
+          "hash": "YMva4sycUX+PQtfwTX3GMw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.TestApplicationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.TestApplicationBuilder.html",
+          "hash": "jpG3701co+b08AAxGCRi1A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.TestingMiddlewareSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.TestingMiddlewareSource.html",
+          "hash": "UEkWNR7LZv5LIPY8snFU3w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.TypeMapping.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.TypeMapping.html",
+          "hash": "EMXjTIwzZL1733OPbkfY8w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.Testing.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.Testing.html",
+          "hash": "oGbyXlcS6RFMx5i/5/PYWw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/RaaLabs.Edge.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/RaaLabs.Edge.html",
+          "hash": "e1ztwrEi0aa5UPbxKlpXrg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "JFFXBZyIMfeO7ITNxptbEA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "0OlEyj9ypMdR1T195N4WVQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.Modules.Configuration.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.Modules.Configuration.README.html",
+          "hash": "X3eHQ6dWuK+vnCVu1TICew=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.Modules.EdgeHub.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.Modules.EdgeHub.README.html",
+          "hash": "b2R8OMLHUnWSX+YA/R6DuA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.Modules.EventHandling.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.Modules.EventHandling.README.html",
+          "hash": "TlLDu0urfAsUw4nX91Jfhw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.Modules.EventHub.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.Modules.EventHub.README.html",
+          "hash": "E0QFs56niqg9duMSq1+hhw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.Modules.IotHub.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.Modules.IotHub.README.html",
+          "hash": "roO0u6l1oW3Gjm6bY9uS6w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.Modules.Mqtt.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.Modules.Mqtt.README.html",
+          "hash": "9B0bUCbatpqV4fKKADCY0g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.Modules.Scheduling.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.Modules.Scheduling.README.html",
+          "hash": "U7/jDd0zeTcLf36xils1cQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.Modules.Timescaledb.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.Modules.Timescaledb.README.html",
+          "hash": "QwCB+bNhNB0QYFEGs56G1w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.README.html",
+          "hash": "z0jGsr5HO0msBlEqAFwMFg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/Edge.Testing.README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/Edge.Testing.README.html",
+          "hash": "gtD6qOuA2fPTpY7yEWs4gg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "articles/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/README.html",
+          "hash": "JctEtGpyY+UK32phm/o5bQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "LTymhi6yg/4nMjwbHzaB8Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "ADOtN3XkchQ7FOnKFjngdg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "logo.svg",
+      "output": {
+        "resource": {
+          "relative_path": "logo.svg"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "acuvJyKM0kAO2hRgEbxt3w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot build incrementally because last build info is missing.",
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0,
+        "full_build_reason_code": "NoAvailableBuildCache"
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 13,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 162,
+          "skipped_file_count": 0
+        },
+        "ResourceDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: should not trace intermediate info.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
