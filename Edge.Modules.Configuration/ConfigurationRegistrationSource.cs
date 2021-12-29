@@ -10,6 +10,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
+using Serilog;
 
 namespace RaaLabs.Edge.Modules.Configuration
 {
@@ -41,7 +42,8 @@ namespace RaaLabs.Edge.Modules.Configuration
                 new DelegateActivator(serviceType, (c, p) =>
                 {
                     var fs = c.Resolve<IFileSystem>();
-                    var config = LoadConfigurationObject(serviceType, fs);
+                    var logger = c.Resolve<ILogger>();
+                    var config = LoadConfigurationObject(serviceType, fs, logger);
 
                     if (serviceType.GetCustomAttribute<RestartOnChangeAttribute>() != null)
                     {
@@ -67,10 +69,10 @@ namespace RaaLabs.Edge.Modules.Configuration
         /// <param name="type"></param>
         /// <param name="fs"></param>
         /// <returns></returns>
-        private static IConfiguration LoadConfigurationObject(Type type, IFileSystem fs)
+        private static IConfiguration LoadConfigurationObject(Type type, IFileSystem fs, ILogger logger)
         {
             string filename = type.GetCustomAttribute<NameAttribute>().Name;
-            var path = ConfigurationFileFinder.FindConfigurationFilePath(fs, filename);
+            var path = ConfigurationFileFinder.FindConfigurationFilePath(fs, filename, logger);
             string content = fs.File.ReadAllText(path);
             IConfiguration configuration = (IConfiguration)JsonConvert.DeserializeObject(content, type);
 

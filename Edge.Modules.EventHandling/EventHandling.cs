@@ -13,6 +13,8 @@ namespace RaaLabs.Edge.Modules.EventHandling
             builder.RegisterModule<EventHandlers>();
             builder.RegisterModule<EventProducers>();
             builder.RegisterModule<EventConsumers>();
+
+            builder.RegisterType<SetupBridges>().AsSelf().As<IBootloader>().SingleInstance();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace RaaLabs.Edge.Modules.EdgeHub
         /// <returns>True if we are running in IoT Edge context, false if not</returns>
         public static bool IsRunningInIotEdge()
         {
-            return !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("IOTEDGE_MODULEID"));
+            return !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("IOTEDGE_MODULEID") ?? Environment.GetEnvironmentVariable("EdgeHubConnectionString"));
         }
     }
 }

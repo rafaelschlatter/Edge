@@ -29,7 +29,7 @@ namespace RaaLabs.Edge.Testing
         /// <summary>
         /// 
         /// </summary>
-        [BeforeScenario]
+        [BeforeScenario(Order = 100_000)]
         public void RegisterClassesFromAssemblies()
         {
             var allTypes = _assemblies.SelectMany(assembly => assembly.GetTypes()).ToList();
