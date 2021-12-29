@@ -6,7 +6,15 @@
   href: Edge.Modules.EdgeHub.README.md
 - name: Edge.Modules.EventHandling
   href: Edge.Modules.EventHandling.README.md
+- name: Edge.Modules.EventHub
+  href: Edge.Modules.EventHub.README.md
+- name: Edge.Modules.IotHub
+  href: Edge.Modules.IotHub.README.md
+- name: Edge.Modules.Mqtt
+  href: Edge.Modules.Mqtt.README.md
 - name: Edge.Modules.Scheduling
   href: Edge.Modules.Scheduling.README.md
+- name: Edge.Modules.Timescaledb
+  href: Edge.Modules.Timescaledb.README.md
 - name: Edge.Testing
   href: Edge.Testing.README.md
